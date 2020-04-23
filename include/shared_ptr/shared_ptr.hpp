@@ -43,6 +43,8 @@ public:
      */
     explicit shared_ptr(T *ptr)
     {
+        if (!ptr) return;   // 处理shared_ptr(nullptr)的情况
+
         try 
         {
             pi_ = new sp_counted_impl_p<T>(ptr);
