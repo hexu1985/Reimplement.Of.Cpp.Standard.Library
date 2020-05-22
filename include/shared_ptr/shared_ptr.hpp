@@ -181,7 +181,6 @@ public:
         this_type(ptr, d).swap(*this);
     }
 
-    // 获取当前对象管理的指针
     /**
      * @brief 返回存储的指针
      *
