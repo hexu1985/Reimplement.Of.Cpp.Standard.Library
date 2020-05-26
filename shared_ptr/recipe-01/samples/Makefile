@@ -2,10 +2,11 @@
 RM = rm -rf
 CXX = g++
 CXXFLAGS = -Wall -g -std=c++11 #-DNDEBUG
-INCLUDES = -I../../include/shared_ptr
-LDFLAGS = -lmini_stl
-LDPATH = -L../../src
+INCLUDES = -I../include
+LDFLAGS =
+LDPATH =
 
+LIB_SRC = $(shell ls ../src/*.cpp)
 SOURCES = $(shell ls *.cpp)
 PROGS = $(SOURCES:%.cpp=%)
 
@@ -15,5 +16,5 @@ all: $(PROGS)
 clean:
 	$(RM) $(PROGS) *.dSYM
 
-%: %.cpp
+%: %.cpp $(LIB_SRC)
 	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDES) $^ $(LDFLAGS) $(LDPATH)
