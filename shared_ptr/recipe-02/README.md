@@ -1,4 +1,4 @@
-### 基础版shared_ptr
+### shared_ptr版本二
 
 - 不支持weak_ptr
-- make_shared是类似std的实现
+- make_shared标准的实现
