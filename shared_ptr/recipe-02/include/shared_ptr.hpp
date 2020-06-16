@@ -43,11 +43,6 @@ public:
     shared_ptr() {}
 
     /**
-     * @brief 构造无被管理对象的shared_ptr, 即空shared_ptr
-     */
-//    shared_ptr(std::nullptr_t) {}
-
-    /**
      * @brief 构造shared_ptr, 管理ptr所指向的对象. 共享引用计数为1
      *
      * @param ptr 指向共享对象的指针
