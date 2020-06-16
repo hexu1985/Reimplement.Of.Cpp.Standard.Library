@@ -267,18 +267,18 @@ public:
     }
 
     /**
-     * @brief 以实现定义的基于拥有者(与基于值相反)顺序, 检查此shared_ptr是否先于other. 
+     * @brief 以实现定义的基于拥有者(与基于值相反)顺序, 检查此shared_ptr是否先于r. 
      *        二个智能指针仅若都占有同一对象或均为空才比较相等, 
      *        即使由get()获得的指针不同(例如因为它们指向同一对象中的不同子对象)
      *        此顺序用于令共享和弱指针可用作关联容器中的关键，通常经由 std::owner_less 。
      *
-     * @param other 要比较的 std::shared_ptr
+     * @param r 要比较的 std::shared_ptr
      *
-     * @return 若*this前于other则为true, 否则为false. 常见实现比较控制块的地址.
+     * @return 若*this前于r则为true, 否则为false. 常见实现比较控制块的地址.
      */
-    bool owner_before(const shared_ptr &other) const
+    bool owner_before(const shared_ptr &r) const
     {
-        return this->pi_ < other.pi_;
+        return this->pi_ < r.pi_;
     }
 };
 
