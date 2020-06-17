@@ -13,6 +13,33 @@
 namespace mini_stl {
 
 /**
+ * @brief shared_ptr的引用计数子类: 内嵌共享对象, 为make_shared提供支持
+ *
+ * @tparam T
+ */
+template <typename T>
+class sp_counted_impl: public sp_counted_base {
+private:
+    T data_;
+
+    sp_counted_impl(const sp_counted_impl &) = delete;
+    sp_counted_impl &operator =(const sp_counted_impl &) = delete;
+
+public:
+    sp_counted_impl(): data_() {}
+
+    template <typename ...Args>
+    sp_counted_impl(Args &&...args): data_(std::forward<Args>(args)...) {}
+
+    // do nothing
+    void dispose() override {}
+
+    void *get_pointer() override { return &data_; }
+
+    void *get_deleter() override { return nullptr; }
+};
+
+/**
  * @brief shared_ptr的引用计数子类: 使用默认的delete运算符释放共享对象的指针
  *
  * @tparam T 共享对象的类型

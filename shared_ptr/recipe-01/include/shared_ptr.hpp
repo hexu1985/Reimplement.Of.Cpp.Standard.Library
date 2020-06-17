@@ -30,6 +30,12 @@ private:
 
     typedef shared_ptr<T> this_type;
 
+    // for make_shared call only
+    shared_ptr(sp_counted_base_tag, sp_counted_base *pi): pi_(pi) {}
+
+    template <typename U, typename ...Args>
+    friend shared_ptr<U> make_shared(Args &&...args);
+
 public:
     /**
      * @brief 构造无被管理对象的shared_ptr, 即空shared_ptr
@@ -559,7 +565,10 @@ std::basic_ostream<charT, traits> &operator <<(
 template <typename T, typename ...Args>
 shared_ptr<T> make_shared(Args &&...args)
 {
+    /*
     return shared_ptr<T>(new T(std::forward<Args>(args)...));
+    */
+    return shared_ptr<T>(sp_counted_base_tag{}, new sp_counted_impl<T>(std::forward<Args>(args)...));
 }
 
 /**

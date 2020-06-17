@@ -77,6 +77,8 @@ public:
     long use_count() const;
 };
 
+struct sp_counted_base_tag {};
+
 }   // namespace mini_stl
 
 #endif
