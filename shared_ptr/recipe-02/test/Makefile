@@ -8,14 +8,22 @@ LDPATH = -L$(HOME)/local/lib
 VPATH = 
 
 LIB_SRC = $(shell ls ../src/*.cpp)
+LIB_OBJ = $(subst .cpp,.o,$(LIB_SRC))
 SOURCES = $(shell ls *.cpp)
+OBJECTS = $(subst .cpp,.o,$(SOURCES))
 PROGS = shared_ptr_test
 
 all: $(PROGS)
 	@echo "PROGS = $(PROGS)" 
 
 clean:
-	$(RM) $(PROGS)
+	$(RM) $(PROGS) $(LIB_OBJ) $(OBJECTS)
 
-$(PROGS): $(SOURCES) $(LIB_SRC)
+$(LIB_OBJ): %.o: %.cpp
+	$(CXX) -o $@ -c $(CXXFLAGS) $(INCLUDES) $<
+
+$(OBJECTS): %.o: %.cpp
+	$(CXX) -o $@ -c $(CXXFLAGS) $(INCLUDES) $<
+
+$(PROGS): $(OBJECTS) $(LIB_OBJ)
 	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDES) $^ $(LDFLAGS) $(LDPATH)

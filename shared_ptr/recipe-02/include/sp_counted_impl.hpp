@@ -12,7 +12,11 @@
 
 namespace mini_stl {
 
-// shared pointer counted implement: data
+/**
+ * @brief shared_ptr的引用计数子类: 内嵌共享对象, 为make_shared提供支持
+ *
+ * @tparam T
+ */
 template <typename T>
 class sp_counted_impl: public sp_counted_base {
 private:
