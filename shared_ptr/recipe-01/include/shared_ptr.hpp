@@ -108,24 +108,57 @@ public:
     }
 
     /**
+     * @brief 从r移动构造shared_ptr.
+     *        构造后, *this含r先前状态的副本, 而r为空且其存储的指针为空.
+     *
+     * @param r 从它获得所有权的另一智能指针
+     */
+    shared_ptr(shared_ptr &&r) noexcept: pi_(r.pi_)
+    {
+        r.pi_ = nullptr;
+    } 
+
+    /**
      * @brief 赋值运算符, 以r所管理者替换被管理对象.
      *        若*this已占有对象且它是最后一个占有该对象的shared_ptr, 
      *        且r与*this不相同, 则通过占有的删除器销毁对象.
      *
-     * @param r 要获得所有权或共享所有权的另一智能指针
+     * @param r 要获得共享所有权的另一智能指针
      *
      * @return *this
      */
     shared_ptr &operator =(const shared_ptr &r)
     {
         /**
-        if (pi_ != r.pi_) {
+        if (this != &r) {
             if (r.pi_ != nullptr) r.pi_->add_ref_copy();
             if (pi_ != nullptr) pi_->release();
             pi_ = r.pi_;
         }
         */
         this_type(r).swap(*this);
+        return *this;
+    }
+
+    /**
+     * @brief 从r移动赋值shared_ptr.
+     *        赋值后, *this含有先前r状态的副本, 而r为空,
+     *        等价于shared_ptr<T>(std::move(r)).swap(*this) 。
+     *
+     * @param r 要获得所有权的另一智能指针
+     *
+     * @return *this
+     */
+    shared_ptr &operator =(shared_ptr &&r) noexcept
+    {
+        /**
+        if (this != &r) {
+            if (pi_ != nullptr) pi_->release();
+            pi_ = r.pi_;
+            r.pi_ = nullptr;
+        }
+        */
+        this_type(std::move(r)).swap(*this);
         return *this;
     }
 

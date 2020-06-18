@@ -8,5 +8,6 @@ using std::shared_ptr;
 TEST(benchmark, shared_ptr_operator_assign)
 {
     shared_ptr_operator_assign();
+    shared_ptr_operator_assign2();
 }
 

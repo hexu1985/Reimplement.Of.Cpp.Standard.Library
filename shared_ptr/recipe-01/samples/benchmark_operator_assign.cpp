@@ -49,8 +49,24 @@ int main()
     print_details(p1, "p1");
     print_details(p2, "p2");
 
-    cout << "p1 = p2;" << '\n';
+    cout << "p1 = p1;\n"; 
+    p1 = p1;
+
+    print_details(p1, "p1");
+
+    cout << "p2 = std::move(p2);\n";
+    p2 = std::move(p2);
+
+    print_details(p2, "p2");
+
+    cout << "p1 = p2;\n"; 
     p1 = p2;
+
+    print_details(p1, "p1");
+    print_details(p2, "p2");
+
+    cout << "p2 = std::move(p1);\n";
+    p2 = std::move(p1);
 
     print_details(p1, "p1");
     print_details(p2, "p2");
