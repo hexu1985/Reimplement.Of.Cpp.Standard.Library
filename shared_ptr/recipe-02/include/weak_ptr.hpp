@@ -54,6 +54,18 @@ public:
     }
 
     /**
+     * @brief 移动构造函数. 
+     *        从r移动weak_ptr实例到*this.
+     *        之后, r为空且r.use_count()==0
+     *
+     * @param r 被移动的weak_ptr
+     */
+    weak_ptr (weak_ptr &&r) noexcept: pi_(r.pi_)
+    {
+        r.pi_ = nullptr;
+    }
+
+    /**
      * @brief 构造新的weak_ptr, 它共享r所管理的对象.
      *        若r不管理对象, 则*this亦不管理对象.
      *
@@ -83,13 +95,26 @@ public:
     weak_ptr &operator =(const weak_ptr &r)
     {
         /**
-        if (pi_ != r.pi_) {
+        if (this != &r) {
             if (r.pi_ != nullptr) r.pi_->weak_add_ref();
             if (pi_ != nullptr) pi_->weak_release();
             pi_ = r.pi_;
         }
         */
         this_type(r).swap(*this);
+        return *this;
+    }
+
+    weak_ptr &operator =(weak_ptr &&r) noexcept
+    {
+        /**
+        if (this != &r) {
+            if (pi_ != nullptr) pi_->weak_release();
+            pi_ = r.pi_;
+            r.pi_ = nullptr;
+        }
+        */
+        this_type(std::move(r)).swap(*this);
         return *this;
     }
 
