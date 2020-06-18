@@ -12,8 +12,15 @@
 #include <utility>
 #include <cstddef>
 #include "sp_counted_impl.hpp"
+#include "bad_weak_ptr.hpp"
 
 namespace mini_stl {
+
+template <typename T>
+class shared_ptr;
+
+template <typename T>
+class weak_ptr;
 
 /**
  * @brief 拥有共享对象所有权语义的智能指针
@@ -29,6 +36,9 @@ private:
     sp_counted_base *pi_ = nullptr;
 
     typedef shared_ptr<T> this_type;
+
+    template<typename> friend class shared_ptr;
+    template<typename> friend class weak_ptr;
 
     // for make_shared call only
     shared_ptr(sp_counted_base_tag, sp_counted_base *pi): pi_(pi) {}
@@ -108,24 +118,69 @@ public:
     }
 
     /**
+     * @brief 从r移动构造shared_ptr.
+     *        构造后, *this含r先前状态的副本, 而r为空且其存储的指针为空.
+     *
+     * @param r 从它获得所有权的另一智能指针
+     */
+    shared_ptr(shared_ptr &&r) noexcept: pi_(r.pi_)
+    {
+        r.pi_ = nullptr;
+    } 
+	
+    /**
+     * @brief 构造shared_ptr, 共享r所管理对象的所有权.
+     *
+     * @param r 被共享weak_ptr
+     */
+    explicit shared_ptr(const weak_ptr<T> &r): pi_(r.pi_)
+    {
+        if (pi_ == nullptr || !pi_->add_ref_lock()) {
+            throw bad_weak_ptr{};
+        }
+    }
+
+    /**
      * @brief 赋值运算符, 以r所管理者替换被管理对象.
      *        若*this已占有对象且它是最后一个占有该对象的shared_ptr, 
      *        且r与*this不相同, 则通过占有的删除器销毁对象.
      *
-     * @param r 要获得所有权或共享所有权的另一智能指针
+     * @param r 要获得共享所有权的另一智能指针
      *
      * @return *this
      */
     shared_ptr &operator =(const shared_ptr &r)
     {
         /**
-        if (pi_ != r.pi_) {
+        if (this != &r) {
             if (r.pi_ != nullptr) r.pi_->add_ref_copy();
             if (pi_ != nullptr) pi_->release();
             pi_ = r.pi_;
         }
         */
         this_type(r).swap(*this);
+        return *this;
+    }
+
+    /**
+     * @brief 从r移动赋值shared_ptr.
+     *        赋值后, *this含有先前r状态的副本, 而r为空,
+     *        等价于shared_ptr<T>(std::move(r)).swap(*this) 。
+     *
+     * @param r 要获得所有权的另一智能指针
+     *
+     * @return *this
+     */
+    shared_ptr &operator =(shared_ptr &&r) noexcept
+    {
+        /**
+        if (this != &r) {
+            if (pi_ != nullptr) pi_->release();
+            pi_ = r.pi_;
+            r.pi_ = nullptr;
+        }
+        */
+        this_type(std::move(r)).swap(*this);
         return *this;
     }
 
@@ -278,6 +333,11 @@ public:
      * @return 若*this前于r则为true, 否则为false. 常见实现比较控制块的地址.
      */
     bool owner_before(const shared_ptr &r) const
+    {
+        return this->pi_ < r.pi_;
+    }
+
+    bool owner_before(const weak_ptr<T> &r) const
     {
         return this->pi_ < r.pi_;
     }

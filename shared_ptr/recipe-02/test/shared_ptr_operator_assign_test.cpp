@@ -8,5 +8,6 @@ using mini_stl::shared_ptr;
 TEST(test, shared_ptr_operator_assign)
 {
     shared_ptr_operator_assign();
+    shared_ptr_operator_assign2();
 }
 

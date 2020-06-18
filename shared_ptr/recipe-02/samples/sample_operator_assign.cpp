@@ -23,15 +23,15 @@ void operator delete(void *ptr)
     free(ptr);
 }
 
-void print_details(const shared_ptr<int> &sp, const std::string &name)
+void print_details(const shared_ptr<int> &p, const std::string &name)
 {
     cout << "-----------------------------\n";
     cout << name << '\n';
-    cout << "use_count: " << sp.use_count() << '\n'
-        << "get: " << sp.get() << '\n'
-        << "operator bool: " << static_cast<bool>(sp) << '\n';
-    if (sp) {
-        cout << "resource value: " << *sp << '\n';
+    cout << "use_count: " << p.use_count() << '\n'
+        << "get: " << p.get() << '\n'
+        << "operator bool: " << static_cast<bool>(p) << '\n';
+    if (p) {
+        cout << "resource value: " << *p << '\n';
     } else {
         cout << "no resource\n";
     }
@@ -49,8 +49,24 @@ int main()
     print_details(p1, "p1");
     print_details(p2, "p2");
 
-    cout << "p1 = p2;" << '\n';
+    cout << "p1 = p1;\n"; 
+    p1 = p1;
+
+    print_details(p1, "p1");
+
+    cout << "p2 = std::move(p2);\n";
+    p2 = std::move(p2);
+
+    print_details(p2, "p2");
+
+    cout << "p1 = p2;\n"; 
     p1 = p2;
+
+    print_details(p1, "p1");
+    print_details(p2, "p2");
+
+    cout << "p2 = std::move(p1);\n";
+    p2 = std::move(p1);
 
     print_details(p1, "p1");
     print_details(p2, "p2");
