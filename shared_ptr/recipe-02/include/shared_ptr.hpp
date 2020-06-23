@@ -22,6 +22,23 @@ class shared_ptr;
 template <typename T>
 class weak_ptr;
 
+template <typename T>
+class enable_shared_from_this;
+
+template <typename T>
+inline void sp_enable_shared_from_this(const shared_ptr<T> *sp, const enable_shared_from_this<T> *pe)
+{
+	if (pe != nullptr) {
+		pe->internal_accept_owner(sp);
+	}
+}
+
+// SFINAE: Substitution Failure Is Not An Error
+// 默认匹配函数
+inline void sp_enable_shared_from_this(...)
+{
+}
+
 /**
  * @brief 拥有共享对象所有权语义的智能指针
  *
@@ -41,7 +58,10 @@ private:
     template<typename> friend class weak_ptr;
 
     // for make_shared call only
-    shared_ptr(sp_counted_base_tag, sp_counted_base *pi): pi_(pi) {}
+    shared_ptr(sp_counted_base_tag, sp_counted_base *pi): pi_(pi) 
+    {
+		sp_enable_shared_from_this(this, get());
+    }
 
     template <typename U, typename ...Args>
     friend shared_ptr<U> make_shared(Args &&...args);
@@ -71,6 +91,7 @@ public:
             delete ptr;
             throw;
         }
+		sp_enable_shared_from_this(this, ptr);
     }
 
     /**
@@ -93,6 +114,7 @@ public:
             d(ptr);    // delete ptr
             throw;
         }
+		sp_enable_shared_from_this(this, ptr);
     }
 
     /**
