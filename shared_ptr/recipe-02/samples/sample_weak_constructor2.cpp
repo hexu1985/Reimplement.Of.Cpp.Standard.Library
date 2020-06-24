@@ -32,5 +32,6 @@ Output:
 use_count:
 wp1: 0
 wp2: 0
-wp3: 1
+wp3: 0
+wp4: 1
 */
