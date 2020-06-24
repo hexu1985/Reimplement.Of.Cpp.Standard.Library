@@ -51,6 +51,7 @@ public:
 
 private:
     sp_counted_base *pi_ = nullptr;
+    element_type *px_ = nullptr;
 
     typedef shared_ptr<T> this_type;
 
@@ -58,7 +59,7 @@ private:
     template<typename> friend class weak_ptr;
 
     // for make_shared call only
-    shared_ptr(sp_counted_base_tag, sp_counted_base *pi): pi_(pi) 
+    shared_ptr(sp_counted_base_tag, sp_counted_base *pi): pi_(pi), px_(static_cast<T *>(pi->get_pointer())) 
     {
 		sp_enable_shared_from_this(this, get());
     }
@@ -76,15 +77,19 @@ public:
     /**
      * @brief 构造shared_ptr, 管理ptr所指向的对象.
      *
+     * @tparam Y 共享对象的类型
      * @param ptr 指向共享对象的指针
+     *
+     * @note  Y* 必须可转换为 T*
      */
-    explicit shared_ptr(T *ptr)
+    template <typename Y>
+    explicit shared_ptr(Y *ptr): px_(ptr)
     {
         if (!ptr) return;   // 处理shared_ptr(nullptr)的情况
 
         try 
         {
-            pi_ = new sp_counted_impl_p<T>(ptr);
+            pi_ = new sp_counted_impl_p<Y>(ptr);
         }
         catch (...) 
         {
@@ -98,16 +103,17 @@ public:
      * @brief 构造shared_ptr, 管理ptr所指向的对象,
      *        当共享引用计数降到0时, 通过deleter释放指针ptr
      *
-     * @tparam Deleter 自定义的deleter的类型
+     * @tparam Y 共享对象的类型
+     * @tparam Deleter  自定义的deleter的类型
      * @param ptr 指向共享对象的指针
      * @param d deleter的引用
      */
-    template <typename Deleter>
-    shared_ptr(T *ptr, Deleter d)
+    template <typename Y, typename Deleter>
+    shared_ptr(Y *ptr, Deleter d): px_(ptr)
     {
         try 
         {
-            pi_ = new sp_counted_impl_pd<T *, Deleter>(ptr, d);
+            pi_ = new sp_counted_impl_pd<Y *, Deleter>(ptr, d);
         }
         catch (...)
         {
@@ -134,7 +140,22 @@ public:
      *
      * @param r 被共享shared_ptr
      */
-    shared_ptr(const shared_ptr &r): pi_(r.pi_)
+    shared_ptr(const shared_ptr &r): pi_(r.pi_), px_(r.px_)
+    {
+        if (pi_ != nullptr) pi_->add_ref_copy();
+    }
+
+    /**
+     * @brief 构造 shared_ptr, 共享r所管理对象的所有权.
+     *        若r不管理对象, 则*this 亦不管理对象. 
+     *
+     * @tparam Y 共享对象的类型
+     * @param r 被共享shared_ptr
+     *
+     * @note 若Y*不可隐式转换为T*, 则模板重载不参与重载决议。
+     */
+    template <typename Y>
+    shared_ptr(const shared_ptr<Y> &r): pi_(r.pi_), px_(r.px_)
     {
         if (pi_ != nullptr) pi_->add_ref_copy();
     }
@@ -145,21 +166,50 @@ public:
      *
      * @param r 从它获得所有权的另一智能指针
      */
-    shared_ptr(shared_ptr &&r) noexcept: pi_(r.pi_)
+    shared_ptr(shared_ptr &&r) noexcept: pi_(r.pi_), px_(r.px_)
     {
         r.pi_ = nullptr;
+        r.px_ = nullptr;
+    } 
+
+    template <typename Y>
+    shared_ptr(shared_ptr<Y> &&r) noexcept: pi_(r.pi_), px_(r.px_)
+    {
+        r.pi_ = nullptr;
+        r.px_ = nullptr;
     } 
 	
     /**
      * @brief 构造shared_ptr, 共享r所管理对象的所有权.
      *
+     * @tparam Y 共享对象的类型
      * @param r 被共享weak_ptr
+     *
+     * @note Y*必须可隐式转换为T*
      */
-    explicit shared_ptr(const weak_ptr<T> &r): pi_(r.pi_)
+    template <typename Y>
+    explicit shared_ptr(const weak_ptr<Y> &r): pi_(r.pi_), px_(r.px_)
     {
         if (pi_ == nullptr || !pi_->add_ref_lock()) {
             throw bad_weak_ptr{};
         }
+    }
+
+    /**
+     * @brief 别名使用构造函数: 构造 shared_ptr, 与r的初始值共享所有权信息, 但保有无关且不管理的指针ptr. 
+     *
+     * @tparam Y 共享对象的类型
+     * @param r 被共享weak_ptr
+     * @param ptr 别名指针
+     *
+     * @note 若此shared_ptr是离开作用域的组中的最后者, 则它将调用最初r所管理对象的析构函数.
+     *       然而, 在此shared_ptr上调用get()将始终返回ptr的副本. 
+     *       程序员负责确保只要此shared_ptr存在, 此ptr就保持合法.
+     */
+    template <typename Y>
+    shared_ptr(const shared_ptr<Y> &r, element_type *ptr): pi_(r.pi_), px_(ptr)
+    {
+        if (pi_ != nullptr) pi_->add_ref_copy();
     }
 
     /**
@@ -178,8 +228,26 @@ public:
             if (r.pi_ != nullptr) r.pi_->add_ref_copy();
             if (pi_ != nullptr) pi_->release();
             pi_ = r.pi_;
+            px_ = r.px_;
         }
         */
+        this_type(r).swap(*this);
+        return *this;
+    }
+
+    /**
+     * @brief 赋值运算符, 以r所管理者替换被管理对象.
+     *        若*this已占有对象且它是最后一个占有该对象的shared_ptr, 
+     *        且r与*this不相同, 则通过占有的删除器销毁对象.
+     *
+     * @tparam Y 共享对象的类型
+     * @param r 要获得共享所有权的另一智能指针
+     *
+     * @return *this
+     */
+    template <typename Y>
+    shared_ptr &operator =(const shared_ptr<Y> &r)
+    {
         this_type(r).swap(*this);
         return *this;
     }
@@ -199,9 +267,28 @@ public:
         if (this != &r) {
             if (pi_ != nullptr) pi_->release();
             pi_ = r.pi_;
+            px_ = r.px_;
             r.pi_ = nullptr;
+            r.px_ = nullptr;
         }
         */
+        this_type(std::move(r)).swap(*this);
+        return *this;
+    }
+
+    /**
+     * @brief 从r移动赋值shared_ptr.
+     *        赋值后, *this含有先前r状态的副本, 而r为空,
+     *        等价于shared_ptr<T>(std::move(r)).swap(*this) 。
+     *
+     * @tparam Y 共享对象的类型
+     * @param r 要获得所有权的另一智能指针
+     *
+     * @return *this
+     */
+    template <typename Y>
+    shared_ptr &operator =(shared_ptr<Y> &&r) noexcept
+    {
         this_type(std::move(r)).swap(*this);
         return *this;
     }
@@ -215,6 +302,7 @@ public:
     {
         using std::swap;
         swap(this->pi_, r.pi_);
+        swap(this->px_, r.px_);
     }
 
     /**
@@ -228,6 +316,7 @@ public:
         if (pi_) {
             pi_->release();
             pi_ = nullptr;
+            px_ = nullptr;
         }
         */
         this_type().swap(*this);
@@ -238,11 +327,13 @@ public:
      *        以delete表达式为删除器.
      *        等价于shared_ptr<T>(ptr).swap(*this);
      *
+     * @tparam Y 共享对象的类型
      * @param ptr 指向要取得所有权的对象的指针
      *
      * @note 合法的delete表达式必须可用, 即delete ptr必须为良式, 拥有良好定义行为且不抛任何异常.
      */
-    void reset(T *ptr)
+    template <typename Y>
+    void reset(Y *ptr)
     {
         this_type(ptr).swap(*this);
     }
@@ -252,6 +343,7 @@ public:
      *        以指定的删除器d为删除器.
      *        等价于shared_ptr<T>(ptr, d).swap(*this);
      *
+     * @tparam Y 共享对象的类型
      * @tparam Deleter deleter类型
      * @param ptr 指向要取得所有权的对象的指针
      * @param d 为删除对象而存储的删除器
@@ -259,8 +351,8 @@ public:
      * @note  Deleter必须对T类型可调用, 即d(ptr)必须为良构, 拥有良好定义行为且不抛任何异常.
      *        Deleter必须可复制构造(CopyConstructible), 且其复制构造函数和析构函数必须不抛异常.
      */
-    template <typename Deleter>
-    void reset(T *ptr, Deleter d)
+    template <typename Y, typename Deleter>
+    void reset(Y *ptr, Deleter d)
     {
         this_type(ptr, d).swap(*this);
     }
@@ -272,11 +364,7 @@ public:
      */
     element_type *get() const
     {
-        if (pi_ != nullptr) {
-            return static_cast<element_type *>(pi_->get_pointer());
-        } else {
-            return nullptr;
-        }
+        return px_;
     }
 
     /**
@@ -348,13 +436,15 @@ public:
      * @brief 以实现定义的基于拥有者(与基于值相反)顺序, 检查此shared_ptr是否先于r. 
      *        二个智能指针仅若都占有同一对象或均为空才比较相等, 
      *        即使由get()获得的指针不同(例如因为它们指向同一对象中的不同子对象)
-     *        此顺序用于令共享和弱指针可用作关联容器中的关键，通常经由 std::owner_less 。
+     *        此顺序用于令共享和弱指针可用作关联容器中的关键，通常经由 std::owner_less.
      *
+     * @tparam Y 共享对象的类型
      * @param r 要比较的 std::shared_ptr
      *
      * @return 若*this前于r则为true, 否则为false. 常见实现比较控制块的地址.
      */
-    bool owner_before(const shared_ptr &r) const
+    template <typename Y>
+    bool owner_before(const shared_ptr<Y> &r) const
     {
         return this->pi_ < r.pi_;
     }
@@ -365,11 +455,13 @@ public:
      *        即使由get()获得的指针不同(例如因为它们指向同一对象中的不同子对象)
      *        此顺序用于令共享和弱指针可用作关联容器中的关键，通常经由 std::owner_less. 
      *
+     * @tparam Y 共享对象的类型
      * @param r 要比较的 std::weak_ptr
      *
      * @return 若*this前于r则为true, 否则为false. 常见实现比较控制块的地址.
      */
-    bool owner_before(const weak_ptr<T> &r) const
+    template <typename Y>
+    bool owner_before(const weak_ptr<Y> &r) const
     {
         return this->pi_ < r.pi_;
     }
@@ -692,6 +784,66 @@ template <typename Deleter, typename T>
 Deleter *get_deleter(const shared_ptr<T> &p)
 {
     return static_cast<Deleter *>(p.get_deleter());
+}
+
+/**
+ * @brief 创建std::shared_ptr的新实例, 其存储指针从r的存储指针用转型表达式获得.
+ *
+ * @tparam T to shared_ptr的共享对象类型
+ * @tparam Y from shared_ptr的共享对象类型
+ * @param r 要转换的指针 
+ *
+ * @return to shared_ptr
+ */
+template <typename T, typename Y>
+shared_ptr<T> static_pointer_cast(const shared_ptr<Y> &r)
+{
+    (void) static_cast<T *>(static_cast<Y *>(0));
+
+    typedef typename shared_ptr<T>::element_type E;
+
+    E *p = static_cast<E *>(r.get());
+    return shared_ptr<T>(r, p);
+}
+
+/**
+ * @brief 创建std::shared_ptr的新实例, 其存储指针从r的存储指针用转型表达式获得.
+ *
+ * @tparam T to shared_ptr的共享对象类型
+ * @tparam Y from shared_ptr的共享对象类型
+ * @param r 要转换的指针 
+ *
+ * @return to shared_ptr
+ */
+template <typename T, typename Y>
+shared_ptr<T> dynamic_pointer_cast(const shared_ptr<Y> &r)
+{
+    (void) dynamic_cast<T *>(static_cast<Y *>(0));
+
+    typedef typename shared_ptr<T>::element_type E;
+
+    E *p = dynamic_cast<E *>(r.get());
+    return p ? shared_ptr<T>(r, p) : shared_ptr<T>();
+}
+
+/**
+ * @brief 创建std::shared_ptr的新实例, 其存储指针从r的存储指针用转型表达式获得.
+ *
+ * @tparam T to shared_ptr的共享对象类型
+ * @tparam Y from shared_ptr的共享对象类型
+ * @param r 要转换的指针 
+ *
+ * @return to shared_ptr
+ */
+template <typename T, typename Y>
+shared_ptr<T> const_pointer_cast(const shared_ptr<Y> &r)
+{
+    (void) const_cast<T *>(static_cast<Y *>(0));
+
+    typedef typename shared_ptr<T>::element_type E;
+
+    E *p = const_cast<E *>(r.get());
+    return shared_ptr<T>(r, p);
 }
 
 }   // namespace mini_stl
