@@ -44,7 +44,7 @@ public:
     shared_ptr(nullptr_t) {}
 
     /**
-     * @brief 构造shared_ptr, 管理ptr所指向的对象. 共享引用计数为1
+     * @brief 构造shared_ptr, 管理ptr所指向的对象.
      *
      * @param ptr 指向共享对象的指针
      */
@@ -64,7 +64,7 @@ public:
     }
 
     /**
-     * @brief 通过指针ptr和deleter构造, 持有指针ptr和deleter, 共享引用计数为1,
+     * @brief 构造shared_ptr, 管理ptr所指向的对象,
      *        当共享引用计数降到0时, 通过deleter释放指针ptr
      *
      * @tparam Deleter 自定义的deleter的类型
@@ -98,7 +98,7 @@ public:
 
     /**
      * @brief 构造shared_ptr, 共享r所管理对象的所有权.
-     *        若r不管理对象, 则*this亦不管理对象。
+     *        若r不管理对象, 则*this亦不管理对象.
      *
      * @param r 被共享shared_ptr
      */
