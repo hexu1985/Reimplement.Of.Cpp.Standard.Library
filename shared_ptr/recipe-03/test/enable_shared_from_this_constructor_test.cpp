@@ -15,6 +15,5 @@ using mini_stl::enable_shared_from_this;
 TEST(test, enable_shared_from_this_constructor)
 {
     enable_shared_from_this_constructor();
-    enable_shared_from_this_constructor2();
 }
 

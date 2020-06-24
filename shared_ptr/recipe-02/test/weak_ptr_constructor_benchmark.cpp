@@ -11,6 +11,5 @@ using std::make_shared;
 TEST(benchmark, weak_ptr_constructor)
 {
     weak_ptr_constructor();
-    weak_ptr_constructor2();
 }
 

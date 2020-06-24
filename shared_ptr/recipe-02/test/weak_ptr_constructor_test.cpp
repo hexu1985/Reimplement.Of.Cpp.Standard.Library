@@ -13,6 +13,5 @@ using mini_stl::make_shared;
 TEST(test, weak_ptr_constructor)
 {
     weak_ptr_constructor();
-    weak_ptr_constructor2();
 }
 

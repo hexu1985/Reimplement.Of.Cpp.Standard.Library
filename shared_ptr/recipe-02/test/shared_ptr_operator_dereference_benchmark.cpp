@@ -9,6 +9,5 @@ using std::shared_ptr;
 TEST(benchmark, shared_ptr_operator_dereference)
 {
     shared_ptr_operator_dereference();
-    shared_ptr_operator_dereference2();
 }
 

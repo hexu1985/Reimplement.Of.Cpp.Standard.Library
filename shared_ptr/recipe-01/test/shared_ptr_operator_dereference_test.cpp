@@ -9,6 +9,5 @@ using mini_stl::shared_ptr;
 TEST(test, shared_ptr_operator_dereference)
 {
     shared_ptr_operator_dereference();
-    shared_ptr_operator_dereference2();
 }
 
