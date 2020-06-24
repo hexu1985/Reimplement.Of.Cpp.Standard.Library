@@ -98,16 +98,16 @@ public:
      * @brief 通过指针ptr和deleter构造, 持有指针ptr和deleter, 共享引用计数为1,
      *        当共享引用计数降到0时, 通过deleter释放指针ptr
      *
-     * @tparam D 自定义的deleter的类型
+     * @tparam Deleter 自定义的deleter的类型
      * @param ptr 指向共享对象的指针
      * @param d deleter的引用
      */
-    template <typename D>
-    shared_ptr(T *ptr, D d)
+    template <typename Deleter>
+    shared_ptr(T *ptr, Deleter d)
     {
         try 
         {
-            pi_ = new sp_counted_impl_pd<T *, D>(ptr, d);
+            pi_ = new sp_counted_impl_pd<T *, Deleter>(ptr, d);
         }
         catch (...)
         {
@@ -252,15 +252,15 @@ public:
      *        以指定的删除器d为删除器.
      *        等价于shared_ptr<T>(ptr, d).swap(*this);
      *
-     * @tparam D deleter类型
+     * @tparam Deleter deleter类型
      * @param ptr 指向要取得所有权的对象的指针
      * @param d 为删除对象而存储的删除器
      *
      * @note  Deleter必须对T类型可调用, 即d(ptr)必须为良构, 拥有良好定义行为且不抛任何异常.
      *        Deleter必须可复制构造(CopyConstructible), 且其复制构造函数和析构函数必须不抛异常.
      */
-    template <typename D>
-    void reset(T *ptr, D d)
+    template <typename Deleter>
+    void reset(T *ptr, Deleter d)
     {
         this_type(ptr, d).swap(*this);
     }
