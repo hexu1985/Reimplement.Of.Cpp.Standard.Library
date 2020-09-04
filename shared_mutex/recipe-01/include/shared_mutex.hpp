@@ -20,6 +20,14 @@ namespace mini_stl {
  *      独占性 - 仅一个线程能占有互斥。 
  */
 class shared_mutex {
+private:
+    std::mutex rw_mutex;        // basic lock on this struct
+    std::condition_variable rw_condreaders;     // for reader threads waiting 
+    std::condition_variable rw_condwriters;     // for writer threads waiting
+    int rw_nwaitreaders;        // the number reader threads waiting
+    int rw_nwaitwriters;        // the number writer threads waiting 
+    int rw_refcount;            // -1 if writer has the lock, else # readers holding the lock
+
 public:
     /**
      * @brief 构造互斥。调用后互斥在未锁定状态。
@@ -35,6 +43,13 @@ public:
      * @brief 赋值运算符被删除，不可复制。
      */
 	shared_mutex &operator =(const shared_mutex &) = delete;
+
+    /**
+     * @brief 销毁互斥。
+     *
+     * @warning 若互斥为任何线程占有，或若任何线程在保有任何互斥的所有权时终止，则行为未定义。
+     */
+    ~shared_mutex();
 
     /**
      * @brief 锁定互斥。若另一线程已锁定互斥，则到 lock 的调用将阻塞执行，直至获得锁。
