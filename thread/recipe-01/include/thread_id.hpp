@@ -17,21 +17,21 @@ namespace mini_stl {
  * @brief 表示线程的 id
  */
 struct thread_id {
-	pthread_t id;	// native thread handle
+    pthread_t id;    // native thread handle
 
-	typedef	pthread_t native_handle_type;
+    typedef pthread_t native_handle_type;
 
     /**
      * @brief 构造不表示线程的 id
      */
-	thread_id(): id() {} 
+    thread_id(): id() {} 
 
     /**
      * @brief 通过pthread_t类型的id构造一个线程的id
      *
      * @param tid pthread_t类型的id
      */
-	thread_id(pthread_t tid) { id = tid; }
+    thread_id(pthread_t tid) { id = tid; }
 
     /**
      * @brief 通过pthread_t类型的id赋值给线程的id
@@ -40,7 +40,7 @@ struct thread_id {
      *
      * @return *this
      */
-	thread_id &operator =(pthread_t tid) { id = tid; return *this; }
+    thread_id &operator =(pthread_t tid) { id = tid; return *this; }
 
     /**
      * @brief 比较两个 thread::id 对象
@@ -50,61 +50,61 @@ struct thread_id {
      *
      * @return 比较结果
      */
-	friend bool operator ==(const thread_id &lhs, const thread_id &rhs);
-	friend bool operator !=(const thread_id &lhs, const thread_id &rhs);
-	friend bool operator <(const thread_id &lhs, const thread_id &rhs);
-	friend bool operator <=(const thread_id &lhs, const thread_id &rhs);
-	friend bool operator >(const thread_id &lhs, const thread_id &rhs);
-	friend bool operator >=(const thread_id &lhs, const thread_id &rhs);
+    friend bool operator ==(const thread_id &lhs, const thread_id &rhs);
+    friend bool operator !=(const thread_id &lhs, const thread_id &rhs);
+    friend bool operator <(const thread_id &lhs, const thread_id &rhs);
+    friend bool operator <=(const thread_id &lhs, const thread_id &rhs);
+    friend bool operator >(const thread_id &lhs, const thread_id &rhs);
+    friend bool operator >=(const thread_id &lhs, const thread_id &rhs);
 
     /**
      * @brief 返回底层实现定义的线程句柄
      *
      * @return pthread_t类型的id
      */
-	native_handle_type native_handle() const { return id; }
+    native_handle_type native_handle() const { return id; }
 
     /**
      * @brief 交换两个线程的id
      *
      * @param other 被交换对象
      */
-	void swap(thread_id &other)
-	{
-		pthread_t tmp = id;
-		id = other.id;
-		other.id = tmp;
-	}
+    void swap(thread_id &other)
+    {
+        pthread_t tmp = id;
+        id = other.id;
+        other.id = tmp;
+    }
 };
 
 inline bool operator ==(const thread_id &lhs, const thread_id &rhs)
 {
-	return pthread_equal(lhs.id, rhs.id);
+    return pthread_equal(lhs.id, rhs.id);
 }
 
 inline bool operator !=(const thread_id &lhs, const thread_id &rhs)
 {
-	return !(lhs == rhs);
+    return !(lhs == rhs);
 }
 
 inline bool operator <(const thread_id &lhs, const thread_id &rhs)
 {
-	return lhs.id < rhs.id;
+    return lhs.id < rhs.id;
 }
 
 inline bool operator <=(const thread_id &lhs, const thread_id &rhs)
 {
-	return !(rhs < lhs);
+    return !(rhs < lhs);
 }
 
 inline bool operator >(const thread_id &lhs, const thread_id &rhs)
 {
-	return (rhs < lhs);
+    return (rhs < lhs);
 }
 
 inline bool operator >=(const thread_id &lhs, const thread_id &rhs)
 {
-	return !(lhs < rhs);
+    return !(lhs < rhs);
 }
 
 /**
@@ -117,13 +117,13 @@ inline bool operator >=(const thread_id &lhs, const thread_id &rhs)
  */
 template <typename charT, typename traits>
 std::basic_ostream<charT, traits> &operator <<(
-	std::basic_ostream<charT, traits> &os, const thread_id &id)
+    std::basic_ostream<charT, traits> &os, const thread_id &id)
 {
-	os << id.native_handle();
-	return os;
+    os << id.native_handle();
+    return os;
 }
 
-}	// namespace mini_stl
+}    // namespace mini_stl
 
 namespace std {
 
@@ -132,13 +132,13 @@ namespace std {
  */
 template <> struct hash<mini_stl::thread_id>
 {
-	size_t operator ()(const mini_stl::thread_id &id) const noexcept
-	{
-		return static_cast<size_t>(id.native_handle());
-	}
+    size_t operator ()(const mini_stl::thread_id &id) const noexcept
+    {
+        return static_cast<size_t>(id.native_handle());
+    }
 };
 
-}	// namespace std
+}    // namespace std
 
 #endif
 
