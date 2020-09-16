@@ -159,7 +159,7 @@ public:
      */
 	void swap(thread &other) noexcept { id_.swap(other.id_); }
 
-private:
+public:
     /**
      * @brief 例程基类
      */
@@ -168,6 +168,7 @@ private:
 		virtual void run() = 0;
 	};
 
+private:
     /**
      * @brief 例程子类
      *
