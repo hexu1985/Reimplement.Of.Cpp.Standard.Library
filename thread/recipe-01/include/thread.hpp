@@ -9,6 +9,7 @@
 #define MINI_STL_THREAD_INC
 
 #include <memory>
+#include <functional>
 #include <exception>
 #include "thread_id.hpp"
 
