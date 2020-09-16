@@ -1,6 +1,7 @@
 #include "thread.hpp"
 #include <system_error>
-#include "pthread.h"
+#include <unistd.h>
+#include <pthread.h>
 
 namespace {
 
@@ -24,6 +25,12 @@ void *pthread_function(void *arg)
 
 namespace mini_stl {
 
+unsigned thread::hardware_concurrency()
+{
+	int const count = sysconf(_SC_NPROCESSORS_ONLN);
+	return (count>0) ? count : 0;
+}
+
 void thread::join()
 {
     if (!joinable()) {
@@ -36,6 +43,20 @@ void thread::join()
     }
     id_ = id();
 
+}
+
+void thread::detach()
+{
+	if (!joinable()) {
+		throw std::system_error(EINVAL, std::system_category(), __func__);
+	}
+
+	int error = pthread_detach(id_.native_handle());
+	if (error != 0) {
+		throw std::system_error(error, std::system_category(), __func__);
+	}
+
+	id_ = id();
 }
 
 void thread::create_thread(routine_base *rtn)
