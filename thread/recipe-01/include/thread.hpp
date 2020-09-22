@@ -10,7 +10,6 @@
 
 #include <memory>
 #include <functional>
-#include <exception>
 #include "thread_id.hpp"
 
 namespace mini_stl {
