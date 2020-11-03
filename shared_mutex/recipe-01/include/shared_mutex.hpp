@@ -5,8 +5,8 @@
  * @version 1.0
  * @date 2020-09-04
  */
-#ifndef MINI_STL_SHARED_MUTEX_H
-#define MINI_STL_SHARED_MUTEX_H
+#ifndef MINI_STL_SHARED_MUTEX_INC
+#define MINI_STL_SHARED_MUTEX_INC
 
 #include <mutex>
 #include <condition_variable>
