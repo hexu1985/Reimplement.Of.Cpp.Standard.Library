@@ -294,20 +294,25 @@ public:
 		return *this;
 	}
 
-	/**
-	 * Return iterator to beginning
-	 * Returns an iterator pointing to the first element in the vector.
-	 */
+    /**
+     * @brief 返回指向 vector 首元素的迭代器。
+     *        若 vector 为空，则返回的迭代器将等于 end() 。
+     *
+     * @return 指向首元素的迭代器。
+     */
 	iterator begin() noexcept { return start_; }
 	const_iterator begin() const noexcept { return start_; }
+	const_iterator cbegin() const noexcept { return start_; }
 
-	/**
-	 * Return iterator to end
-	 * Returns an iterator referring to the past-the-end element 
-	 * in the vector container.
-	 */
+    /**
+     * @brief 返回指向 vector 末元素后一元素的迭代器。
+     *        此元素表现为占位符；试图访问它导致未定义行为。
+     *
+     * @return 指向后随最后元素的迭代器。 
+     */
 	iterator end() noexcept { return finish_; }
 	const_iterator end() const noexcept { return finish_; }
+	const_iterator cend() const noexcept { return finish_; }
 
 	/**
 	 * Return reverse iterator to reverse beginning
@@ -332,20 +337,6 @@ public:
 	{
 		return const_reverse_iterator(begin()); 
 	}
-
-	/**
-	 * Return const_iterator to beginning
-	 * Returns a const_iterator pointing to the first element in the container.
-	 */
-	const_iterator cbegin() const noexcept { return start_; }
-
-	/**
-	 * Return const_iterator to end
-	 * Returns a const_iterator pointing to the past-the-end element 
-	 * in the container.
-	 * The value returned shall not be dereferenced.
-	 */
-	const_iterator cend() const noexcept { return finish_; }
 
 	/**
 	 * Return const_reverse_iterator to reverse beginning
