@@ -1,6 +1,10 @@
-// -*- C++ -*-
-// HeXu's
-// 2013 Aug
+/**
+ * @file vector.hpp
+ * @brief 封装动态数组的顺序容器
+ * @author hexu_1985@sina.com
+ * @version 1.0
+ * @date 2020-11-03
+ */
 
 #ifndef MINI_STL_VECTOR_INC
 #define MINI_STL_VECTOR_INC
@@ -17,7 +21,12 @@
 
 namespace mini_stl {
 
-/* vector class */
+/**
+ * @brief 封装动态数组的顺序容器
+ *
+ * @tparam T 元素的类型
+ * @tparam Alloc 用于获取/释放内存及构造/析构内存中元素的分配器。类型必须满足分配器 (Allocator) 的要求。
+ */
 template <typename T, typename Alloc = std::allocator<T> >
 class vector {
 public:
@@ -44,28 +53,39 @@ private:
 	pointer end_of_storage_;	// storage end postion
 
 public:
-	/**
-	 * Construct vector
-	 * Constructs a vector, 
-	 * initializing its contents depending on the constructor version used:
-	 */
+    /**
+     * @brief 默认构造函数。构造拥有默认构造的分配器的空容器。
+     */
+	explicit vector():
+        vector(allocator_type())
+	{
+	} 
 
-	/** 
-	 * empty container constructor (default constructor)
-	 * Constructs an empty container, with no elements.
-	 */
-	explicit vector(const allocator_type &alloc = allocator_type()):
+    /**
+     * @brief 构造拥有给定分配器 alloc 的空容器。
+     *
+     * @param alloc 用于此容器所有内存分配的分配器
+     */
+	explicit vector(const allocator_type &alloc):
 		alloc_(alloc) 
 	{
 		initialize();
 	} 
 
-	/**
-	 * fill constructor
-	 * Constructs a container with n elements. Each element is a copy of val.
-	 */
+    /**
+     * @brief 构造拥有个 n 默认插入的 T 实例的容器。不进行复制。
+     *
+     * @param n 容器的大小
+     */
 	explicit vector(size_type n): vector(n, value_type(), allocator_type()) {}
 
+    /**
+     * @brief  构造拥有 count 个有值 val 的元素的容器。
+     *
+     * @param n 容器的大小
+     * @param val 以之初始化容器元素的值
+     * @param alloc 用于此容器所有内存分配的分配器
+     */
 	vector(size_type n, const value_type &val, 
 		const allocator_type &alloc = allocator_type()): alloc_(alloc)
 	{
@@ -87,12 +107,13 @@ public:
 		}
 	}
 
-	/**
-	 * range constructor
-	 * Constructs a container with as many elements as the range [first,last), 
-	 * with each element emplace-constructed from its corresponding element 
-	 * in that range, in the same order.
-	 */
+
+    /**
+     * @brief 构造拥有范围 [first, last) 内容的容器。
+     *
+     * @param first, last 复制元素的来源范围
+     * @param alloc 用于此容器所有内存分配的分配器
+     */
 	template <typename InputIterator, typename = typename
 		std::enable_if<!std::is_integral<InputIterator>::value>::type>
 	vector(InputIterator first, InputIterator last,
@@ -117,11 +138,11 @@ public:
 		}
 	}
 	
-	/**
-	 * copy constructor
-	 * Constructs a container with a copy of each of the elements in x, 
-	 * in the same order.
-	 */
+    /**
+     * @brief 复制构造函数。构造拥有 x 内容的容器
+     *
+     * @param x 用作初始化容器元素来源的另一容器
+     */
 	vector(const vector &x): alloc_(x.alloc_) 
 	{
 		size_type n = x.size();
@@ -143,6 +164,12 @@ public:
 		}
 	}
 
+    /**
+     * @brief 构造拥有 x 内容的容器，以 alloc 为分配器。
+     *
+     * @param x 用作初始化容器元素来源的另一容器
+     * @param alloc 用于此容器所有内存分配的分配器
+     */
 	vector(const vector &x, const allocator_type &alloc): alloc_(alloc)
 	{
 		size_type n = x.size();
@@ -164,14 +191,12 @@ public:
 		}
 	}
 
-	/**
-	 * move constructor (and moving with allocator)
-	 * Constructs a container that acquires the elements of x.
-	 * If alloc is specified and is different from x's allocator, 
-	 * the elements are moved. Otherwise, no elements are constructed 
-	 * (their ownership is directly transferred).
-	 * x is left in an unspecified but valid state.
-	 */
+    /**
+     * @brief 移动构造函数。用移动语义构造拥有 x 内容的容器。
+     * 分配器通过属于 x 的分配器移动构造获得。移动后，保证 x 为 empty() 。
+     *
+     * @param x 用作初始化容器元素来源的另一容器
+     */
 	vector(vector &&x): 
 		alloc_(std::move(x.alloc_)),
 		start_(x.start_), finish_(x.finish_), end_of_storage_(x.end_of_storage_)
@@ -179,6 +204,13 @@ public:
 		x.initialize();
 	}
 
+    /**
+     * @brief 有分配器扩展的移动构造函数。以 alloc 为新容器的分配器，从 x 移动内容；
+     *        alloc != x.get_allocator() ，则它导致逐元素移动。（该情况下，移动后不保证 x 为空）
+     *
+     * @param x 用作初始化容器元素来源的另一容器
+     * @param alloc 用于此容器所有内存分配的分配器
+     */
 	vector(vector &&x, const allocator_type &alloc): alloc_(alloc)
 	{
 		size_type n = x.size();
@@ -200,26 +232,28 @@ public:
 		}
 	}
 
-	/**
-	 * initializer list constructor
-	 * Constructs a container with a copy of each of the elements in il, 
-	 * in the same order.
-	 */
+    /**
+     * @brief 构造拥有 initializer_list il 内容的容器。
+     *
+     * @param il 用作初始化元素来源的 initializer_list
+     * @param alloc 用于此容器所有内存分配的分配器
+     */
 	vector(std::initializer_list<value_type> il,
 		const allocator_type &alloc = allocator_type()): 
 		vector(il.begin(), il.end(), alloc) {}
 
-	/**
-	 * Vector destructor
-	 * Destroys the container object.
-	 */
+    /**
+     * @brief 销毁 vector 。调用元素的析构函数，然后解分配所用的存储。注意，若元素是指针，则不销毁所指向的对象。
+     */
 	~vector() { finalize(); }
 
-	/**
-	 * The copy assignment 
-	 * copies all the elements from x into the container 
-	 * (with x preserving its contents).
-	 */
+    /**
+     * @brief 复制赋值运算符。以 x 的副本替换内容。
+     *
+     * @param x 用作数据源的另一容器
+     *
+     * @return *this
+     */
 	vector &operator =(const vector &x)
 	{
 		if (this == &x)
@@ -229,11 +263,14 @@ public:
 		return *this;
 	}
 
-	/**
-	 * The move assignment 
-	 * moves the elements of x into the container 
-	 * (x is left in an unspecified but valid state).
-	 */
+    /**
+     * @brief 移动赋值运算符。用移动语义以 x 的内容替换内容（即从 x 移动 x 中的数据到此容器）。
+     *        之后 x 在合法但未指定的状态。
+     *
+     * @param x 用作数据源的另一容器
+     *
+     * @return *this
+     */
 	vector &operator =(vector &&x)
 	{
 		if (this == &x)
@@ -244,10 +281,13 @@ public:
 		return *this;
 	}
 
-	/**
-	 * The initializer list assignment 
-	 * copies the elements of il into the container.
-	 */
+    /**
+     * @brief 以 initializer_list il 所标识者替换内容。
+     *
+     * @param il 用作数据源的 initializer_list
+     *
+     * @return *this
+     */
 	vector &operator =(std::initializer_list<value_type> il)
 	{
 		assign(il.begin(), il.end());
