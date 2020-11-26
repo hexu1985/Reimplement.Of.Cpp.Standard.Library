@@ -41,7 +41,7 @@ public:
      * @brief 构造无被管理对象的shared_ptr, 即空shared_ptr
      */
     shared_ptr() {}
-    shared_ptr(nullptr_t) {}
+    shared_ptr(std::nullptr_t) {}
 
     /**
      * @brief 构造shared_ptr, 管理ptr所指向的对象.
