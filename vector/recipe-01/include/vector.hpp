@@ -107,7 +107,6 @@ public:
 		}
 	}
 
-
     /**
      * @brief 构造拥有范围 [first, last) 内容的容器。
      *
@@ -314,50 +313,23 @@ public:
 	const_iterator end() const noexcept { return finish_; }
 	const_iterator cend() const noexcept { return finish_; }
 
-	/**
-	 * Return reverse iterator to reverse beginning
-	 * Returns a reverse iterator pointing to the last element in the vector 
-	 * (i.e., its reverse beginning).
-	 */
+    /**
+     * @brief 返回指向逆向 vector 首元素的逆向迭代器。它对应非逆向 vector 的末元素。若 vector 为空，则返回的迭代器等于 rend() 。
+     *
+     * @return 指向首元素的逆向迭代器。
+     */
 	reverse_iterator rbegin() noexcept { return reverse_iterator(end()); }
+	const_reverse_iterator rbegin() const noexcept { return const_reverse_iterator(end()); }
+	const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator(end()); }
 
-	const_reverse_iterator rbegin() const noexcept 
-	{
-		return const_reverse_iterator(end()); 
-	}
-
-	/**
-	 * Return reverse iterator to reverse end
-	 * Returns a reverse iterator pointing to the theoretical element preceding 
-	 * the first element in the vector (which is considered its reverse end).
-	 */
+    /**
+     * @brief 返回指向逆向 vector 末元素后一元素的逆向迭代器。它对应非逆向 vector 首元素的前一元素。此元素表现为占位符，试图访问它导致未定义行为。
+     *
+     * @return 指向末元素后一元素的逆向迭代器。
+     */
 	reverse_iterator rend() noexcept { return reverse_iterator(begin()); }
-
-	const_reverse_iterator rend() const noexcept 
-	{
-		return const_reverse_iterator(begin()); 
-	}
-
-	/**
-	 * Return const_reverse_iterator to reverse beginning
-	 * Returns a const_reverse_iterator pointing to the last element 
-	 * in the container (i.e., its reverse beginning).
-	 */
-	const_reverse_iterator crbegin() const noexcept 
-	{
-		return const_reverse_iterator(end()); 
-	}
-
-	/**
-	 * Return const_reverse_iterator to reverse end
-	 * Returns a const_reverse_iterator pointing to the theoretical element 
-	 * preceding the first element in the container 
-	 * (which is considered its reverse end).
-	 */
-	const_reverse_iterator crend() const noexcept 
-	{
-		return const_reverse_iterator(begin()); 
-	}
+	const_reverse_iterator rend() const noexcept { return const_reverse_iterator(begin()); }
+	const_reverse_iterator crend() const noexcept { return const_reverse_iterator(begin()); }
 
 	/**
 	 * Return size
