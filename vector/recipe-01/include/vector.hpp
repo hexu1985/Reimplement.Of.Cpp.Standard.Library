@@ -331,12 +331,11 @@ public:
 	const_reverse_iterator rend() const noexcept { return const_reverse_iterator(begin()); }
 	const_reverse_iterator crend() const noexcept { return const_reverse_iterator(begin()); }
 
-	/**
-	 * Return size
-	 * Returns the number of elements in the vector.
-	 * This is the number of actual objects held in the vector, 
-	 * which is not necessarily equal to its storage capacity.
-	 */
+    /**
+     * @brief 返回容器中的元素数，即 std::distance(begin(), end()) 。
+     *
+     * @return 容器中的元素数量。
+     */
 	size_type size() const noexcept { return (finish_-start_); }
 
 	/**
