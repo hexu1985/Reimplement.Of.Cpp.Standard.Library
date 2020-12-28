@@ -120,38 +120,38 @@ private:
 
 
 // comparaison operators
-template <typename T, typename U> 
-inline bool operator ==(const unique_ptr<T> &l, const unique_ptr<U> &r) noexcept
+template <typename T1, typename D1, typename T2, typename D2> 
+inline bool operator ==(const unique_ptr<T1, D1> &l, const unique_ptr<T2, D2> &r) noexcept
 {
     return (l.get() == r.get());
 }
 
-template <typename T, typename U> 
-inline bool operator !=(const unique_ptr<T> &l, const unique_ptr<U> &r) noexcept
+template <typename T1, typename D1, typename T2, typename D2> 
+inline bool operator !=(const unique_ptr<T1, D1> &l, const unique_ptr<T2, D2> &r) noexcept
 {
     return (l.get() != r.get());
 }
 
-template <typename T, typename U> 
-inline bool operator <=(const unique_ptr<T> &l, const unique_ptr<U> &r) noexcept
+template <typename T1, typename D1, typename T2, typename D2> 
+inline bool operator <=(const unique_ptr<T1, D1> &l, const unique_ptr<T2, D2> &r) noexcept
 {
     return (l.get() <= r.get());
 }
 
-template <typename T, typename U> 
-inline bool operator <(const unique_ptr<T> &l, const unique_ptr<U> &r) noexcept
+template <typename T1, typename D1, typename T2, typename D2> 
+inline bool operator <(const unique_ptr<T1, D1> &l, const unique_ptr<T2, D2> &r) noexcept
 {
     return (l.get() < r.get());
 }
 
-template <typename T, typename U> 
-inline bool operator >=(const unique_ptr<T> &l, const unique_ptr<U> &r) noexcept
+template <typename T1, typename D1, typename T2, typename D2> 
+inline bool operator >=(const unique_ptr<T1, D1> &l, const unique_ptr<T2, D2> &r) noexcept
 {
     return (l.get() >= r.get());
 }
 
-template <typename T, typename U> 
-inline bool operator>(const unique_ptr<T> &l, const unique_ptr<U> &r) noexcept
+template <typename T1, typename D1, typename T2, typename D2> 
+inline bool operator>(const unique_ptr<T1, D1> &l, const unique_ptr<T2, D2> &r) noexcept
 {
     return (l.get() > r.get());
 }
