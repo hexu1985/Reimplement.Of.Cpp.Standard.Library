@@ -2,6 +2,7 @@
 #define MINI_STL_UNIQUE_PTR_INC
 
 #include <type_traits>
+#include <algorithm>
 
 namespace mini_stl {
 
@@ -33,9 +34,9 @@ public:
 
     unique_ptr(std::nullptr_t) noexcept {}
 
-    unique_ptr(T *p) noexcept: px_(p) {}
+    unique_ptr(T *p) noexcept: px_(p), del_() {}
 
-    unique_ptr(T *p, const Deleter &del): px_(p), del_(del) {}
+    unique_ptr(T *p, Deleter &del): px_(p), del_(del) {}
 
     unique_ptr(T *p, Deleter &&del): px_(p), del_(std::move(del)) {}
 
@@ -74,13 +75,13 @@ public:
         return p;
     }
 
-    void reset(T *p) noexcept
+    void reset(T *p = nullptr) noexcept
     {
-        unique_ptr<T> other(p);
+        unique_ptr<T, Deleter> other(p);
         swap(other);
     }
 
-    void swap(unique_ptr<T> &other) noexcept 
+    void swap(unique_ptr<T, Deleter> &other) noexcept 
     {
         std::swap(px_, other.px_);
         std::swap(del_, other.del_);

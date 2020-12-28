@@ -1,6 +1,5 @@
 #include <iostream>
 #include <memory>
-#include "unique_ptr.hpp"
  
 int main () 
 {
@@ -9,7 +8,7 @@ int main ()
         delete ptr;
     };
  
-    mini_stl::unique_ptr<int,decltype(deleter)> uniq(new int, deleter);
+    std::unique_ptr<int,decltype(deleter)> uniq(new int, deleter);
     std::cout << (uniq ? "not empty\n" : "empty\n");
     uniq.reset();
     std::cout << (uniq ? "not empty\n" : "empty\n");
