@@ -27,29 +27,28 @@ public:
 
 private:
     element_type *px_ = nullptr;
-    Deleter del_;
+    Deleter del_{};
 
 public:
     unique_ptr() noexcept {}
 
     unique_ptr(std::nullptr_t) noexcept {}
 
-    unique_ptr(T *p) noexcept: px_(p), del_() {}
+    unique_ptr(T *p) noexcept: px_(p) {}
 
     unique_ptr(T *p, Deleter &del): px_(p), del_(del) {}
 
     unique_ptr(T *p, Deleter &&del): px_(p), del_(std::move(del)) {}
 
-    unique_ptr(unique_ptr<T> &&u) noexcept {
-      std::swap(px_, u.px_);
-      std::swap(del_, u.del_);
+    unique_ptr(unique_ptr &&u) noexcept: px_(u.px_), del_(std::move(u.del_))
+    {
+        u.px_ = nullptr;
     };
 
-    template<typename U, typename = typename std::enable_if<std::is_convertible<U *, T *>::value>::type>
-    unique_ptr(unique_ptr<U> &&u) noexcept 
+    template<typename U, typename E, typename = typename std::enable_if<std::is_convertible<U *, T *>::value>::type>
+    unique_ptr(unique_ptr<U, E> &&u) noexcept: px_(u.px_), del_(std::move(u.del_))
     {
-        std::swap(px_, u.px_);
-        std::swap(del_, u.del_);
+        u.px_ = nullptr;
     }
 
     ~unique_ptr()
@@ -57,14 +56,13 @@ public:
         destroy();
     }
 
-    unique_ptr &operator =(unique_ptr<T> &&r) noexcept 
+    unique_ptr &operator =(unique_ptr &&r) noexcept 
     {
         if (this == &r)
             return *this;
 
         destroy();
         std::swap(px_, r.px_);
-        std::swap(del_, r.del_);
     }
 
 
@@ -77,11 +75,11 @@ public:
 
     void reset(T *p = nullptr) noexcept
     {
-        unique_ptr<T, Deleter> other(p);
-        swap(other);
+        destroy();
+        px_ = p;
     }
 
-    void swap(unique_ptr<T, Deleter> &other) noexcept 
+    void swap(unique_ptr &other) noexcept 
     {
         std::swap(px_, other.px_);
         std::swap(del_, other.del_);
