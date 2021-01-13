@@ -3,6 +3,7 @@
 
 #include <type_traits>
 #include <algorithm>
+#include <functional>
 
 namespace mini_stl {
 
@@ -97,7 +98,7 @@ public:
 
     T *operator ->() const noexcept
     {
-      return px_;
+        return px_;
     }
 
     explicit operator bool() const noexcept 
@@ -167,5 +168,17 @@ inline bool operator>(const unique_ptr<T1, D1> &l, const unique_ptr<T2, D2> &r) 
 }
 
 }   // namespace mini_stl
+
+namespace std {
+
+template <typename T, typename Deleter>
+struct hash<mini_stl::unique_ptr<T, Deleter>> {
+    size_t operator ()(const mini_stl::unique_ptr<T, Deleter> &p)
+    {
+        return std::hash<typename mini_stl::unique_ptr<T, Deleter>::pointer>()(p.get());
+    }
+};
+
+} // namespace std
 
 #endif

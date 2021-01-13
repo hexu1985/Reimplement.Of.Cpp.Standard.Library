@@ -1,6 +1,6 @@
 #include <iostream>
+#include <memory>
 #include <functional>
-#include "unique_ptr.hpp"
  
 struct Foo {
     Foo() { std::cout << "Foo...\n"; }
@@ -10,9 +10,9 @@ struct Foo {
 int main()
 {
     Foo* foo = new Foo();
-    mini_stl::unique_ptr<Foo> up(foo);
+    std::unique_ptr<Foo> up(foo);
  
-    std::cout << "hash(up):  " << std::hash<mini_stl::unique_ptr<Foo>>()(up) << '\n';
+    std::cout << "hash(up):  " << std::hash<std::unique_ptr<Foo>>()(up) << '\n';
     std::cout << "hash(foo): " << std::hash<Foo*>()(foo) << '\n';
 }
 
