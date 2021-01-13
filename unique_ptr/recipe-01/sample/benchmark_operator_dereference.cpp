@@ -1,5 +1,5 @@
 #include <iostream>
-#include "unique_ptr.hpp"
+#include <memory>
  
 struct Foo {
     void bar() { std::cout << "Foo::bar\n"; }
@@ -12,7 +12,7 @@ void f(const Foo& foo)
  
 int main() 
 {
-    mini_stl::unique_ptr<Foo> ptr(new Foo);
+    std::unique_ptr<Foo> ptr(new Foo);
  
     ptr->bar();
     f(*ptr);

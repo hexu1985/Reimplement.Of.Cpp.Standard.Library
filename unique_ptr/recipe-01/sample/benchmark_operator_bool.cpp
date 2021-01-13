@@ -1,9 +1,9 @@
 #include <iostream>
-#include "unique_ptr.hpp"
+#include <memory>
  
 int main()
 {
-    mini_stl::unique_ptr<int> ptr(new int(42));
+    std::unique_ptr<int> ptr(new int(42));
  
     if (ptr) std::cout << "before reset, ptr is: " << *ptr << '\n';
     ptr.reset();
