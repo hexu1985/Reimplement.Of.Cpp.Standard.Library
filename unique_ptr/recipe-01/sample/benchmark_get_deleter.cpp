@@ -1,6 +1,5 @@
 #include <iostream>
 #include <memory>
-#include "unique_ptr.hpp"
  
 struct Foo
 {
@@ -20,7 +19,7 @@ struct D
  
 int main()
 {
-    mini_stl::unique_ptr<Foo, D> up(new Foo(), D());
+    std::unique_ptr<Foo, D> up(new Foo(), D());
     D& del = up.get_deleter();
     del.bar();
 }

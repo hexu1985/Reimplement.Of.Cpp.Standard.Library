@@ -108,6 +108,16 @@ public:
     template<typename U, typename... Args>
     friend unique_ptr<U> make_unique(Args &&... args);
 
+    deleter_type &get_deleter() noexcept
+    {
+        return del_;
+    }
+
+    const deleter_type &get_deleter() const noexcept
+    {
+        return del_;
+    }
+
 private:
     void destroy() 
     {
