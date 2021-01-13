@@ -64,6 +64,7 @@ public:
 
         destroy();
         std::swap(px_, r.px_);
+        return *this;
     }
 
 
@@ -107,7 +108,10 @@ public:
     }
 
     template<typename U, typename... Args>
-    friend unique_ptr<U> make_unique(Args &&... args);
+    friend unique_ptr<U> make_unique(Args &&... args)
+    {
+        return unique_ptr<U>(new U(std::forward<Args>(args)...));
+    }
 
     deleter_type &get_deleter() noexcept
     {

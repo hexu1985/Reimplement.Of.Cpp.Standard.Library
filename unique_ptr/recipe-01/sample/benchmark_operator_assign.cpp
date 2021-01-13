@@ -1,5 +1,5 @@
 #include <iostream>
-#include "unique_ptr.hpp"
+#include <memory>
  
 struct Foo {
     int id;
@@ -9,11 +9,11 @@ struct Foo {
  
 int main() 
 {
-    mini_stl::unique_ptr<Foo> p1( mini_stl::make_unique<Foo>(1) );
+    std::unique_ptr<Foo> p1( std::make_unique<Foo>(1) );
  
     {
         std::cout << "Creating new Foo...\n";
-        mini_stl::unique_ptr<Foo> p2( mini_stl::make_unique<Foo>(2) );
+        std::unique_ptr<Foo> p2( std::make_unique<Foo>(2) );
         // p1 = p2; // Error ! can't copy unique_ptr
         p1 = std::move(p2);
         std::cout << "About to leave inner block...\n";
