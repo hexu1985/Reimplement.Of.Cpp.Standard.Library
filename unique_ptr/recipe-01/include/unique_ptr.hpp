@@ -68,7 +68,6 @@ public:
         return *this;
     }
 
-
     T *release() noexcept 
     {
         T *p = px_;
@@ -148,39 +147,39 @@ std::basic_ostream<charT, traits> &operator <<(
 
 // comparaison operators
 template <typename T1, typename D1, typename T2, typename D2> 
-inline bool operator ==(const unique_ptr<T1, D1> &l, const unique_ptr<T2, D2> &r) noexcept
+inline bool operator ==(const unique_ptr<T1, D1> &lhs, const unique_ptr<T2, D2> &rhs) noexcept
 {
-    return (l.get() == r.get());
+    return (lhs.get() == rhs.get());
 }
 
 template <typename T1, typename D1, typename T2, typename D2> 
-inline bool operator !=(const unique_ptr<T1, D1> &l, const unique_ptr<T2, D2> &r) noexcept
+inline bool operator !=(const unique_ptr<T1, D1> &lhs, const unique_ptr<T2, D2> &rhs) noexcept
 {
-    return (l.get() != r.get());
+    return (lhs.get() != rhs.get());
 }
 
 template <typename T1, typename D1, typename T2, typename D2> 
-inline bool operator <=(const unique_ptr<T1, D1> &l, const unique_ptr<T2, D2> &r) noexcept
+inline bool operator <=(const unique_ptr<T1, D1> &lhs, const unique_ptr<T2, D2> &rhs) noexcept
 {
-    return (l.get() <= r.get());
+    return (lhs.get() <= rhs.get());
 }
 
 template <typename T1, typename D1, typename T2, typename D2> 
-inline bool operator <(const unique_ptr<T1, D1> &l, const unique_ptr<T2, D2> &r) noexcept
+inline bool operator <(const unique_ptr<T1, D1> &lhs, const unique_ptr<T2, D2> &rhs) noexcept
 {
-    return (l.get() < r.get());
+    return (lhs.get() < rhs.get());
 }
 
 template <typename T1, typename D1, typename T2, typename D2> 
-inline bool operator >=(const unique_ptr<T1, D1> &l, const unique_ptr<T2, D2> &r) noexcept
+inline bool operator >=(const unique_ptr<T1, D1> &lhs, const unique_ptr<T2, D2> &rhs) noexcept
 {
-    return (l.get() >= r.get());
+    return (lhs.get() >= rhs.get());
 }
 
 template <typename T1, typename D1, typename T2, typename D2> 
-inline bool operator>(const unique_ptr<T1, D1> &l, const unique_ptr<T2, D2> &r) noexcept
+inline bool operator>(const unique_ptr<T1, D1> &lhs, const unique_ptr<T2, D2> &rhs) noexcept
 {
-    return (l.get() > r.get());
+    return (lhs.get() > rhs.get());
 }
 
 template <typename T, typename D> 
