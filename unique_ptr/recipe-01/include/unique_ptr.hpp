@@ -20,8 +20,7 @@ struct default_delete {
 };
 
 template<typename T, typename Deleter=default_delete<T>>
-class unique_ptr
-{
+class unique_ptr {
 public:
     using pointer = T *;
     using element_type = T;
