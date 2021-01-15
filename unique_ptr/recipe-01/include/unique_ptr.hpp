@@ -1,6 +1,7 @@
 #ifndef MINI_STL_UNIQUE_PTR_INC
 #define MINI_STL_UNIQUE_PTR_INC
 
+#include <iostream>
 #include <type_traits>
 #include <algorithm>
 #include <functional>
@@ -108,10 +109,7 @@ public:
     }
 
     template<typename U, typename... Args>
-    friend unique_ptr<U> make_unique(Args &&... args)
-    {
-        return unique_ptr<U>(new U(std::forward<Args>(args)...));
-    }
+    friend unique_ptr<U> make_unique(Args &&... args);
 
     deleter_type &get_deleter() noexcept
     {
@@ -133,6 +131,20 @@ private:
     }
 };
 
+template<typename T, typename... Args>
+unique_ptr<T> make_unique(Args &&... args)
+{
+    return unique_ptr<T>(new T(std::forward<Args>(args)...));
+}
+
+template <typename charT, typename traits, typename T, typename Deleter>
+std::basic_ostream<charT, traits> &operator <<(
+        std::basic_ostream<charT, traits> &os, 
+        const unique_ptr<T, Deleter> &ptr)
+{
+    os << ptr.get();
+    return os;
+}
 
 // comparaison operators
 template <typename T1, typename D1, typename T2, typename D2> 
@@ -170,6 +182,31 @@ inline bool operator>(const unique_ptr<T1, D1> &l, const unique_ptr<T2, D2> &r) 
 {
     return (l.get() > r.get());
 }
+
+template <typename T, typename D> 
+inline bool operator ==(const unique_ptr<T, D> &lhs, std::nullptr_t) noexcept
+{
+    return !lhs;
+}
+
+template <typename T, typename D> 
+inline bool operator ==(std::nullptr_t, const unique_ptr<T, D> &rhs) noexcept
+{
+    return !rhs;
+}
+
+template <typename T, typename D> 
+inline bool operator !=(const unique_ptr<T, D> &lhs, std::nullptr_t) noexcept
+{
+    return (bool) lhs;
+}
+
+template <typename T, typename D> 
+inline bool operator !=(std::nullptr_t, const unique_ptr<T, D> &rhs) noexcept
+{
+    return (bool) rhs;
+}
+
 
 }   // namespace mini_stl
 
