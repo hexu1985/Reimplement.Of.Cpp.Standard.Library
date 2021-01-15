@@ -1,0 +1,26 @@
+#include <iostream>
+#include <functional>
+#include "unique_ptr.hpp"
+ 
+struct Foo {
+    Foo() { std::cout << "Foo...\n"; }
+    ~Foo() { std::cout << "~Foo...\n\n"; }
+};
+ 
+int main()
+{
+    Foo* foo = new Foo();
+    mini_stl::unique_ptr<Foo> up(foo);
+ 
+    std::cout << "hash(up):  " << std::hash<mini_stl::unique_ptr<Foo>>()(up) << '\n';
+    std::cout << "hash(foo): " << std::hash<Foo*>()(foo) << '\n';
+}
+
+/*
+Output:
+
+Foo...
+hash(up):  3686401041
+hash(foo): 3686401041
+~Foo...
+*/
