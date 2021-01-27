@@ -44,14 +44,6 @@ public:
     unique_ptr(T *p, Deleter &del): px_(p), del_(del) {}
 
     unique_ptr(T *p, Deleter &&del): px_(p), del_(std::move(del)) {}
-#else
-    unique_ptr(pointer p,
-        typename std::conditional<std::is_reference<Deleter>::value, Deleter, const Deleter &>::type del): 
-        px_(p), del_(del) {}
-
-    unique_ptr (pointer p, typename std::remove_reference<Deleter>::type &&del):
-        px_(p), del_(std::move(del)) {}
-#endif
 
     unique_ptr(unique_ptr &&u) noexcept: px_(u.px_), del_(std::move(u.del_))
     {
@@ -63,6 +55,27 @@ public:
     {
         u.px_ = nullptr;
     }
+#else
+    unique_ptr(pointer p,
+        typename std::conditional<std::is_reference<Deleter>::value, Deleter, const Deleter &>::type del): 
+        px_(p), del_(del) {}
+
+    unique_ptr (pointer p, typename std::remove_reference<Deleter>::type &&del):
+        px_(p), del_(std::move(del)) {}
+
+    unique_ptr(unique_ptr &&u) noexcept: px_(u.px_), 
+        del_(static_cast<typename std::conditional<std::is_reference<Deleter>::value, Deleter &, Deleter &&>::type>(u.del_))
+    {
+        u.px_ = nullptr;
+    };
+
+    template<typename U, typename E, typename = typename std::enable_if<std::is_convertible<U *, T *>::value>::type>
+    unique_ptr(unique_ptr<U, E> &&u) noexcept: px_(u.px_), 
+        del_(static_cast<typename std::conditional<std::is_reference<E>::value, E &, E &&>::type>(u.del_))
+    {
+        u.px_ = nullptr;
+    }
+#endif
 
     ~unique_ptr()
     {
