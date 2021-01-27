@@ -3,6 +3,15 @@
  
 class Foo {};
  
+template <typename charT, typename traits, typename T, typename Deleter>
+std::basic_ostream<charT, traits> &operator <<(
+        std::basic_ostream<charT, traits> &os, 
+        const std::unique_ptr<T, Deleter> &ptr)
+{
+    os << ptr.get();
+    return os;
+}
+
 int main()
 {
     auto p = std::make_unique<Foo>();

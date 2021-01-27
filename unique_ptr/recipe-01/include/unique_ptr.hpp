@@ -19,7 +19,7 @@ struct default_delete {
     }
 };
 
-template<typename T, typename Deleter=default_delete<T>>
+template <typename T, typename Deleter=default_delete<T>>
 class unique_ptr {
 public:
     using pointer = T *;
@@ -27,19 +27,31 @@ public:
     using deleter_type = Deleter;
 
 private:
-    element_type *px_ = nullptr;
-    Deleter del_{};
+    element_type *px_;
+    Deleter del_;
+
+    template <typename U, typename E>
+    friend class unique_ptr;
 
 public:
-    unique_ptr() noexcept {}
+    unique_ptr() noexcept: px_(nullptr), del_() {}
 
-    unique_ptr(std::nullptr_t) noexcept {}
+    unique_ptr(std::nullptr_t) noexcept: px_(nullptr), del_() {}
 
-    unique_ptr(T *p) noexcept: px_(p) {}
+    unique_ptr(T *p) noexcept: px_(p), del_() {}
 
+#if 0
     unique_ptr(T *p, Deleter &del): px_(p), del_(del) {}
 
     unique_ptr(T *p, Deleter &&del): px_(p), del_(std::move(del)) {}
+#else
+    unique_ptr(pointer p,
+        typename std::conditional<std::is_reference<Deleter>::value, Deleter, const Deleter &>::type del): 
+        px_(p), del_(del) {}
+
+    unique_ptr (pointer p, typename std::remove_reference<Deleter>::type &&del):
+        px_(p), del_(std::move(del)) {}
+#endif
 
     unique_ptr(unique_ptr &&u) noexcept: px_(u.px_), del_(std::move(u.del_))
     {
