@@ -38,19 +38,31 @@ public:
     using deleter_type = Deleter;
 
 private:
-    element_type *px_ = nullptr;
-    Deleter del_{};
+    element_type *px_;
+    Deleter del_;
+
+    template <typename U, typename E>
+    friend class unique_ptr;
 
 public:
-    unique_ptr() noexcept {}
+    unique_ptr() noexcept: px_(nullptr), del_() {}
 
-    unique_ptr(std::nullptr_t) noexcept {}
+    unique_ptr(std::nullptr_t) noexcept: px_(nullptr), del_() {}
 
-    unique_ptr(T *p) noexcept: px_(p) {}
+    unique_ptr(T *p) noexcept: px_(p), del_() {}
 
+#if 0
     unique_ptr(T *p, Deleter &del): px_(p), del_(del) {}
 
     unique_ptr(T *p, Deleter &&del): px_(p), del_(std::move(del)) {}
+#else
+    unique_ptr(pointer p,
+        typename std::conditional<std::is_reference<Deleter>::value, Deleter, const Deleter &>::type del): 
+        px_(p), del_(del) {}
+
+    unique_ptr (pointer p, typename std::remove_reference<Deleter>::type &&del):
+        px_(p), del_(std::move(del)) {}
+#endif
 
     unique_ptr(unique_ptr &&u) noexcept: px_(u.px_), del_(std::move(u.del_))
     {
@@ -143,7 +155,124 @@ private:
 
 template<typename T, typename Deleter>
 class unique_ptr<T[], Deleter> {
+public:
+    using pointer = T *;
+    using element_type = T;
+    using deleter_type = Deleter;
 
+private:
+    element_type *px_;
+    Deleter del_;
+
+    template <typename U, typename E>
+    friend class unique_ptr;
+
+public:
+    unique_ptr() noexcept: px_(nullptr), del_() {}
+
+    unique_ptr(std::nullptr_t) noexcept: px_(nullptr), del_() {}
+
+    unique_ptr(T *p) noexcept: px_(p), del_() {}
+
+#if 0
+    unique_ptr(T *p, Deleter &del): px_(p), del_(del) {}
+
+    unique_ptr(T *p, Deleter &&del): px_(p), del_(std::move(del)) {}
+#else
+    unique_ptr(pointer p,
+        typename std::conditional<std::is_reference<Deleter>::value, Deleter, const Deleter &>::type del): 
+        px_(p), del_(del) {}
+
+    unique_ptr (pointer p, typename std::remove_reference<Deleter>::type &&del):
+        px_(p), del_(std::move(del)) {}
+#endif
+
+    unique_ptr(unique_ptr &&u) noexcept: px_(u.px_), del_(std::move(u.del_))
+    {
+        u.px_ = nullptr;
+    };
+
+    template<typename U, typename E, typename = typename std::enable_if<std::is_convertible<U *, T *>::value>::type>
+    unique_ptr(unique_ptr<U, E> &&u) noexcept: px_(u.px_), del_(std::move(u.del_))
+    {
+        u.px_ = nullptr;
+    }
+
+    ~unique_ptr()
+    {
+        destroy();
+    }
+
+    unique_ptr &operator =(unique_ptr &&r) noexcept 
+    {
+        if (this == &r)
+            return *this;
+
+        destroy();
+        std::swap(px_, r.px_);
+        return *this;
+    }
+
+    T *release() noexcept 
+    {
+        T *p = px_;
+        px_ = nullptr;
+        return p;
+    }
+
+    void reset(T *p = nullptr) noexcept
+    {
+        destroy();
+        px_ = p;
+    }
+
+    void swap(unique_ptr &other) noexcept 
+    {
+        std::swap(px_, other.px_);
+        std::swap(del_, other.del_);
+    }
+
+    T *get() const noexcept 
+    {
+        return px_;
+    }
+
+    T &operator *() const 
+    {
+        return *px_;
+    }
+
+    T *operator ->() const noexcept
+    {
+        return px_;
+    }
+
+    explicit operator bool() const noexcept 
+    {
+        return px_ != nullptr;
+    }
+
+    template<typename U, typename... Args>
+    friend unique_ptr<U> make_unique(Args &&... args);
+
+    deleter_type &get_deleter() noexcept
+    {
+        return del_;
+    }
+
+    const deleter_type &get_deleter() const noexcept
+    {
+        return del_;
+    }
+
+private:
+    void destroy() 
+    {
+        if (px_) {
+            del_(px_);
+            px_ = nullptr;
+        }
+    }
 };
 
 template<typename T, typename... Args>
