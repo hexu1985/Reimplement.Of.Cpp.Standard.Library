@@ -58,7 +58,7 @@ public:
         u.ptr_ = nullptr;
     };
 
-    template<typename U, typename E, typename = typename std::enable_if<std::is_convertible<U *, T *>::value>::type>
+    template <typename U, typename E, typename = typename std::enable_if<std::is_convertible<U *, T *>::value>::type>
     unique_ptr(unique_ptr<U, E> &&u) noexcept: ptr_(u.ptr_), del_(std::forward<E>(u.del_))
     {
         u.ptr_ = nullptr;
@@ -127,7 +127,7 @@ public:
         return ptr_ != nullptr;
     }
 
-    template<typename U, typename... Args>
+    template <typename U, typename... Args>
     friend unique_ptr<U> make_unique(Args &&... args);
 
     deleter_type &get_deleter() noexcept
@@ -141,7 +141,7 @@ public:
     }
 };
 
-template<typename T, typename... Args>
+template <typename T, typename... Args>
 unique_ptr<T> make_unique(Args &&... args)
 {
     return unique_ptr<T>(new T(std::forward<Args>(args)...));
