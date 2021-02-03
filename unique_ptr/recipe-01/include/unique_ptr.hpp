@@ -27,47 +27,47 @@ public:
     using deleter_type = Deleter;
 
 private:
-    element_type *px_;
+    element_type *ptr_;
     Deleter del_;
 
     template <typename U, typename E>
     friend class unique_ptr;
 
 public:
-    unique_ptr() noexcept: px_(nullptr), del_() {}
+    unique_ptr() noexcept: ptr_(nullptr), del_() {}
 
-    unique_ptr(std::nullptr_t) noexcept: px_(nullptr), del_() {}
+    unique_ptr(std::nullptr_t) noexcept: ptr_(nullptr), del_() {}
 
-    unique_ptr(T *p) noexcept: px_(p), del_() {}
+    unique_ptr(T *p) noexcept: ptr_(p), del_() {}
 
 #if 0
-    unique_ptr(T *p, Deleter &del): px_(p), del_(del) {}
+    unique_ptr(T *p, Deleter &del): ptr_(p), del_(del) {}
 
-    unique_ptr(T *p, Deleter &&del): px_(p), del_(std::move(del)) {}
+    unique_ptr(T *p, Deleter &&del): ptr_(p), del_(std::move(del)) {}
 #else
     unique_ptr(pointer p,
         typename std::conditional<std::is_reference<Deleter>::value, Deleter, const Deleter &>::type del): 
-        px_(p), del_(del) {}
+        ptr_(p), del_(del) {}
 
     unique_ptr (pointer p, typename std::remove_reference<Deleter>::type &&del):
-        px_(p), del_(std::move(del)) {}
+        ptr_(p), del_(std::move(del)) {}
 #endif
 
-    unique_ptr(unique_ptr &&u) noexcept: px_(u.px_), del_(std::forward<Deleter>(u.del_))
+    unique_ptr(unique_ptr &&u) noexcept: ptr_(u.ptr_), del_(std::forward<Deleter>(u.del_))
     {
-        u.px_ = nullptr;
+        u.ptr_ = nullptr;
     };
 
     template<typename U, typename E, typename = typename std::enable_if<std::is_convertible<U *, T *>::value>::type>
-    unique_ptr(unique_ptr<U, E> &&u) noexcept: px_(u.px_), del_(std::forward<E>(u.del_))
+    unique_ptr(unique_ptr<U, E> &&u) noexcept: ptr_(u.ptr_), del_(std::forward<E>(u.del_))
     {
-        u.px_ = nullptr;
+        u.ptr_ = nullptr;
     }
 
     ~unique_ptr()
     {
-        if (px_ != nullptr) {
-            del_(px_);
+        if (ptr_ != nullptr) {
+            del_(ptr_);
         }
     }
 
@@ -83,17 +83,17 @@ public:
 
     T *release() noexcept 
     {
-        T *p = px_;
-        px_ = nullptr;
+        T *p = ptr_;
+        ptr_ = nullptr;
         return p;
     }
 
     void reset(T *p = nullptr) noexcept
     {
-        T *old_px = px_;
-        px_ = p;
-        if (old_px != nullptr) {
-            del_(old_px);
+        T *old_ptr = ptr_;
+        ptr_ = p;
+        if (old_ptr != nullptr) {
+            del_(old_ptr);
         }
     }
 
@@ -102,29 +102,29 @@ public:
         if (this != &other) {
             using std::swap;
             // forward is already inside of swap
-            swap(px_, other.px_);
+            swap(ptr_, other.ptr_);
             swap(del_, other.del_);
         }
     }
 
     T *get() const noexcept 
     {
-        return px_;
+        return ptr_;
     }
 
     T &operator *() const 
     {
-        return *px_;
+        return *ptr_;
     }
 
     T *operator ->() const noexcept
     {
-        return px_;
+        return ptr_;
     }
 
     explicit operator bool() const noexcept 
     {
-        return px_ != nullptr;
+        return ptr_ != nullptr;
     }
 
     template<typename U, typename... Args>
