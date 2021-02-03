@@ -44,17 +44,6 @@ public:
     unique_ptr(T *p, Deleter &del): px_(p), del_(del) {}
 
     unique_ptr(T *p, Deleter &&del): px_(p), del_(std::move(del)) {}
-
-    unique_ptr(unique_ptr &&u) noexcept: px_(u.px_), del_(std::move(u.del_))
-    {
-        u.px_ = nullptr;
-    };
-
-    template<typename U, typename E, typename = typename std::enable_if<std::is_convertible<U *, T *>::value>::type>
-    unique_ptr(unique_ptr<U, E> &&u) noexcept: px_(u.px_), del_(std::move(u.del_))
-    {
-        u.px_ = nullptr;
-    }
 #else
     unique_ptr(pointer p,
         typename std::conditional<std::is_reference<Deleter>::value, Deleter, const Deleter &>::type del): 
@@ -62,33 +51,33 @@ public:
 
     unique_ptr (pointer p, typename std::remove_reference<Deleter>::type &&del):
         px_(p), del_(std::move(del)) {}
+#endif
 
-    unique_ptr(unique_ptr &&u) noexcept: px_(u.px_), 
-        del_(static_cast<typename std::conditional<std::is_reference<Deleter>::value, Deleter &, Deleter &&>::type>(u.del_))
+    unique_ptr(unique_ptr &&u) noexcept: px_(u.px_), del_(std::forward<Deleter>(u.del_))
     {
         u.px_ = nullptr;
     };
 
     template<typename U, typename E, typename = typename std::enable_if<std::is_convertible<U *, T *>::value>::type>
-    unique_ptr(unique_ptr<U, E> &&u) noexcept: px_(u.px_), 
-        del_(static_cast<typename std::conditional<std::is_reference<E>::value, E &, E &&>::type>(u.del_))
+    unique_ptr(unique_ptr<U, E> &&u) noexcept: px_(u.px_), del_(std::forward<E>(u.del_))
     {
         u.px_ = nullptr;
     }
-#endif
 
     ~unique_ptr()
     {
-        destroy();
+        if (px_ != nullptr) {
+            del_(px_);
+        }
     }
 
     unique_ptr &operator =(unique_ptr &&r) noexcept 
     {
-        if (this == &r)
-            return *this;
-
-        destroy();
-        std::swap(px_, r.px_);
+        if (this != &r) {
+            reset(r.release());
+            // forward deleter
+            del_ = std::forward<deleter_type>(r.del_);
+        }
         return *this;
     }
 
@@ -101,14 +90,21 @@ public:
 
     void reset(T *p = nullptr) noexcept
     {
-        destroy();
+        T *old_px = px_;
         px_ = p;
+        if (old_px != nullptr) {
+            del_(old_px);
+        }
     }
 
     void swap(unique_ptr &other) noexcept 
     {
-        std::swap(px_, other.px_);
-        std::swap(del_, other.del_);
+        if (this != &other) {
+            using std::swap;
+            // forward is already inside of swap
+            swap(px_, other.px_);
+            swap(del_, other.del_);
+        }
     }
 
     T *get() const noexcept 
@@ -142,15 +138,6 @@ public:
     const deleter_type &get_deleter() const noexcept
     {
         return del_;
-    }
-
-private:
-    void destroy() 
-    {
-        if (px_) {
-            del_(px_);
-            px_ = nullptr;
-        }
     }
 };
 
