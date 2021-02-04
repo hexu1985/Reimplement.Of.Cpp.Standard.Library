@@ -8,6 +8,7 @@
 
 namespace mini_stl {
 
+#if 0
 template <typename T>
 struct default_delete {
     default_delete() = default;
@@ -18,6 +19,28 @@ struct default_delete {
         delete p;
     }
 };
+#else
+template <typename T>
+struct default_delete {
+    default_delete() = default;
+    ~default_delete() = default;
+
+    default_delete(const default_delete &d) {}
+    default_delete(default_delete &&d) {}
+
+    template <typename U, 
+             typename = typename std::enable_if<std::is_convertible<U *, T *>::value>::type>
+    default_delete(const default_delete<U> &d) {}
+
+    default_delete &operator =(const default_delete &d) { return *this; }
+    default_delete &operator =(default_delete &&d) { return *this; }
+
+    void operator ()(T *p) const
+    {
+        delete p;
+    }
+};
+#endif
 
 template <typename T, typename Deleter=default_delete<T>>
 class unique_ptr {

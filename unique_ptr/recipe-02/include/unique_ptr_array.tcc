@@ -1,3 +1,4 @@
+#if 0
 template <typename T>
 struct default_delete<T []> {
     default_delete() = default;
@@ -8,6 +9,28 @@ struct default_delete<T []> {
         delete [] p;
     }
 };
+#else
+template <typename T>
+struct default_delete<T []> {
+    default_delete() = default;
+    ~default_delete() = default;
+
+    default_delete(const default_delete &d) {}
+    default_delete(default_delete &&d) {}
+
+    template <typename U, 
+             typename = typename std::enable_if<std::is_convertible<U, T>::value>::type>
+    default_delete(const default_delete<U> &d) {}
+
+    default_delete &operator =(const default_delete &d) { return *this; }
+    default_delete &operator =(default_delete &&d) { return *this; }
+
+    void operator ()(T *p) const
+    {
+        delete [] p;
+    }
+};
+#endif
 
 template<typename T, typename Deleter>
 class unique_ptr<T[], Deleter> {
@@ -112,9 +135,6 @@ public:
         return ptr_ != nullptr;
     }
 
-    template<typename U, typename... Args>
-    friend unique_ptr<U> make_unique(size_t size);
-
     deleter_type &get_deleter() noexcept
     {
         return del_;
@@ -126,6 +146,7 @@ public:
     }
 };
 
+// std::is_unbounded_array can use in C++20
 template<class T>
 struct is_unbounded_array: std::false_type {};
  
@@ -135,7 +156,7 @@ struct is_unbounded_array<T[]> : std::true_type {};
 template <typename T, 
     typename = typename std::enable_if<is_unbounded_array<T>::value>::type
     >
-unique_ptr<T> make_unique(int size)
+unique_ptr<T> make_unique(size_t size)
 {
     return unique_ptr<T>(new typename std::remove_extent<T>::type[size]);
 }
