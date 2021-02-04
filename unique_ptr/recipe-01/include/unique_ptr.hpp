@@ -127,9 +127,6 @@ public:
         return ptr_ != nullptr;
     }
 
-    template <typename U, typename... Args>
-    friend unique_ptr<U> make_unique(Args &&... args);
-
     deleter_type &get_deleter() noexcept
     {
         return del_;
