@@ -296,7 +296,6 @@ public:
 	 */
 	iterator begin() noexcept { return start_; }
 	const_iterator begin() const noexcept { return start_; }
-	const_iterator cbegin() const noexcept { return start_; }
 
 	/**
 	 * Return iterator to end
@@ -305,7 +304,6 @@ public:
 	 */
 	iterator end() noexcept { return finish_; }
 	const_iterator end() const noexcept { return finish_; }
-	const_iterator cend() const noexcept { return finish_; }
 
 	/**
 	 * Return reverse iterator to reverse beginning
@@ -313,8 +311,11 @@ public:
 	 * (i.e., its reverse beginning).
 	 */
 	reverse_iterator rbegin() noexcept { return reverse_iterator(end()); }
-	const_reverse_iterator rbegin() const noexcept { return const_reverse_iterator(end()); }
-	const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator(end()); }
+
+	const_reverse_iterator rbegin() const noexcept 
+	{
+		return const_reverse_iterator(end()); 
+	}
 
 	/**
 	 * Return reverse iterator to reverse end
