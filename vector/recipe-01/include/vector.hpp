@@ -1,10 +1,6 @@
-/**
- * @file vector.hpp
- * @brief 封装动态数组的顺序容器
- * @author hexu_1985@sina.com
- * @version 1.0
- * @date 2020-11-03
- */
+// -*- C++ -*-
+// HeXu's
+// 2013 Aug
 
 #ifndef MINI_STL_VECTOR_INC
 #define MINI_STL_VECTOR_INC
@@ -21,12 +17,7 @@
 
 namespace mini_stl {
 
-/**
- * @brief 封装动态数组的顺序容器
- *
- * @tparam T 元素的类型
- * @tparam Alloc 用于获取/释放内存及构造/析构内存中元素的分配器。类型必须满足分配器 (Allocator) 的要求。
- */
+/* vector class */
 template <typename T, typename Alloc = std::allocator<T> >
 class vector {
 public:
@@ -34,6 +25,7 @@ public:
 	typedef	T value_type;
 	typedef Alloc allocator_type;
 
+#if __cplusplus >= 201103L
 	typedef T &reference;
 	typedef const T &const_reference;
 	typedef typename std::allocator_traits<allocator_type>::pointer pointer;
@@ -44,6 +36,18 @@ public:
 	typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 	typedef typename std::iterator_traits<iterator>::difference_type difference_type;
 	typedef size_t size_type;
+#else // !( __cplusplus >= 201103L )
+	typedef typename allocator_type::reference reference;
+	typedef typename allocator_type::const_reference const_reference;
+	typedef typename allocator_type::pointer pointer;
+	typedef typename allocator_type::const_pointer const_pointer;
+	typedef pointer iterator;
+	typedef const_pointer const_iterator;
+	typedef std::reverse_iterator<iterator> reverse_iterator;
+	typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+	typedef typename std::iterator_traits<iterator>::difference_type difference_type;
+	typedef size_t size_type;
+#endif // __cplusplus >= 201103L
 
 private:
 	// member data
@@ -53,41 +57,37 @@ private:
 	pointer end_of_storage_;	// storage end postion
 
 public:
-    /**
-     * @brief 默认构造函数。构造拥有默认构造的分配器的空容器。
-     */
-	explicit vector():
-        vector(allocator_type())
-	{
-	} 
+	/**
+	 * Construct vector
+	 * Constructs a vector, 
+	 * initializing its contents depending on the constructor version used:
+	 */
 
-    /**
-     * @brief 构造拥有给定分配器 alloc 的空容器。
-     *
-     * @param alloc 用于此容器所有内存分配的分配器
-     */
-	explicit vector(const allocator_type &alloc):
+	/** 
+	 * empty container constructor (default constructor)
+	 * Constructs an empty container, with no elements.
+	 */
+	explicit vector(const allocator_type &alloc = allocator_type()):
 		alloc_(alloc) 
 	{
 		initialize();
 	} 
 
-    /**
-     * @brief 构造拥有个 n 默认插入的 T 实例的容器。不进行复制。
-     *
-     * @param n 容器的大小
-     */
+	/**
+	 * fill constructor
+	 * Constructs a container with n elements. Each element is a copy of val.
+	 */
+#if __cplusplus >= 201103L
 	explicit vector(size_type n): vector(n, value_type(), allocator_type()) {}
+#endif // __cplusplus >= 201103L
 
-    /**
-     * @brief  构造拥有 count 个有值 val 的元素的容器。
-     *
-     * @param n 容器的大小
-     * @param val 以之初始化容器元素的值
-     * @param alloc 用于此容器所有内存分配的分配器
-     */
+#if __cplusplus >= 201103L
 	vector(size_type n, const value_type &val, 
 		const allocator_type &alloc = allocator_type()): alloc_(alloc)
+#else // !( __cplusplus >= 201103L ) 
+	explicit vector(size_type n, const value_type &val = value_type(), 
+		const allocator_type &alloc = allocator_type()): alloc_(alloc)
+#endif // __cplusplus >= 201103L
 	{
 		if (n == 0) {
 			initialize();
@@ -98,7 +98,7 @@ public:
 
 		try
 		{
-			finish_ = std::uninitialized_fill_n(start_, n, val);
+			finish_ = uninitialized_fill_n(start_, n, val);
 		}
 		catch (...)
 		{
@@ -107,16 +107,24 @@ public:
 		}
 	}
 
-    /**
-     * @brief 构造拥有范围 [first, last) 内容的容器。
-     *
-     * @param first, last 复制元素的来源范围
-     * @param alloc 用于此容器所有内存分配的分配器
-     */
+	/**
+	 * range constructor
+	 * Constructs a container with as many elements as the range [first,last), 
+	 * with each element emplace-constructed from its corresponding element 
+	 * in that range, in the same order.
+	 */
+#if __cplusplus >= 201103L
 	template <typename InputIterator, typename = typename
 		std::enable_if<!std::is_integral<InputIterator>::value>::type>
 	vector(InputIterator first, InputIterator last,
 		const allocator_type &alloc = allocator_type()): alloc_(alloc)
+#else // !( __cplusplus >= 201103L )
+	template <typename InputIterator>
+	vector(InputIterator first, InputIterator last,
+		const allocator_type &alloc = allocator_type(), typename
+		std::enable_if<!std::is_integral<InputIterator>::value>::type * = NULL):
+		alloc_(alloc)
+#endif // __cplusplus >= 201103L
 	{
 		size_type n = std::distance(first, last);
 		if (n == 0) {
@@ -128,7 +136,7 @@ public:
 
 		try
 		{
-			finish_ = std::uninitialized_copy(first, last, start_);
+			finish_ = uninitialized_copy(first, last, start_);
 		}
 		catch (...)
 		{
@@ -137,11 +145,11 @@ public:
 		}
 	}
 	
-    /**
-     * @brief 复制构造函数。构造拥有 x 内容的容器
-     *
-     * @param x 用作初始化容器元素来源的另一容器
-     */
+	/**
+	 * copy constructor
+	 * Constructs a container with a copy of each of the elements in x, 
+	 * in the same order.
+	 */
 	vector(const vector &x): alloc_(x.alloc_) 
 	{
 		size_type n = x.size();
@@ -154,7 +162,7 @@ public:
 
 		try
 		{
-			finish_ = std::uninitialized_copy(x.begin(), x.end(), start_);
+			finish_ = uninitialized_copy(x.begin(), x.end(), start_);
 		}
 		catch (...)
 		{
@@ -163,12 +171,6 @@ public:
 		}
 	}
 
-    /**
-     * @brief 构造拥有 x 内容的容器，以 alloc 为分配器。
-     *
-     * @param x 用作初始化容器元素来源的另一容器
-     * @param alloc 用于此容器所有内存分配的分配器
-     */
 	vector(const vector &x, const allocator_type &alloc): alloc_(alloc)
 	{
 		size_type n = x.size();
@@ -181,7 +183,7 @@ public:
 
 		try
 		{
-			finish_ = std::uninitialized_copy(x.begin(), x.end(), start_);
+			finish_ = uninitialized_copy(x.begin(), x.end(), start_);
 		}
 		catch (...)
 		{
@@ -190,12 +192,15 @@ public:
 		}
 	}
 
-    /**
-     * @brief 移动构造函数。用移动语义构造拥有 x 内容的容器。
-     * 分配器通过属于 x 的分配器移动构造获得。移动后，保证 x 为 empty() 。
-     *
-     * @param x 用作初始化容器元素来源的另一容器
-     */
+#if __cplusplus >= 201103L
+	/**
+	 * move constructor (and moving with allocator)
+	 * Constructs a container that acquires the elements of x.
+	 * If alloc is specified and is different from x's allocator, 
+	 * the elements are moved. Otherwise, no elements are constructed 
+	 * (their ownership is directly transferred).
+	 * x is left in an unspecified but valid state.
+	 */
 	vector(vector &&x): 
 		alloc_(std::move(x.alloc_)),
 		start_(x.start_), finish_(x.finish_), end_of_storage_(x.end_of_storage_)
@@ -203,13 +208,6 @@ public:
 		x.initialize();
 	}
 
-    /**
-     * @brief 有分配器扩展的移动构造函数。以 alloc 为新容器的分配器，从 x 移动内容；
-     *        alloc != x.get_allocator() ，则它导致逐元素移动。（该情况下，移动后不保证 x 为空）
-     *
-     * @param x 用作初始化容器元素来源的另一容器
-     * @param alloc 用于此容器所有内存分配的分配器
-     */
 	vector(vector &&x, const allocator_type &alloc): alloc_(alloc)
 	{
 		size_type n = x.size();
@@ -222,7 +220,7 @@ public:
 
 		try
 		{
-			finish_ = std::uninitialized_move(x.begin(), x.end(), start_);
+			finish_ = uninitialized_move(x.begin(), x.end(), start_);
 		}
 		catch (...)
 		{
@@ -230,29 +228,30 @@ public:
 			throw;
 		}
 	}
+#endif // __cplusplus >= 201103L
 
-    /**
-     * @brief 构造拥有 initializer_list il 内容的容器。
-     *
-     * @param il 用作初始化元素来源的 initializer_list
-     * @param alloc 用于此容器所有内存分配的分配器
-     */
+#if __cplusplus >= 201103L
+	/**
+	 * initializer list constructor
+	 * Constructs a container with a copy of each of the elements in il, 
+	 * in the same order.
+	 */
 	vector(std::initializer_list<value_type> il,
 		const allocator_type &alloc = allocator_type()): 
 		vector(il.begin(), il.end(), alloc) {}
+#endif // __cplusplus >= 201103L
 
-    /**
-     * @brief 销毁 vector 。调用元素的析构函数，然后解分配所用的存储。注意，若元素是指针，则不销毁所指向的对象。
-     */
+	/**
+	 * Vector destructor
+	 * Destroys the container object.
+	 */
 	~vector() { finalize(); }
 
-    /**
-     * @brief 复制赋值运算符。以 x 的副本替换内容。
-     *
-     * @param x 用作数据源的另一容器
-     *
-     * @return *this
-     */
+	/**
+	 * The copy assignment 
+	 * copies all the elements from x into the container 
+	 * (with x preserving its contents).
+	 */
 	vector &operator =(const vector &x)
 	{
 		if (this == &x)
@@ -262,14 +261,12 @@ public:
 		return *this;
 	}
 
-    /**
-     * @brief 移动赋值运算符。用移动语义以 x 的内容替换内容（即从 x 移动 x 中的数据到此容器）。
-     *        之后 x 在合法但未指定的状态。
-     *
-     * @param x 用作数据源的另一容器
-     *
-     * @return *this
-     */
+	/**
+	 * The move assignment 
+	 * moves the elements of x into the container 
+	 * (x is left in an unspecified but valid state).
+	 */
+#if __cplusplus >= 201103L
 	vector &operator =(vector &&x)
 	{
 		if (this == &x)
@@ -279,63 +276,99 @@ public:
 		this->swap_data(x);
 		return *this;
 	}
+#endif // __cplusplus >= 201103L
 
-    /**
-     * @brief 以 initializer_list il 所标识者替换内容。
-     *
-     * @param il 用作数据源的 initializer_list
-     *
-     * @return *this
-     */
+	/**
+	 * The initializer list assignment 
+	 * copies the elements of il into the container.
+	 */
+#if __cplusplus >= 201103L
 	vector &operator =(std::initializer_list<value_type> il)
 	{
 		assign(il.begin(), il.end());
 		return *this;
 	}
+#endif // __cplusplus >= 201103L
 
-    /**
-     * @brief 返回指向 vector 首元素的迭代器。
-     *        若 vector 为空，则返回的迭代器将等于 end() 。
-     *
-     * @return 指向首元素的迭代器。
-     */
+	/**
+	 * Return iterator to beginning
+	 * Returns an iterator pointing to the first element in the vector.
+	 */
 	iterator begin() noexcept { return start_; }
 	const_iterator begin() const noexcept { return start_; }
 	const_iterator cbegin() const noexcept { return start_; }
 
-    /**
-     * @brief 返回指向 vector 末元素后一元素的迭代器。
-     *        此元素表现为占位符；试图访问它导致未定义行为。
-     *
-     * @return 指向后随最后元素的迭代器。 
-     */
+	/**
+	 * Return iterator to end
+	 * Returns an iterator referring to the past-the-end element 
+	 * in the vector container.
+	 */
 	iterator end() noexcept { return finish_; }
 	const_iterator end() const noexcept { return finish_; }
 	const_iterator cend() const noexcept { return finish_; }
 
-    /**
-     * @brief 返回指向逆向 vector 首元素的逆向迭代器。它对应非逆向 vector 的末元素。若 vector 为空，则返回的迭代器等于 rend() 。
-     *
-     * @return 指向首元素的逆向迭代器。
-     */
+	/**
+	 * Return reverse iterator to reverse beginning
+	 * Returns a reverse iterator pointing to the last element in the vector 
+	 * (i.e., its reverse beginning).
+	 */
 	reverse_iterator rbegin() noexcept { return reverse_iterator(end()); }
 	const_reverse_iterator rbegin() const noexcept { return const_reverse_iterator(end()); }
 	const_reverse_iterator crbegin() const noexcept { return const_reverse_iterator(end()); }
 
-    /**
-     * @brief 返回指向逆向 vector 末元素后一元素的逆向迭代器。它对应非逆向 vector 首元素的前一元素。此元素表现为占位符，试图访问它导致未定义行为。
-     *
-     * @return 指向末元素后一元素的逆向迭代器。
-     */
+	/**
+	 * Return reverse iterator to reverse end
+	 * Returns a reverse iterator pointing to the theoretical element preceding 
+	 * the first element in the vector (which is considered its reverse end).
+	 */
 	reverse_iterator rend() noexcept { return reverse_iterator(begin()); }
-	const_reverse_iterator rend() const noexcept { return const_reverse_iterator(begin()); }
-	const_reverse_iterator crend() const noexcept { return const_reverse_iterator(begin()); }
 
-    /**
-     * @brief 返回容器中的元素数，即 std::distance(begin(), end()) 。
-     *
-     * @return 容器中的元素数量。
-     */
+	const_reverse_iterator rend() const noexcept 
+	{
+		return const_reverse_iterator(begin()); 
+	}
+
+	/**
+	 * Return const_iterator to beginning
+	 * Returns a const_iterator pointing to the first element in the container.
+	 */
+	const_iterator cbegin() const noexcept { return start_; }
+
+	/**
+	 * Return const_iterator to end
+	 * Returns a const_iterator pointing to the past-the-end element 
+	 * in the container.
+	 * The value returned shall not be dereferenced.
+	 */
+	const_iterator cend() const noexcept { return finish_; }
+
+	/**
+	 * Return const_reverse_iterator to reverse beginning
+	 * Returns a const_reverse_iterator pointing to the last element 
+	 * in the container (i.e., its reverse beginning).
+	 */
+	const_reverse_iterator crbegin() const noexcept 
+	{
+		return const_reverse_iterator(end()); 
+	}
+
+	/**
+	 * Return const_reverse_iterator to reverse end
+	 * Returns a const_reverse_iterator pointing to the theoretical element 
+	 * preceding the first element in the container 
+	 * (which is considered its reverse end).
+	 */
+	const_reverse_iterator crend() const noexcept 
+	{
+		return const_reverse_iterator(begin()); 
+	}
+
+	/**
+	 * Return size
+	 * Returns the number of elements in the vector.
+	 * This is the number of actual objects held in the vector, 
+	 * which is not necessarily equal to its storage capacity.
+	 */
 	size_type size() const noexcept { return (finish_-start_); }
 
 	/**
@@ -364,7 +397,7 @@ public:
 
 		size_type sz = size();
 		if (sz < n) {	// this->size() < n <= capacity()
-            std::uninitialized_fill(finish_, start_+n, val);
+			uninitialized_fill(finish_, start_+n, val);
 		} else {	// n < this->size()
 			range_destroy(start_+n, finish_);
 		} 
@@ -411,7 +444,11 @@ public:
 		// copy from oldbuf to newbuf and set newbuf's size and capacity
 		try
 		{
-			new_finish = std::uninitialized_move(start_, finish_, new_start);
+#if __cplusplus >= 201103L
+			new_finish = uninitialized_move(start_, finish_, new_start);
+#else // !( __cplusplus >= 201103L )
+			new_finish = uninitialized_copy(start_, finish_, new_start);
+#endif // __cplusplus >= 201103L
 		}
 		catch (...)
 		{
@@ -433,7 +470,11 @@ public:
 		if (size() > capacity()/2)
 			return;
 
+#if __cplusplus >= 201103L
 		vector x(std::move(*this), this->alloc_);
+#else // !( __cplusplus >= 201103L )
+		vector x(*this, this->alloc_);
+#endif // __cplusplus >= 201103L
 		this->swap_data(x);
 	}
 
@@ -513,9 +554,15 @@ public:
 	 * each of the elements in the range between first and last, 
 	 * in the same order.
 	 */
+#if __cplusplus >= 201103L
 	template <typename InputIterator, typename = typename
 		std::enable_if<!std::is_integral<InputIterator>::value>::type>
 	void assign(InputIterator first, InputIterator last)
+#else // !( __cplusplus >= 201103L )
+	template <typename InputIterator>
+	void assign(InputIterator first, InputIterator last, typename
+		std::enable_if<!std::is_integral<InputIterator>::value>::type * = NULL)
+#endif // __cplusplus >= 201103L
 	{
 		size_type n = std::distance(first, last);
 		if (n > capacity()) {
@@ -530,7 +577,7 @@ public:
 
 		if (sz < n) {	// this->size() < std::distance(first, last)
 			std::advance(first, sz);
-            std::uninitialized_copy(first, last, finish_);
+			uninitialized_copy(first, last, finish_);
 		} else {	// this->size() >= std::distance(first, last)
 			range_destroy(start_+n, finish_);
 		}
@@ -556,7 +603,7 @@ public:
 		std::fill_n(start_, std::min(n, sz), val);
 
 		if (sz < n) {	// this->size() < std::distance(first, last)
-            std::uninitialized_fill(start_+sz, start_+n, val);
+			uninitialized_fill(start_+sz, start_+n, val);
 		} else if (sz > n) {	// this->size() > std::distance(first, last)
 			range_destroy(start_+n, finish_);
 		}
@@ -570,10 +617,12 @@ public:
 	 * the new contents are copies of the values passed as initializer list, 
 	 * in the same order.
 	 */
+#if __cplusplus >= 201103L
 	void assign(std::initializer_list<value_type> il)
 	{
 		assign(il.begin(), il.end());
 	}
+#endif // __cplusplus >= 201103L
 
 	/**
 	 * Add element at the end
@@ -589,6 +638,7 @@ public:
 		construct(finish_++, val);
 	}
 
+#if __cplusplus >= 201103L
 	void push_back(value_type &&val)
 	{
 		if (full()) {
@@ -597,6 +647,7 @@ public:
 
 		construct(finish_++, std::forward<value_type>(val));
 	}
+#endif // __cplusplus >= 201103L
 
 	/**
 	 * Delete last element
@@ -635,7 +686,7 @@ public:
 
 		pointer pos = (pointer) position;
 		if (pos == finish_ || vacate(pos, n)) {
-            std::uninitialized_fill_n(pos, n, val);
+			uninitialized_fill_n(pos, n, val);
 		} else {
 			std::fill_n(pos, n, val);
 		}
@@ -643,10 +694,17 @@ public:
 		return (iterator) pos;
 	}
 
+#if __cplusplus >= 201103L
 	template <typename InputIterator, typename = typename
 		std::enable_if<!std::is_integral<InputIterator>::value>::type>
 	iterator insert(const_iterator position, 
 		InputIterator first, InputIterator last)
+#else // !( __cplusplus >= 201103L )
+	template <typename InputIterator>
+	iterator insert(const_iterator position, 
+		InputIterator first, InputIterator last, typename
+		std::enable_if<!std::is_integral<InputIterator>::value>::type * = 0)
+#endif // __cplusplus >= 201103L
 	{
 		assert(position <= finish_); 
 
@@ -663,7 +721,7 @@ public:
 
 		pointer pos = (pointer) position;
 		if (pos == finish_ || vacate(pos, n)) {
-            std::uninitialized_copy(first, last, pos);
+			uninitialized_copy(first, last, pos);
 		} else {
 			std::copy(first, last, pos);
 		}
@@ -671,6 +729,7 @@ public:
 		return (iterator) pos;
 	}
 	
+#if __cplusplus >= 201103L
 	iterator insert(const_iterator position, value_type &&val)
 	{
 		if (full()) {	// need reallocate
@@ -688,12 +747,15 @@ public:
 		finish_++;
 		return (iterator) pos;
 	}
+#endif // __cplusplus >= 201103L
 
+#if __cplusplus >= 201103L
 	iterator insert(const_iterator position, 
 		std::initializer_list<value_type> il)
 	{
 		return insert(position, il.begin(), il.end());
 	}
+#endif // __cplusplus >= 201103L
 
 	/**
 	 * Erase elements
@@ -706,7 +768,11 @@ public:
 
 		if (position == end()) return end();
 
+#if __cplusplus >= 201103L
 		std::move((iterator) position+1, finish_, (iterator) position);
+#else // !( __cplusplus >= 201103L )
+		std::copy((iterator) position+1, finish_, (iterator) position);
+#endif // __cplusplus >= 201103L
 		destroy(--finish_);
 		return (iterator) position;
 	}
@@ -718,7 +784,11 @@ public:
 		if (first == last) 
 			return (iterator) first;
 
+#if __cplusplus >= 201103L
 		iterator iter = std::move((iterator) last, finish_, (iterator) first);
+#else // !( __cplusplus >= 201103L )
+		iterator iter = std::copy((iterator) last, finish_, (iterator) first);
+#endif // __cplusplus >= 201103L
 		range_destroy(iter, finish_);
 		finish_ = iter;
 		return (iterator) first;
@@ -748,6 +818,7 @@ public:
 		finish_ = start_;
 	}
 
+#if __cplusplus >= 201103L
 	/**
 	 * Construct and insert element
 	 * The container is extended by inserting a new element at position. 
@@ -788,6 +859,7 @@ public:
 
 		construct(finish_++, std::forward<Args>(args) ...);
 	}
+#endif // __cplusplus >= 201103L
 
 	/**
 	 * Get allocator
@@ -816,26 +888,46 @@ private:
 	 * vacate n element's space for insert before pos.
 	 * if uninitialized buffer, return true, otherwise return false
 	 */
+#if __cplusplus >= 201103L
 	bool vacate(pointer pos, size_type n)
 	{
 		assert(pos < finish_ && finish_+n <= end_of_storage_);
 		if (finish_-pos <= n) {
-            std::uninitialized_move(pos, finish_, pos+n);
+			uninitialized_move(pos, finish_, pos+n);
 			range_destroy(pos, finish_);
 			return true;
 		} else {	// finish_-pos > n
-            std::uninitialized_move_n(finish_-n, n, finish_);
+			uninitialized_move_n(finish_-n, n, finish_);
 			std::move_backward(pos, finish_-n, finish_);
 			return false;
 		}
 	}
+#else // !( __cplusplus >= 201103L )
+	bool vacate(pointer pos, size_type n)
+	{
+		assert(pos < finish_ && finish_+n <= end_of_storage_);
+		if (finish_-pos <= n) {
+			uninitialized_copy(pos, finish_, pos+n);
+			range_destroy(pos, finish_);
+			return true;
+		} else {	// finish_-pos > n
+			uninitialized_copy_n(finish_-n, n, finish_);
+			std::copy_backward(pos, finish_-n, finish_);
+			return false;
+		}
+	}
+#endif // __cplusplus >= 201103L
 
 	pointer allocate(size_type n)
 	{
 		if (n == 0)
 			return NULL;
 
+#if __cplusplus >= 201103L
 		return std::allocator_traits<allocator_type>::allocate(alloc_, n);
+#else // !( __cplusplus >= 201103L )
+		return alloc_.allocate(n);
+#endif // __cplusplus >= 201103L
 	}
 
 	void deallocate(pointer p, size_type n)
@@ -843,19 +935,34 @@ private:
 		if (p == NULL || n == 0)
 			return;
 
+#if __cplusplus >= 201103L
 		std::allocator_traits<allocator_type>::deallocate(alloc_, p, n);
+#else // !( __cplusplus >= 201103L )
+		alloc_.deallocate(p, n);
+#endif // __cplusplus >= 201103L
 	}
 
+#if __cplusplus >= 201103L
 	template <typename ...Args>
 	void construct(pointer p, Args &&...args)
 	{
 		std::allocator_traits<allocator_type>::construct(alloc_, p, 
 			std::forward<Args>(args)...);
 	}
+#else // !( __cplusplus >= 201103L )
+	void construct(pointer p, const value_type &val)
+	{
+		alloc_.construct(p, val);
+	}
+#endif // __cplusplus >= 201103L
 
 	void destroy(pointer p)
 	{
+#if __cplusplus >= 201103L
 		std::allocator_traits<allocator_type>::destroy(alloc_, p);
+#else // !( __cplusplus >= 201103L )
+		alloc_.destroy(p);
+#endif // __cplusplus >= 201103L
 	}
 
 	void range_destroy(pointer first, pointer last)
@@ -879,6 +986,120 @@ private:
 	{
 		range_destroy(start_, finish_);
 		deallocate(start_, capacity());
+	}
+
+	template <typename InputIterator>
+	pointer uninitialized_copy(InputIterator first, InputIterator last,
+		pointer result)
+	{
+		pointer save(result);
+		try
+		{
+			for (; first != last; ++result, ++first)
+				construct(result, value_type(*first));
+		}
+		catch (...)
+		{
+			while(save != result)
+				destroy(save++);
+			throw;
+		}
+		return result;
+	}
+
+#if __cplusplus >= 201103L
+	template <typename InputIterator>
+	pointer uninitialized_move(InputIterator first, InputIterator last,
+		pointer result)
+	{
+		pointer save(result);
+		try
+		{
+			for (; first != last; ++result, ++first)
+				construct(result, std::move(*first));
+		}
+		catch (...)
+		{
+			while(save != result)
+				destroy(save++);
+			throw;
+		}
+		return result;
+	}
+#endif // __cplusplus >= 201103L
+
+	template <typename InputIterator>
+	pointer uninitialized_copy_n(InputIterator first, size_type n, 
+		pointer result)
+	{
+		pointer save(result);
+		try
+		{
+			for (; n > 0; ++result, ++first, --n)
+				construct(result, *first);
+		}
+		catch (...)
+		{
+			while(save != result)
+				destroy(save++);
+			throw;
+		}
+		return result;
+	}
+
+#if __cplusplus >= 201103L
+	template <typename InputIterator>
+	pointer uninitialized_move_n(InputIterator first, size_type n, 
+		pointer result)
+	{
+		pointer save(result);
+		try
+		{
+			for (; n > 0; ++result, ++first, --n)
+				construct(result, std::move(*first));
+		}
+		catch (...)
+		{
+			while(save != result)
+				destroy(save++);
+			throw;
+		}
+		return result;
+	}
+#endif // __cplusplus >= 201103L
+
+	void uninitialized_fill(pointer first, pointer last, const value_type &x)
+	{
+		pointer save(first);
+		try
+		{
+			for (; first != last; ++first)
+				construct(first, x);
+		}
+		catch (...)
+		{
+			while(save != first)
+				destroy(save++);
+			throw;
+		}
+	}
+
+	pointer uninitialized_fill_n(pointer first, size_type n, 
+		const value_type &x)
+	{
+		pointer save(first);
+		try
+		{
+			for (; n > 0; ++first, --n)
+				construct(first, x);
+		}
+		catch (...)
+		{
+			while(save != first)
+				destroy(save++);
+			throw;
+		}
+		return first;
 	}
 };
 
