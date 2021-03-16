@@ -2,8 +2,8 @@
 // HeXu's
 // 2013 Nov
 
-#ifndef HX_LIST_H
-#define HX_LIST_H
+#ifndef MINI_STL_LIST_INC
+#define MINI_STL_LIST_INC
 
 #include <cassert>
 #include <cstddef>
@@ -12,17 +12,11 @@
 #include <limits>
 #include <functional>
 #include <algorithm>
-
-#if __cplusplus >= 201103L
 #include <initializer_list>
-#endif // __cplusplus >= 201103L
 
-#include "key_words.h"
-#include "type_traits.h"
-#include "functional.h"
 #include "list_impl.h"
 
-namespace Hx {
+namespace mini_stl {
 
 /**
  * A helper node class for list.
@@ -30,10 +24,9 @@ namespace Hx {
  * data value in each node.
  */
 template <typename T>
-struct list_node: public detail::list_node_t {
+struct list_node: public double_linked::list_node_t {
 	// raw storage buffer for type T
-	typename 
-	std::aligned_storage<sizeof (T), std::alignment_of<T>::value>::type storage;
+	typename std::aligned_storage<sizeof (T), std::alignment_of<T>::value>::type storage;
 
 	T *valptr() noexcept
 	{
@@ -48,8 +41,8 @@ struct list_node: public detail::list_node_t {
 
 template <typename T>
 struct list_iterator {
-	typedef detail::list_node_t link_type;
-	link_type *link;
+	typedef double_linked::list_node_t link_type;
+	link_type *link = nullptr;
 
 	typedef list_iterator<T> this_type;
 	typedef list_node<T> node_type;
@@ -60,7 +53,7 @@ struct list_iterator {
 	typedef ptrdiff_t difference_type;
 	typedef std::bidirectional_iterator_tag iterator_category;
 
-	list_iterator(): link(NULL) {}
+    list_iterator() = default;
 
 	explicit list_iterator(link_type *link_): link(link_) {}
 
@@ -123,8 +116,8 @@ struct list_iterator {
 
 template <typename T>
 struct list_const_iterator {
-	typedef const detail::list_node_t link_type;
-	link_type *link;
+	typedef const double_linked::list_node_t link_type;
+	link_type *link = nullptr;
 
 	typedef list_const_iterator<T> this_type;
 	typedef const list_node<T> node_type;
@@ -136,7 +129,7 @@ struct list_const_iterator {
 	typedef ptrdiff_t difference_type;
 	typedef std::bidirectional_iterator_tag iterator_category;
 
-	list_const_iterator(): link(NULL) {}
+    list_const_iterator() = default;
 
 	explicit list_const_iterator(link_type *link_): link(link_) {}
 
@@ -224,8 +217,8 @@ bool operator !=(const list_iterator<T> &x, const list_const_iterator<T> &y)
  */
 template <typename T, typename Alloc = std::allocator<T> >
 class list {
-	typedef detail::list_t list_type;
-	typedef detail::list_node_t link_type;
+	typedef double_linked::list_t list_type;
+	typedef double_linked::list_node_t link_type;
 	typedef list_node<T> node_type;
 	typedef typename Alloc::template rebind<node_type>::other node_alloc_type;
 
@@ -262,17 +255,10 @@ public:
 	 * Constructs a container with n elements. 
 	 * Each element is a copy of val (if provided).
 	 */
-#if __cplusplus >= 201103L
 	explicit list(size_type n): list(n, value_type(), allocator_type()) {}
-#endif // __cplusplus >= 201103L
 
-#if __cplusplus >= 201103L
 	list(size_type n, const value_type &val,
 		const allocator_type &alloc = allocator_type()): node_alloc_(alloc)
-#else // !( __cplusplus >= 201103L )
-	explicit list(size_type n, const value_type &val = value_type(),
-		const allocator_type &alloc = allocator_type()): node_alloc_(alloc)
-#endif // __cplusplus >= 201103L
 	{
 		initialize();
 		try
@@ -292,17 +278,10 @@ public:
 	 * with each element emplace-constructed from its corresponding element 
 	 * in that range, in the same order.
 	 */
-#if __cplusplus >= 201103L
 	template <typename InputIterator, typename = typename
 		std::enable_if<!std::is_integral<InputIterator>::value>::type>
 	list(InputIterator first, InputIterator last,
 		const allocator_type &alloc = allocator_type()): node_alloc_(alloc)
-#else // !( __cplusplus >= 201103L )
-	template <typename InputIterator>
-	list(InputIterator first, InputIterator last,
-		const allocator_type &alloc = allocator_type(), typename
-		std::enable_if<!std::is_integral<InputIterator>::value>::type * = NULL): node_alloc_(alloc)
-#endif // __cplusplus >= 201103L
 	{
 		initialize();
 		try 
@@ -349,7 +328,6 @@ public:
 		}
 	}
 
-#if __cplusplus >= 201103L
 	/**
 	 * move constructor (and moving with allocator)
 	 * Constructs a container that acquires the elements of x.
@@ -378,9 +356,7 @@ public:
 		}
 		x.clear();
 	}
-#endif // __cplusplus >= 201103L
 
-#if __cplusplus >= 201103L
 	/**
 	 * initializer list constructor
 	 * Constructs a container with a copy of each of the elements in il, 
@@ -392,7 +368,6 @@ public:
 		initialize();
 		copy_from(il.begin(), il.end());
 	}
-#endif // __cplusplus >= 201103L
 
 	/**
 	 * List destructor
@@ -424,7 +399,6 @@ public:
 	 * The move assignment moves the elements of x into the container 
 	 * (x is left in an unspecified but valid state).
 	 */
-#if __cplusplus >= 201103L
 	list &operator =(list &&x)
 	{
 		using std::swap;
@@ -437,19 +411,16 @@ public:
 		swap(node_alloc_, x.node_alloc_);
 		return *this;
 	}
-#endif // __cplusplus >= 201103L
 
 	/**
 	 * The initializer list assignment copies the elements of il into 
 	 * the container.
 	 */
-#if __cplusplus >= 201103L
 	list &operator =(std::initializer_list<value_type> il)
 	{
 		copy_from(il.begin(), il.end());
 		return *this;
 	}
-#endif // __cplusplus >= 201103L
 
 	/**
 	 * Return iterator to beginning
@@ -612,15 +583,9 @@ public:
 	 * each of the elements in the range between first and last, 
 	 * in the same order.
 	 */
-#if __cplusplus >= 201103L
 	template <typename InputIterator, typename = typename
 		std::enable_if<!std::is_integral<InputIterator>::value>::type>
 	void assign(InputIterator first, InputIterator last)
-#else // !( __cplusplus >= 201103L )
-	template <typename InputIterator>
-	void assign(InputIterator first, InputIterator last, typename
-		std::enable_if<!std::is_integral<InputIterator>::value>::type * = NULL)
-#endif // __cplusplus >= 201103L
 	{
 		copy_from(first, last); 
 	}
@@ -631,7 +596,6 @@ public:
 	 */
 	void assign(size_type n, const value_type &val) { fill(n, val); }
 
-#if __cplusplus >= 201103L
 	/**
 	 * In the initializer list version, the new contents are copies of 
 	 * the values passed as initializer list, in the same order.
@@ -640,9 +604,7 @@ public:
 	{
 		copy_from(il.begin(), il.end());
 	}
-#endif // __cplusplus >= 201103L
 
-#if __cplusplus >= 201103L
 	/**
 	 * Construct and insert element at beginning
 	 * Inserts a new element at the beginning of the list, right before its 
@@ -654,7 +616,6 @@ public:
 	{
 		list_insert(list_head(&lst_), create_node(std::forward<Args>(args) ...));
 	}
-#endif // __cplusplus >= 201103L
 
 	/**
 	 * Insert element at beginning
@@ -667,12 +628,10 @@ public:
 		list_insert(list_head(&lst_), create_node(val));
 	}
 
-#if __cplusplus >= 201103L
 	void push_front(value_type &&val)
 	{
 		list_insert(list_head(&lst_), create_node(std::forward<value_type>(val)));
 	}
-#endif // __cplusplus >= 201103L
 
 	/**
 	 * Delete first element
@@ -687,7 +646,6 @@ public:
 		destroy_node(link);
 	}
 
-#if __cplusplus >= 201103L
 	/**
 	 * Construct and insert element at the end
 	 * Inserts a new element at the end of the list, right after its current 
@@ -700,7 +658,6 @@ public:
 		list_insert(list_after_tail(&lst_), 
 			create_node(std::forward<Args>(args) ...));
 	}
-#endif // __cplusplus >= 201103L
 
 	/**
 	 * Add element at the end
@@ -712,7 +669,6 @@ public:
 		list_insert(list_after_tail(&lst_), create_node(val));
 	}
 
-#if __cplusplus >= 201103L
 	/**
 	 * Add element at the end
 	 * Adds a new element at the end of the list container, after its current 
@@ -723,7 +679,6 @@ public:
 		list_insert(list_after_tail(&lst_), 
 			create_node(std::forward<value_type>(val)));
 	}
-#endif // __cplusplus >= 201103L
 
 	/**
 	 * Delete last element
@@ -738,7 +693,6 @@ public:
 		destroy_node(link);
 	}
 
-#if __cplusplus >= 201103L
 	template <typename ... Args>
 	iterator emplace(const_iterator position, Args &&... args)
 	{
@@ -746,7 +700,6 @@ public:
 		list_insert((link_type *) position.link, link);
 		return iterator(link);
 	}
-#endif // __cplusplus >= 201103L
 
 	/**
 	 * Insert elements
@@ -760,14 +713,12 @@ public:
 		return iterator(link);
 	}
 
-#if __cplusplus >= 201103L
 	iterator insert(const_iterator position, value_type &&val)
 	{
 		link_type *link = create_node(std::forward<value_type>(val));
 		list_insert((link_type *) position.link, link);
 		return iterator(link);
 	}
-#endif // __cplusplus >= 201103L
 
 	iterator insert(const_iterator position, size_type n, const value_type &val)
 	{
@@ -782,17 +733,10 @@ public:
 		return iterator(keep);
 	}
 
-#if __cplusplus >= 201103L
 	template <typename InputIterator, typename = typename
 		std::enable_if<!std::is_integral<InputIterator>::value>::type>
 	iterator insert(const_iterator position, InputIterator first, 
 		InputIterator last)
-#else // !( __cplusplus >= 201103L )
-	template <typename InputIterator>
-	iterator insert(const_iterator position, InputIterator first, 
-		InputIterator last, typename
-		std::enable_if<!std::is_integral<InputIterator>::value>::type * = NULL)
-#endif // __cplusplus >= 201103L
 	{
 		link_type *keep = const_cast<link_type *>(position.link);
 		for (InputIterator iter = first; iter != last; ++iter) {
@@ -805,13 +749,11 @@ public:
 		return iterator(keep);
 	}
 
-#if __cplusplus >= 201103L
 	iterator insert(const_iterator position, 
 		std::initializer_list<value_type> il)
 	{
 		return insert(position, il.begin(), il.end());
 	}
-#endif // __cplusplus >= 201103L
 
 	/**
 	 * Erase elements
@@ -906,7 +848,6 @@ public:
 			(link_type *) first.link, (link_type *) last.link);
 	}
 
-#if __cplusplus >= 201103L
 	void splice(const_iterator position, list &&x)
 	{
 		list_transfer((link_type *) position.link, 
@@ -925,7 +866,6 @@ public:
 		list_transfer((link_type *) position.link, 
 			(link_type *) first.link, (link_type *) last.link);
 	}
-#endif // __cplusplus >= 201103L
 
 	/**
 	 * Remove elements with specific value
@@ -994,7 +934,6 @@ public:
 			list_head(&x.lst_), list_after_tail(&x.lst_), comp, get_val);
 	}
 
-#if __cplusplus >= 201103L
 	void merge(list &&x)
 	{
 		merge(std::move(x), std::less<value_type>());
@@ -1006,7 +945,6 @@ public:
 		list_merge(list_head(&lst_), list_after_tail(&lst_),
 			list_head(&x.lst_), list_after_tail(&x.lst_), comp, get_val);
 	}
-#endif // __cplusplus >= 201103L
 
 	/**
 	 * Sort elements in container
@@ -1112,7 +1050,6 @@ private:
 		// list.size() == distance(first, last)
 	}
 
-#if __cplusplus >= 201103L
 	template <typename InputIterator>
 	void move_from(InputIterator first, InputIterator last)
 	{
@@ -1135,7 +1072,6 @@ private:
 
 		// list.size() == distance(first, last)
 	}
-#endif // __cplusplus >= 201103L
 
 	node_type *get_node()
 	{
@@ -1147,7 +1083,6 @@ private:
 		node_alloc_.deallocate(node, 1);
 	}
 
-#if __cplusplus >= 201103L
 	template <typename ...Args>
 	link_type *create_node(Args &&...args)
 	{
@@ -1164,22 +1099,6 @@ private:
 		}
 		return static_cast<link_type *>(node);
 	}
-#else // !( __cplusplus >= 201103L )
-	link_type *create_node(const T &val)
-	{
-		node_type *node = get_node();
-		try
-		{
-			allocator_type(node_alloc_).construct(node->valptr(), val);
-		}
-		catch (...)
-		{
-			put_node(node);
-			throw;
-		}
-		return static_cast<link_type *>(node);
-	}
-#endif // __cplusplus >= 201103L
 
 	struct destroy {
 		destroy(node_alloc_type &alloc): node_alloc(&alloc) {}
@@ -1309,13 +1228,7 @@ void swap(list<T, Alloc> &x, list<T, Alloc> &y)
 	return x.swap(y);
 }
 
-} // namespace Hx
+} // namespace mini_stl
 
-namespace std {
-
-using Hx::swap;
-
-}	// namespace std
-
-#endif // HX_LIST_H
+#endif // MINI_STL_LIST_INC
 
