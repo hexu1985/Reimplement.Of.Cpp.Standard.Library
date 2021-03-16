@@ -13,359 +13,320 @@
 
 #ifdef __cplusplus
 namespace mini_stl {
-namespace detail {
+namespace double_linked {
 #endif // __cplusplus
 
 /**
- * Doubly linked node
+ * 双向循环链表节点, 不包含数据
+ *            ___  next      
+ *           |   |------>
+ *     <-----|___|       
+ *       prev
  */
 typedef struct list_node_t {
-	struct list_node_t *next;
-	struct list_node_t *prev;
+    struct list_node_t *next;
+    struct list_node_t *prev;
 } list_node_t;
 
 /**
- * Doubly linked node
+ * 双向循环链表
  */
 typedef struct list_t {
-	list_node_t nil;
+    list_node_t nil;
 } list_t;
 
 /**
- * initialize an circular doubly linked list
- *   ____
- *  |    |
- *  |    v
- *  `--[nil]--.
- *       ^    |
- *       |____|
+ * 初始化NIL节点
+ *         ____
+ *        |    |
+ *        V    |
+ *   .--[nil]--'
+ *   |    A    
+ *   |____|     
+ */
+inline
+void list_nil_init(list_node_t *nil)
+{
+    nil->prev = nil->next = nil;
+}
+
+/**
+ * 初始化链表
  */
 inline
 void list_init(list_t *lst)
 {
-	lst->nil.next = &lst->nil;
-	lst->nil.prev = &lst->nil;
+    list_nil_init(&lst->nil);
 }
 
 /**
- * get list first node link
+ * 获取链表头节点指针
  */
 inline
 list_node_t *list_head(const list_t *lst)
 {
-	return (list_node_t *) lst->nil.next;
+    return (list_node_t *) lst->nil.next;
 }
 
 /**
- * get list last node link
+ * 获取链表尾节点指针
  */
 inline
 list_node_t *list_tail(const list_t *lst)
 {
-	return (list_node_t *) lst->nil.prev;
+    return (list_node_t *) lst->nil.prev;
 }
 
 /**
- * get after last node link
+ * 获取NIL节点指针
  */
 inline
-list_node_t *list_after_tail(const list_t *lst)
+list_node_t *list_nil(const list_t *lst)
 {
-	return (list_node_t *) &lst->nil;
+    return (list_node_t *) &lst->nil;
 }
 
 /**
- * insert a node before pos
- * [nil] <=> [N1] <=> [N2] <=> [N3] <=> [nil]
- *                     ^-pos
- *                  ||
- *                  \/
- * [nil] <=> [N1] <=> [M] <=> [N2] <=> [N3] <=> [nil]
- *                     ^-node   ^-pos
+ * 在链表的x节点前插入t节点
+ *            ___                ___
+ *           |   |------------->|   |------>
+ *    <------|___|<-------------|___|
+ *                                ^-x
+ *                  ___        
+ *                 |   |------>
+ *            <----|___|       
+ *                   ^-t       
+ * =========================================
+ *            ___                ___
+ *           |   |------------->|   |------>
+ *    <------|___|<-------------|___|
+ *             A                 A ^-x
+ *             |(1) ___          |(2)
+ *             |   |   |---------'
+ *             '---|___|       
+ *                   ^-t       
+ * =========================================
+ *            ___                ___
+ *           |   |--.     .---->|   |------>
+ *    <------|___|  |(3)  |  .--|___|
+ *             A    |  (4)|  |    ^-x
+ *             |    V__   |  |
+ *             |   |   |--'  |
+ *             '---|___|<----'
+ *                   ^-t
  */
 inline
-void list_insert(list_node_t *pos, list_node_t *node)
+void list_insert(list_node_t *x, list_node_t *t)
 {
-	node->prev = pos->prev;
-	node->next = pos;
-	pos->prev->next = node;
-	pos->prev = node;
+	t->prev = x->prev;      // (1)
+	t->next = x;            // (2)
+	t->prev->next = t;      // (3)
+	t->next->prev = t;      // (4)
 }
 
 /**
- * insert [first, last) before pos
- * [nil] <=> [N1] <=> [N2] <=> [N3] <=> [nil]
- *                      ^-pos
- * [nil] <=> [M1] <=> [...] <=> [Mm] <=> [Mn] <=> [nil]
- *             ^-first            ^-keep   ^-last
- *                    ||
- *                    \/
- * [nil] <=> [N1] <=> [M1] <=> [...] <=> [Mm] <=> [N2] <=> [N3] <=> [nil] 
- *                      ^-first            ^-keep   ^-pos
+ * 在链表的x节点前插入[a,b]节点
+ *            ___                           ___
+ *           |   |------------------------>|   |------>
+ *    <------|___|<------------------------|___|
+ *                                           ^-x
+ *                  ___         ___        
+ *                 |   |------>|   |------>
+ *            <----|___|<------|___|       
+ *                   ^-a         ^-b
+ * =====================================================
+ *            ___                           ___
+ *           |   |------------------------>|   |------>
+ *    <------|___|<------------------------|___|
+ *             A                            A ^-x
+ *             |(1) ___         ___         |(2)
+ *             |   |   |------>|   |--------'
+ *             '---|___|<------|___|      
+ *                   ^-a         ^-b      
+ * =====================================================
+ *            ___                            ___
+ *           |   |--.                 .---->|   |------>
+ *    <------|___|  |(3)              |  .--|___|
+ *             A    |              (4)|  |    ^-x
+ *             |    V__         ___   |  |
+ *             |   |   |------>|   |--'  |
+ *             '---|___|<------|___|<----'
+ *                   ^-a         ^-b
  */
 inline
-void list_range_insert(list_node_t *pos, list_node_t *first, list_node_t *last)
+void list_insert_range(list_node_t *x, list_node_t *a, list_node_t *b)
 {
-	if (first == last)
-		return;
-
-	first->prev = pos->prev;
-	last->prev->next = pos;
-	pos->prev->next = first;
-	pos->prev = last;
+	a->prev = x->prev;      // (1)
+	b->next = x;            // (2)
+	a->prev->next = a;      // (3)
+	b->next->prev = b;      // (4)
 }
 
 /**
- * remove node from list
- * [nil] <=> [N1] <=> [N2] <=> [N3] <=> [nil]
- *                      ^-pos
- *                  ||
- *                  \/
- * [nil] <=> [N1] <=> [N3] <=> [nil]
+ * 从链表上删除x节点
+ *            ___           ___           ___ 
+ *           |   |-------->|   |-------->|   |------>
+ *    <------|___|<--------|___|<--------|___|
+ *                           ^-x       
+ * ==================================================
+ *                    .--------------------.
+ *                    |(1)                 |
+ *            ___     |     ___           _V_ 
+ *           |   |----'    |   |-------->|   |------>
+ *    <------|___|<--------|___|    .----|___|
+ *             A             ^-x    |   
+ *             |                    |(2)
+ *             '--------------------'
  */
 inline
-void list_remove(list_node_t *pos)
+void list_delete(list_node_t *x)
 {
-	pos->prev->next = pos->next;
-	pos->next->prev = pos->prev;
+	x->prev->next = x->next;    // (1)
+	x->next->prev = x->prev;    // (2)
 }
 
 /**
- * remove [first, last) from list
- * [nil] <=> [N1] <=> [N2] <=> [N3] <=> [N4] <=> [N5] <=> [nil]
- *                      ^-first           ^-last
- *                  ||
- *                  \/
- * [nil] <=> [N1] <=> [N4] <=> [N5] <=> [nil]
- */
-inline 
-void list_range_remove(list_node_t *first, list_node_t *last)
-{
-	if (first == last) 
-		return;
-
-	first->prev->next = last;
-	last->prev = first->prev;
-}
-
-/**
- * transfer [first, last) before pos
- * [nil] <=> [N1] <=> [N2] <=> [N3] <=> [nil]
- *                      ^-pos
- * [nil] <=> [M1] <=> [...] <=> [Mm] <=> [Mn] <=> [nil]
- *             ^-first            ^-keep   ^-last
- *                    ||
- *                    \/
- * [nil] <=> [N1] <=> [M1] <=> [...] <=> [Mm] <=> [N2] <=> [N3] <=> [nil] 
- *                      ^-first            ^-keep   ^-pos
+ * 从链表上删除[a,b]节点
+ *            ___           ___           ___           ___ 
+ *           |   |-------->|   |-------->|   |-------->|   |------>
+ *    <------|___|<--------|___|<--------|___|<--------|___|
+ *                           ^-a           ^-b         
+ * =================================================================
+ *                    .----------------------------------.
+ *                    |(1)                               |
+ *            ___     |     ___           ___           _V_ 
+ *           |   |----'    |   |-------->|   |-------->|   |------>
+ *    <------|___|<--------|___|<--------|___|    .----|___|
+ *             A             ^-a           ^-b    |   
+ *             |                                  |(2)
+ *             '----------------------------------'
  */
 inline
-void list_transfer(list_node_t *pos, list_node_t *first, list_node_t *last)
+void list_delete_range(list_node_t *a, list_node_t *b)
 {
-	if (first == last) 
-		return;
-
-	list_node_t *keep = last->prev;	// keep the node before last
-
-	first->prev->next = last;
-	last->prev = first->prev;
-
-	first->prev = pos->prev;
-	keep->next = pos;
-	pos->prev->next = first;
-	pos->prev = keep;
+	a->prev->next = b->next;    // (1)
+	b->next->prev = a->prev;    // (2)
 }
 
 /**
- * test if list is empty
+ * 将t节点移动到x节点前(x, t可以在同一个链表或不同链表上)
+ * [nil] <=> [N1] <=> [N2] <=> [N3] <=> ... <=> [Nk-1] <=> [Nk] <=> [Nk+1] <=> ...
+ *                              ^-x                         ^-t
+ *                               ||
+ *                               \/
+ *
+ * [nil] <=> [N1] <=> [N2] <=> [Nk] <=> [N3] <=> ... <=> [Nk-1] <=> [Nk+1] <=> ... 
+ *                              ^-t      ^-x
+ */
+inline
+void list_transfer(list_node_t *x, list_node_t *t)
+{
+    list_delete(t);            // 移除节点t
+    list_insert(x, t);         // 将t节点插入到x节点前
+}
+
+/**
+ * 将a节点和b节点之间的节点(包括a和b节点)插入到x节点后, 调用者必须保证[a, b]为有效区间
+ * [head] <=> [N1] <=> [N2] <=> [N3] <=> ... <=> [NIL]
+ *                               ^-x
+ *
+ * [head] <=> [M1] <=> [M2] <=> [M3] <=> ... <=> [Mk-1] <=> [Mk] <=> [Mk+1] <=> ... <=> [NIL]
+ *                               ^-a              ^-b 
+ *                                     ||
+ *                                     \/
+ *
+ * [head] <=> [N1] <=> [N2] <=> [M3] <=> ... <=> [Mk-1] <=> [N3] <=> ... <=> [NIL]
+ *                               ^-a              ^-b        ^-x
+ *
+ * [head] <=> [M1] <=> [M2] <=> [Mk] <=> [Mk+1] <=> ... <=> [NIL]
+ *
+ */
+inline
+void list_transfer_range(list_node_t *x, list_node_t *a, list_node_t *b)
+{
+    list_delete(a, b);
+    list_insert(x, a, b);
+}
+
+/**
+ * 检查链表是否为空
  */
 inline 
 int list_is_empty(const list_t *lst)
 {
-	return (lst->nil.next == &lst->nil);
+    return (lst->nil.next == &lst->nil);
 }
 
 /**
- * reverse circular doubly linked list 
- * [nil] <=> [N1] <=> [N2] <=> [N3] <=> [N4] <=> [N5] <=> [nil]
- *                      ^-first                    ^-last
- *                      ^-head   ^-keep
- *                ||
- *                \/
- * [nil] <=> [N1] <=> [N3] <=> [N2] <=> [N4] <=> [N5] <=> [nil]
- *                               ^-first  ^-keep   ^-last
- *                      ^head
+ * 将链表上[x, nil)之间的所有节点反序排列
  *
+ * [head] <=> [N1] <=> [N2] <=> [N3] <=> [N4] <=> [NIL]
+ *    ^-y       ^-x       
+ *                ||  list_transfer(y->next, x->next)
+ *                \/
+ *
+ * [head] <=> [N2] <=> [N1] <=> [N3] <=> [N4] <=> [NIL]
+ *    ^-y                ^-x
+ *                ||  list_transfer(y->next, x->next)
+ *                \/
+ *
+ * [head] <=> [N3] <=> [N2] <=> [N1] <=> [N4] <=> [NIL]
+ *    ^-y                         ^-x
+ *                ||  list_transfer(y->next, x->next)
+ *                \/
+ *
+ * [head] <=> [N4] <=> [N3] <=> [N2] <=> [N1] <=> [NIL]
+ *    ^-y                                  ^-x
  */
 inline
-void list_reverse(list_node_t *first, list_node_t *last)
+void list_reverse(list_node_t *x, list_node_t *nil)
 {
-	if (first == last) 
-		return;
+    if (x == nil) return;
 
-	list_node_t *head = first;
-	list_node_t *keep = first->next;;
-	for ( ; keep != last; keep = first->next) {
-		first->next = keep->next;	// remove keep from list
-		keep->next->prev = first;
-
-		keep->next = head;		// insert keep before head
-		keep->prev = head->prev;
-		head->prev->next = keep;
-		head->prev = keep;
-
-        head = head->prev;
-	}
+    list_node_t *y = x->prev;
+    while (x->next != nil) {
+        list_transfer(y->next, x->next);
+    }
 }
 
 /**
- * get size of [first, last)
+ * 获取列表大小
  */
 inline
 size_t list_size(const list_t *lst)
 {
-	const list_node_t *first = lst->nil.next;
-	const list_node_t *last = &lst->nil;
-	size_t n = 0;
-	while (first != last) {
-		first = first->next;
-		n++;
-	}
-	return n;
+    const list_node_t *x = lst->nil.next;
+    const list_node_t *nil = &lst->nil;
+    size_t n = 0;
+    while (x != nil) {
+        x = x->next;
+        n++;
+    }
+    return n;
 }
 
 /**
- * swap two list
+ * 交换两个链表
  */
 inline
 void list_swap(list_t *a, list_t *b)
 {
-	list_t tmp;
-	list_init(&tmp);
-	list_transfer(list_after_tail(&tmp), list_head(a), list_after_tail(a));
-	list_transfer(list_after_tail(a), list_head(b), list_after_tail(b));
-	list_transfer(list_after_tail(b), list_head(&tmp), list_after_tail(&tmp));
+    list_t tmp;
+    list_t *lst = &tmp;
+    list_init(lst);
+    if (!list_is_empty(a)) {    // lst <- a
+        list_transfer_range(list_nil(lst), list_head(a), list_tail(a));
+    }
+    if (!list_is_empty(b)) {    // a <- b
+        list_transfer_range(list_nil(a), list_head(b), list_tail(b));
+    }
+    if (!list_is_empty(lst)) { // b <- lst
+        list_transfer_range(list_nil(b), list_head(lst), list_tail(lst));
+    }
 }
 
 #ifdef __cplusplus
-/**
- * search first equal key's node in [first, last)
- */
-template <typename T, typename BinaryPredicate, typename UnaryFunction>
-list_node_t *list_search(const list_node_t *first, const list_node_t *last, 
-	const T &key, BinaryPredicate equal, UnaryFunction get_key)
-{
-	while (first != last && !equal(get_key(first), key)) {
-		first = first->next;
-	}
-	return (list_node_t *) first;
-}
-
-/**
- * search first node in [first, last) which pred return true
- */
-template <typename UnaryPredicate, typename UnaryFunction>
-list_node_t *list_search(const list_node_t *first, const list_node_t *last, 
-	UnaryPredicate pred, UnaryFunction get_key)
-{
-	while (first != last && !pred(get_key(first))) {
-		first = first->next;
-	}
-	return (list_node_t *) first;
-}
-
-/**
- * call op on range [fist, last)
- */
-template <typename UnaryOperation>
-void list_foreach(list_node_t *first, list_node_t *last, UnaryOperation op)
-{
-	list_node_t *keep;
-	while (first != last) {
-		keep = first->next;
-		op(first);
-		first = keep;
-	}
-}
-
-template <typename UnaryOperation, typename UnaryFunction>
-void list_foreach(list_node_t *first, list_node_t *last, 
-	UnaryOperation op, UnaryFunction get_key)
-{
-	while (first != last) {
-		op(get_key(first));
-		first = first->next;
-	}
-}
-
-/**
- * destroy list
- */
-template <typename UnaryOperation>
-void list_destroy(list_t *lst, UnaryOperation destroy)
-{
-	list_foreach(lst->nil.next, &lst->nil, destroy);
-}
-
-/**
- * merge src list [src_pos, src_nil) to dst list [dst_pos, dst_nil), 
- * assume both list range are sorted
- */
-template <typename BinaryPredicate, typename UnaryFunction>
-void list_merge(list_node_t *dst_pos, list_node_t *dst_nil, 
-	list_node_t *src_pos, list_node_t *src_nil, 
-	BinaryPredicate less, UnaryFunction get_key)
-{
-	while (dst_pos != dst_nil && src_pos != src_nil) {
-		// find first greater than src_pos in dst list, 
-		// is the insert pos in dst list
-		while (dst_pos != dst_nil && !less(get_key(src_pos), get_key(dst_pos)))
-			dst_pos = dst_pos->next;
-		if (dst_pos == dst_nil) // nofound
-			break;
-
-		// find first pos greater than dst_pos in src list,
-		// range [src_beg, src_pos) is the transfer range
-		list_node_t *src_beg = src_pos;
-		while (src_pos != src_nil && !less(get_key(dst_pos), get_key(src_pos)))
-			src_pos = src_pos->next;
-
-		// transfer [src_beg, src_pos) insert front dst_pos
-		list_transfer(dst_pos, src_beg, src_pos);
-
-		// because dst_pos's key < src_pos's key, move dst_pos to next
-		dst_pos = dst_pos->next;
-	}
-	
-	// transfer src list's remainders to dst list tail if need
-	if (dst_pos == dst_nil) {
-		list_transfer(dst_nil, src_pos, src_nil);
-	}
-}
-
-/**
- * remove duplicate values in list
- */
-template <typename BinaryPredicate, typename UnaryFunction, 
-	typename UnaryOperation>
-void list_unique(list_node_t *first, list_node_t *last, 
-	BinaryPredicate equal, UnaryFunction get_key, UnaryOperation destroy)
-{
-	while (first != last) {
-		// find pos that not equal first's value
-		list_node_t *pos = first->next;
-		while (pos != last && equal(get_key(pos), get_key(first)))
-			pos = pos->next;
-		list_node_t *beg = first->next;
-		list_range_remove(beg, pos);
-		list_foreach(beg, pos, destroy);
-		first = pos;
-	}
-}
-#endif // __cplusplus
-
-#ifdef __cplusplus
-} // namespace detail
+} // namespace double_linked
 } // namespace mini_stl
 #endif // __cplusplus
 
