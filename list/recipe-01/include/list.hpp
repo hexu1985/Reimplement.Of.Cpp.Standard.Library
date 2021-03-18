@@ -339,7 +339,7 @@ public:
 	list(list &&x): node_alloc_(std::move(x.node_alloc_))
 	{
 		initialize();
-		list_transfer(&lst_.nil, x.lst_.nil.next, &x.lst_.nil);
+		list_transfer_range(list_nil(&lst_), list_head(&x.lst_), list_tail(&x.lst_));
 	}
 
 	list(list &&x, const allocator_type &alloc): node_alloc_(alloc)
@@ -642,7 +642,7 @@ public:
 	{
 		assert(!empty());
 		link_type *link = list_head(&lst_);
-		list_remove(link);
+		list_delete(link);
 		destroy_node(link);
 	}
 
@@ -655,8 +655,7 @@ public:
 	template <typename ... Args>
 	void emplace_back(Args &&... args)
 	{
-		list_insert(list_after_tail(&lst_), 
-			create_node(std::forward<Args>(args) ...));
+		list_insert(list_nil(&lst_), create_node(std::forward<Args>(args) ...));
 	}
 
 	/**
@@ -666,7 +665,7 @@ public:
 	 */
 	void push_back(const value_type &val)
 	{
-		list_insert(list_after_tail(&lst_), create_node(val));
+		list_insert(list_nil(&lst_), create_node(val));
 	}
 
 	/**
@@ -676,7 +675,7 @@ public:
 	 */
 	void push_back(value_type &&val)
 	{
-		list_insert(list_after_tail(&lst_), 
+		list_insert(list_nil(&lst_), 
 			create_node(std::forward<value_type>(val)));
 	}
 
@@ -689,7 +688,7 @@ public:
 	{
 		assert(!empty());
 		link_type *link = list_tail(&lst_);
-		list_remove(link);
+		list_delete(link);
 		destroy_node(link);
 	}
 
@@ -763,14 +762,16 @@ public:
 	iterator erase(const_iterator position)
 	{
 		link_type *keep = (link_type *) position.link->next;
-		list_remove((link_type *) position.link);
+		list_delete((link_type *) position.link);
 		destroy_node((link_type *) position.link);
 		return iterator(keep);
 	}
 
 	iterator erase(const_iterator first, const_iterator last)
 	{
-		list_range_remove((link_type *) first.link, (link_type *) last.link);
+        if (first == last) return;
+
+		list_delete_range((link_type *) first.link, (link_type *) last.link->prev);
 		range_destroy((link_type *) first.link, (link_type *) last.link);
 		return iterator((link_type *) last.link);
 	}
@@ -809,7 +810,7 @@ public:
 				list_insert(nil, create_node(val));
 			}
 		} else {
-			list_range_remove(link, nil);
+			list_delete_range(link, nil->prev);
 			range_destroy(link, nil);
 		}
 	}
@@ -831,40 +832,50 @@ public:
 	 */
 	void splice(const_iterator position, list &x)
 	{
-		list_transfer((link_type *) position.link, 
-			x.lst_.nil.next, &x.lst_.nil);
+        if (x.empty()) return;
+
+		list_transfer_range((link_type *) position.link, 
+			list_head(&x.lst_), list_tail(&x.lst_));
 	}
 
 	void splice(const_iterator position, list &x, const_iterator i)
 	{
-		list_transfer((link_type *) position.link, 
-			(link_type *) i.link, (link_type *) i.link->next);
+        if (i == x.end()) return;
+
+		list_transfer((link_type *) position.link, (link_type *) i.link);
 	}
 
 	void splice(const_iterator position, list &x, 
 		const_iterator first, const_iterator last)
 	{
-		list_transfer((link_type *) position.link, 
-			(link_type *) first.link, (link_type *) last.link);
+        if (first == last) return;
+
+		list_transfer_range((link_type *) position.link, 
+			(link_type *) first.link, (link_type *) last.link->prev);
 	}
 
 	void splice(const_iterator position, list &&x)
 	{
-		list_transfer((link_type *) position.link, 
-			x.lst_.nil.next, &x.lst_.nil);
+        if (x.empty()) return;
+
+		list_transfer_range((link_type *) position.link, 
+			list_head(&x.lst_), list_tail(&x.lst_));
 	}
 
 	void splice(const_iterator position, list &&x, const_iterator i)
 	{
-		list_transfer((link_type *) position.link, 
-			(link_type *) i.link, (link_type *) i.link->next);
+        if (i == x.end()) return;
+
+		list_transfer((link_type *) position.link, (link_type *) i.link);
 	}
 
 	void splice(const_iterator position, list &&x, 
 		const_iterator first, const_iterator last)
 	{
-		list_transfer((link_type *) position.link, 
-			(link_type *) first.link, (link_type *) last.link);
+        if (first == last) return;
+
+		list_transfer_range((link_type *) position.link, 
+			(link_type *) first.link, (link_type *) last.link->prev);
 	}
 
 	/**
@@ -893,7 +904,7 @@ public:
 		link_type *nil = &lst_.nil;
 		while ((link = list_search(link, nil, pred, get_val)) != nil) {
 			link_type *keep = link->next;
-			list_remove(link);
+			list_delete(link);
 			destroy_node(link);
 			link = keep;
 		}
@@ -912,7 +923,7 @@ public:
 	template <typename BinaryPredicate>
 	void unique(BinaryPredicate binary_pred)
 	{
-		list_unique(list_head(&lst_), list_after_tail(&lst_), 
+		list_unique(list_head(&lst_), list_nil(&lst_), 
 			binary_pred, get_val, destroy(node_alloc_));
 	}
 
@@ -930,8 +941,8 @@ public:
 	template <typename Compare>
 	void merge(list &x, Compare comp)
 	{
-		list_merge(list_head(&lst_), list_after_tail(&lst_),
-			list_head(&x.lst_), list_after_tail(&x.lst_), comp, get_val);
+		list_merge(list_head(&lst_), list_nil(&lst_),
+			list_head(&x.lst_), list_nil(&x.lst_), comp, get_val);
 	}
 
 	void merge(list &&x)
@@ -942,8 +953,8 @@ public:
 	template <typename Compare>
 	void merge(list &&x, Compare comp)
 	{
-		list_merge(list_head(&lst_), list_after_tail(&lst_),
-			list_head(&x.lst_), list_after_tail(&x.lst_), comp, get_val);
+		list_merge(list_head(&lst_), list_nil(&lst_),
+			list_head(&x.lst_), list_nil(&x.lst_), comp, get_val);
 	}
 
 	/**
@@ -965,7 +976,7 @@ public:
 		link_type **array = new link_type *[n];
 
 		link_type *link = list_head(&lst_); 
-		link_type *nil = list_after_tail(&lst_);
+		link_type *nil = list_nil(&lst_);
 		for (link_type **ptr = array; link != nil; link = link->next) {
 			*ptr++ = link;
 		}
@@ -985,7 +996,7 @@ public:
 	 */
 	void reverse() noexcept
 	{
-		list_reverse(list_head(&lst_), list_after_tail(&lst_));
+		list_reverse(list_head(&lst_), list_nil(&lst_));
 	}
 
 	/**
@@ -1020,7 +1031,7 @@ private:
 				n--;
 			}
 		} else if (n == 0) {	// list.size() > n
-			list_range_remove(link, nil);
+			list_delete_range(link, nil->prev);
 			range_destroy(link, nil);
 		} 
 

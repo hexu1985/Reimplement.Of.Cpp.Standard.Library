@@ -244,8 +244,8 @@ void list_transfer(list_node_t *x, list_node_t *t)
 inline
 void list_transfer_range(list_node_t *x, list_node_t *a, list_node_t *b)
 {
-    list_delete(a, b);
-    list_insert(x, a, b);
+    list_delete_range(a, b);
+    list_insert_range(x, a, b);
 }
 
 /**
