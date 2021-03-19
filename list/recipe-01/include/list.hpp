@@ -1112,19 +1112,6 @@ private:
         return static_cast<link_type *>(node);
     }
 
-    struct destroy {
-        destroy(node_alloc_type &alloc): node_alloc(&alloc) {}
-    
-        void operator ()(link_type *link)
-        {
-            node_type *node = static_cast<node_type *>(link);
-            allocator_type(*node_alloc).destroy(node->valptr());
-            node_alloc->deallocate(node, 1);
-        }
-
-        node_alloc_type *node_alloc;
-    };
-
     void destroy_node(link_type *link)
     {
         node_type *node = static_cast<node_type *>(link);
