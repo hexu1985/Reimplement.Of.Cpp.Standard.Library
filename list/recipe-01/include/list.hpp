@@ -942,20 +942,57 @@ public:
     template <typename Compare>
     void merge(list &x, Compare comp)
     {
-        list_merge(list_head(&lst_), list_nil(&lst_),
-            list_head(&x.lst_), list_nil(&x.lst_), comp, get_val);
+        auto dst_pos = static_cast<node_type *>(list_head(&lst_));
+        auto dst_nil = static_cast<node_type *>(list_nil(&lst_));
+        auto src_pos = static_cast<node_type *>(list_head(&x.lst_));
+        auto src_nil = static_cast<node_type *>(list_nil(&x.lst_));
+        merge(dst_pos, dst_nil, src_pos, src_nil, comp);
     }
 
     void merge(list &&x)
     {
-        merge(std::move(x), std::less<value_type>());
+        merge(std::forward(x), std::less<value_type>());
     }
 
     template <typename Compare>
     void merge(list &&x, Compare comp)
     {
-        list_merge(list_head(&lst_), list_nil(&lst_),
-            list_head(&x.lst_), list_nil(&x.lst_), comp, get_val);
+        auto dst_pos = static_cast<node_type *>(list_head(&lst_));
+        auto dst_nil = static_cast<node_type *>(list_nil(&lst_));
+        auto src_pos = static_cast<node_type *>(list_head(&x.lst_));
+        auto src_nil = static_cast<node_type *>(list_nil(&x.lst_));
+        merge(dst_pos, dst_nil, src_pos, src_nil, comp);
+    }
+
+    template <typename Compare>
+    void merge(node_type *dst_pos, node_type *dst_nil,
+        node_type *src_pos, node_type *src_nil, Compare comp)
+    {
+        while (dst_pos != dst_nil && src_pos != src_nil) {
+            // find first greater than src_pos in dst list, 
+            // is the insert pos in dst list
+            while (dst_pos != dst_nil && !comp(*src_pos->valptr(), *dst_pos->valptr()))
+                dst_pos = static_cast<node_type *>(dst_pos->next);
+            if (dst_pos == dst_nil) // nofound
+                break;
+
+            // find first pos greater than dst_pos in src list,
+            // range [src_beg, src_pos) is the transfer range
+            auto src_beg = src_pos;
+            while (src_pos != src_nil && !comp(*dst_pos->valptr(), *src_pos->valptr()))
+                src_pos = static_cast<node_type *>(src_pos->next);
+
+            // transfer [src_beg, src_pos) insert front dst_pos
+            list_transfer_range(dst_pos, src_beg, src_pos->prev);
+
+            // because dst_pos's key < src_pos's key, move dst_pos to next
+            dst_pos = static_cast<node_type *>(dst_pos->next);
+        }
+
+        // transfer src list's remainders to dst list tail if need
+        if (dst_pos == dst_nil && src_pos != src_nil) {
+            list_transfer_range(dst_nil, src_pos, src_nil->prev);
+        }
     }
 
     /**
