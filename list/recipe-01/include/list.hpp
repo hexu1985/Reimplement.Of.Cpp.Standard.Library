@@ -887,9 +887,7 @@ public:
      */
     void remove(const value_type &val)
     {
-        remove_if(
-            std::bind(std::equal_to<value_type>(), val, std::placeholders::_1)
-        );
+        remove_if([&val](const value_type &node_val) { return val == node_val; });
     }
 
     /**
@@ -901,13 +899,15 @@ public:
     template <typename Predicate>
     void remove_if(Predicate pred)
     {
-        link_type *link = lst_.nil.next;
-        link_type *nil = &lst_.nil;
-        while ((link = list_search(link, nil, pred, get_val)) != nil) {
-            link_type *keep = link->next;
-            list_delete(link);
-            destroy_node(link);
-            link = keep;
+        auto pos = static_cast<node_type *>(list_head(&lst_));
+        auto nil = static_cast<node_type *>(list_nil(&lst_));
+        while (pos != nil) {
+            link_type *next = pos->next;
+            if (pred(*pos->valptr())) {
+                list_delete(pos);
+                destroy_node(pos);
+            }
+            pos = static_cast<node_type *>(next);
         }
     }
 
