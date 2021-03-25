@@ -537,7 +537,7 @@ public:
      */
     size_type max_size() const noexcept
     {
-        return std::numeric_limits<size_type>::max();
+        return std::numeric_limits<size_type>::max() / sizeof (node_type);
     }
 
     /**
@@ -770,7 +770,7 @@ public:
 
     iterator erase(const_iterator first, const_iterator last)
     {
-        if (first == last) return;
+        if (first == last) return iterator((link_type *) last.link);
 
         list_delete_range((link_type *) first.link, (link_type *) last.link->prev);
         range_destroy((link_type *) first.link, (link_type *) last.link);
