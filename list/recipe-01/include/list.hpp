@@ -924,8 +924,18 @@ public:
     template <typename BinaryPredicate>
     void unique(BinaryPredicate binary_pred)
     {
-        list_unique(list_head(&lst_), list_nil(&lst_), 
-            binary_pred, get_val, destroy(node_alloc_));
+        auto pos = static_cast<node_type *>(list_head(&lst_));
+        auto nil = static_cast<node_type *>(list_nil(&lst_));
+        while (pos != nil) {
+            // find pos that not equal first's value
+            node_type *next = static_cast<node_type *>(pos->next);
+            while (next != nil && binary_pred(*pos->valptr(), *next->valptr())) {
+                list_delete(next);
+                destroy_node(next);
+                next = static_cast<node_type *>(pos->next);
+            }
+            pos = next;
+        }
     }
 
     /**
