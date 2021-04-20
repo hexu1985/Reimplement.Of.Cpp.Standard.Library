@@ -5,6 +5,7 @@
 - [shared_ptr](shared_ptr/README.md)
 - [shared_mutex](shared_mutex/README.md)
 - [thread](thread/README.md)
+- [unique_ptr](unique_ptr/README.md)
 
 ### 编译googletest
 ```
