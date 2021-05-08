@@ -24,8 +24,6 @@ public:
 	/* Type Definitions of Vectors */
 	typedef	T value_type;
 	typedef Alloc allocator_type;
-
-#if __cplusplus >= 201103L
 	typedef T &reference;
 	typedef const T &const_reference;
 	typedef typename std::allocator_traits<allocator_type>::pointer pointer;
@@ -36,18 +34,6 @@ public:
 	typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 	typedef typename std::iterator_traits<iterator>::difference_type difference_type;
 	typedef size_t size_type;
-#else // !( __cplusplus >= 201103L )
-	typedef typename allocator_type::reference reference;
-	typedef typename allocator_type::const_reference const_reference;
-	typedef typename allocator_type::pointer pointer;
-	typedef typename allocator_type::const_pointer const_pointer;
-	typedef pointer iterator;
-	typedef const_pointer const_iterator;
-	typedef std::reverse_iterator<iterator> reverse_iterator;
-	typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
-	typedef typename std::iterator_traits<iterator>::difference_type difference_type;
-	typedef size_t size_type;
-#endif // __cplusplus >= 201103L
 
 private:
 	// member data
@@ -77,17 +63,10 @@ public:
 	 * fill constructor
 	 * Constructs a container with n elements. Each element is a copy of val.
 	 */
-#if __cplusplus >= 201103L
 	explicit vector(size_type n): vector(n, value_type(), allocator_type()) {}
-#endif // __cplusplus >= 201103L
 
-#if __cplusplus >= 201103L
 	vector(size_type n, const value_type &val, 
 		const allocator_type &alloc = allocator_type()): alloc_(alloc)
-#else // !( __cplusplus >= 201103L ) 
-	explicit vector(size_type n, const value_type &val = value_type(), 
-		const allocator_type &alloc = allocator_type()): alloc_(alloc)
-#endif // __cplusplus >= 201103L
 	{
 		if (n == 0) {
 			initialize();
@@ -113,18 +92,10 @@ public:
 	 * with each element emplace-constructed from its corresponding element 
 	 * in that range, in the same order.
 	 */
-#if __cplusplus >= 201103L
 	template <typename InputIterator, typename = typename
 		std::enable_if<!std::is_integral<InputIterator>::value>::type>
 	vector(InputIterator first, InputIterator last,
 		const allocator_type &alloc = allocator_type()): alloc_(alloc)
-#else // !( __cplusplus >= 201103L )
-	template <typename InputIterator>
-	vector(InputIterator first, InputIterator last,
-		const allocator_type &alloc = allocator_type(), typename
-		std::enable_if<!std::is_integral<InputIterator>::value>::type * = NULL):
-		alloc_(alloc)
-#endif // __cplusplus >= 201103L
 	{
 		size_type n = std::distance(first, last);
 		if (n == 0) {
@@ -192,7 +163,6 @@ public:
 		}
 	}
 
-#if __cplusplus >= 201103L
 	/**
 	 * move constructor (and moving with allocator)
 	 * Constructs a container that acquires the elements of x.
@@ -228,9 +198,7 @@ public:
 			throw;
 		}
 	}
-#endif // __cplusplus >= 201103L
 
-#if __cplusplus >= 201103L
 	/**
 	 * initializer list constructor
 	 * Constructs a container with a copy of each of the elements in il, 
@@ -239,7 +207,6 @@ public:
 	vector(std::initializer_list<value_type> il,
 		const allocator_type &alloc = allocator_type()): 
 		vector(il.begin(), il.end(), alloc) {}
-#endif // __cplusplus >= 201103L
 
 	/**
 	 * Vector destructor
@@ -266,7 +233,6 @@ public:
 	 * moves the elements of x into the container 
 	 * (x is left in an unspecified but valid state).
 	 */
-#if __cplusplus >= 201103L
 	vector &operator =(vector &&x)
 	{
 		if (this == &x)
@@ -276,19 +242,16 @@ public:
 		this->swap_data(x);
 		return *this;
 	}
-#endif // __cplusplus >= 201103L
 
 	/**
 	 * The initializer list assignment 
 	 * copies the elements of il into the container.
 	 */
-#if __cplusplus >= 201103L
 	vector &operator =(std::initializer_list<value_type> il)
 	{
 		assign(il.begin(), il.end());
 		return *this;
 	}
-#endif // __cplusplus >= 201103L
 
 	/**
 	 * Return iterator to beginning
@@ -445,11 +408,7 @@ public:
 		// copy from oldbuf to newbuf and set newbuf's size and capacity
 		try
 		{
-#if __cplusplus >= 201103L
 			new_finish = uninitialized_move(start_, finish_, new_start);
-#else // !( __cplusplus >= 201103L )
-			new_finish = uninitialized_copy(start_, finish_, new_start);
-#endif // __cplusplus >= 201103L
 		}
 		catch (...)
 		{
@@ -468,14 +427,7 @@ public:
 	 */
 	void shrink_to_fit()
 	{
-		if (size() > capacity()/2)
-			return;
-
-#if __cplusplus >= 201103L
 		vector x(std::move(*this), this->alloc_);
-#else // !( __cplusplus >= 201103L )
-		vector x(*this, this->alloc_);
-#endif // __cplusplus >= 201103L
 		this->swap_data(x);
 	}
 
@@ -555,15 +507,9 @@ public:
 	 * each of the elements in the range between first and last, 
 	 * in the same order.
 	 */
-#if __cplusplus >= 201103L
 	template <typename InputIterator, typename = typename
 		std::enable_if<!std::is_integral<InputIterator>::value>::type>
 	void assign(InputIterator first, InputIterator last)
-#else // !( __cplusplus >= 201103L )
-	template <typename InputIterator>
-	void assign(InputIterator first, InputIterator last, typename
-		std::enable_if<!std::is_integral<InputIterator>::value>::type * = NULL)
-#endif // __cplusplus >= 201103L
 	{
 		size_type n = std::distance(first, last);
 		if (n > capacity()) {
@@ -618,12 +564,10 @@ public:
 	 * the new contents are copies of the values passed as initializer list, 
 	 * in the same order.
 	 */
-#if __cplusplus >= 201103L
 	void assign(std::initializer_list<value_type> il)
 	{
 		assign(il.begin(), il.end());
 	}
-#endif // __cplusplus >= 201103L
 
 	/**
 	 * Add element at the end
@@ -639,7 +583,6 @@ public:
 		construct(finish_++, val);
 	}
 
-#if __cplusplus >= 201103L
 	void push_back(value_type &&val)
 	{
 		if (full()) {
@@ -648,7 +591,6 @@ public:
 
 		construct(finish_++, std::forward<value_type>(val));
 	}
-#endif // __cplusplus >= 201103L
 
 	/**
 	 * Delete last element
@@ -695,17 +637,10 @@ public:
 		return (iterator) pos;
 	}
 
-#if __cplusplus >= 201103L
 	template <typename InputIterator, typename = typename
 		std::enable_if<!std::is_integral<InputIterator>::value>::type>
 	iterator insert(const_iterator position, 
 		InputIterator first, InputIterator last)
-#else // !( __cplusplus >= 201103L )
-	template <typename InputIterator>
-	iterator insert(const_iterator position, 
-		InputIterator first, InputIterator last, typename
-		std::enable_if<!std::is_integral<InputIterator>::value>::type * = 0)
-#endif // __cplusplus >= 201103L
 	{
 		assert(position <= finish_); 
 
@@ -730,7 +665,6 @@ public:
 		return (iterator) pos;
 	}
 	
-#if __cplusplus >= 201103L
 	iterator insert(const_iterator position, value_type &&val)
 	{
 		if (full()) {	// need reallocate
@@ -748,15 +682,12 @@ public:
 		finish_++;
 		return (iterator) pos;
 	}
-#endif // __cplusplus >= 201103L
 
-#if __cplusplus >= 201103L
 	iterator insert(const_iterator position, 
 		std::initializer_list<value_type> il)
 	{
 		return insert(position, il.begin(), il.end());
 	}
-#endif // __cplusplus >= 201103L
 
 	/**
 	 * Erase elements
@@ -769,11 +700,7 @@ public:
 
 		if (position == end()) return end();
 
-#if __cplusplus >= 201103L
 		std::move((iterator) position+1, finish_, (iterator) position);
-#else // !( __cplusplus >= 201103L )
-		std::copy((iterator) position+1, finish_, (iterator) position);
-#endif // __cplusplus >= 201103L
 		destroy(--finish_);
 		return (iterator) position;
 	}
@@ -785,11 +712,7 @@ public:
 		if (first == last) 
 			return (iterator) first;
 
-#if __cplusplus >= 201103L
 		iterator iter = std::move((iterator) last, finish_, (iterator) first);
-#else // !( __cplusplus >= 201103L )
-		iterator iter = std::copy((iterator) last, finish_, (iterator) first);
-#endif // __cplusplus >= 201103L
 		range_destroy(iter, finish_);
 		finish_ = iter;
 		return (iterator) first;
@@ -819,7 +742,6 @@ public:
 		finish_ = start_;
 	}
 
-#if __cplusplus >= 201103L
 	/**
 	 * Construct and insert element
 	 * The container is extended by inserting a new element at position. 
@@ -860,7 +782,6 @@ public:
 
 		construct(finish_++, std::forward<Args>(args) ...);
 	}
-#endif // __cplusplus >= 201103L
 
 	/**
 	 * Get allocator
@@ -889,11 +810,10 @@ private:
 	 * vacate n element's space for insert before pos.
 	 * if uninitialized buffer, return true, otherwise return false
 	 */
-#if __cplusplus >= 201103L
 	bool vacate(pointer pos, size_type n)
 	{
 		assert(pos < finish_ && finish_+n <= end_of_storage_);
-		if (finish_-pos <= n) {
+		if (finish_-pos <= (int) n) {
 			uninitialized_move(pos, finish_, pos+n);
 			range_destroy(pos, finish_);
 			return true;
@@ -903,32 +823,13 @@ private:
 			return false;
 		}
 	}
-#else // !( __cplusplus >= 201103L )
-	bool vacate(pointer pos, size_type n)
-	{
-		assert(pos < finish_ && finish_+n <= end_of_storage_);
-		if (finish_-pos <= n) {
-			uninitialized_copy(pos, finish_, pos+n);
-			range_destroy(pos, finish_);
-			return true;
-		} else {	// finish_-pos > n
-			uninitialized_copy_n(finish_-n, n, finish_);
-			std::copy_backward(pos, finish_-n, finish_);
-			return false;
-		}
-	}
-#endif // __cplusplus >= 201103L
 
 	pointer allocate(size_type n)
 	{
 		if (n == 0)
 			return NULL;
 
-#if __cplusplus >= 201103L
 		return std::allocator_traits<allocator_type>::allocate(alloc_, n);
-#else // !( __cplusplus >= 201103L )
-		return alloc_.allocate(n);
-#endif // __cplusplus >= 201103L
 	}
 
 	void deallocate(pointer p, size_type n)
@@ -936,34 +837,18 @@ private:
 		if (p == NULL || n == 0)
 			return;
 
-#if __cplusplus >= 201103L
 		std::allocator_traits<allocator_type>::deallocate(alloc_, p, n);
-#else // !( __cplusplus >= 201103L )
-		alloc_.deallocate(p, n);
-#endif // __cplusplus >= 201103L
 	}
 
-#if __cplusplus >= 201103L
 	template <typename ...Args>
 	void construct(pointer p, Args &&...args)
 	{
-		std::allocator_traits<allocator_type>::construct(alloc_, p, 
-			std::forward<Args>(args)...);
-	}
-#else // !( __cplusplus >= 201103L )
-	void construct(pointer p, const value_type &val)
-	{
-		alloc_.construct(p, val);
-	}
-#endif // __cplusplus >= 201103L
+        new(p) T(std::forward<Args>(args)...);
+    }
 
 	void destroy(pointer p)
 	{
-#if __cplusplus >= 201103L
-		std::allocator_traits<allocator_type>::destroy(alloc_, p);
-#else // !( __cplusplus >= 201103L )
-		alloc_.destroy(p);
-#endif // __cplusplus >= 201103L
+        p->~T();
 	}
 
 	void range_destroy(pointer first, pointer last)
@@ -1008,7 +893,6 @@ private:
 		return result;
 	}
 
-#if __cplusplus >= 201103L
 	template <typename InputIterator>
 	pointer uninitialized_move(InputIterator first, InputIterator last,
 		pointer result)
@@ -1027,7 +911,6 @@ private:
 		}
 		return result;
 	}
-#endif // __cplusplus >= 201103L
 
 	template <typename InputIterator>
 	pointer uninitialized_copy_n(InputIterator first, size_type n, 
@@ -1048,7 +931,6 @@ private:
 		return result;
 	}
 
-#if __cplusplus >= 201103L
 	template <typename InputIterator>
 	pointer uninitialized_move_n(InputIterator first, size_type n, 
 		pointer result)
@@ -1067,7 +949,6 @@ private:
 		}
 		return result;
 	}
-#endif // __cplusplus >= 201103L
 
 	void uninitialized_fill(pointer first, pointer last, const value_type &x)
 	{
