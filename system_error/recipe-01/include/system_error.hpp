@@ -37,10 +37,8 @@ public:
 	system_error(error_code ec, const std::string &what_arg):
 		std::runtime_error(what_arg), code_(ec) {}
 
-#if __cplusplus >= 201103L
 	system_error(error_code ec, const char *what_arg):
 		std::runtime_error(what_arg), code_(ec) {}
-#endif // __cplusplus >= 201103L
 
 	system_error(int val, const error_category &cat):
 		std::runtime_error(""), code_(val, cat) {}
@@ -49,11 +47,9 @@ public:
 		const std::string &what_arg): 
 		std::runtime_error(what_arg), code_(val, cat) {}
 
-#if __cplusplus >= 201103L
 	system_error(int val, const error_category &cat, 
 		const char *what_arg):
 		std::runtime_error(what_arg), code_(val, cat) {}
-#endif // __cplusplus >= 201103L
 
 	/**
 	 * virtual destructor
@@ -76,5 +72,5 @@ public:
 
 }	// namespace mini_stl
 
-#endif // HX_SYSTEM_ERROR_H
+#endif // MINI_STL_SYSTEM_ERROR_INC
 

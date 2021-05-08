@@ -16,12 +16,7 @@ struct is_error_code_enum: public std::false_type {};
 template<typename T>
 struct is_error_condition_enum: public std::false_type {};
 
-#if __cplusplus >= 201103L
 enum class errc {
-#else // !( __cplusplus >= 201103L )
-namespace errc {
-enum errc_t {
-#endif // __cplusplus >= 201103L
 	success = 0,
 	address_family_not_supported = EAFNOSUPPORT,
 	address_in_use = EADDRINUSE,
@@ -101,18 +96,9 @@ enum errc_t {
 	too_many_symbolic_link_levels = ELOOP,
 	value_too_large = EOVERFLOW,
 	wrong_protocol_type = EPROTOTYPE
-#if __cplusplus >= 201103L
 };
-#else // !( __cplusplus >= 201103L )
-};
-}	// namespace errc
-#endif // __cplusplus >= 201103L
 
-#if __cplusplus >= 201103L
 template<> struct is_error_condition_enum<errc>: public std::true_type {};
-#else // !( __cplusplus >= 201103L )
-template<> struct is_error_condition_enum<errc::errc_t>: public std::true_type {};
-#endif // __cplusplus >= 201103L
 
 class error_category;
 
@@ -148,20 +134,12 @@ public:
 	 * Construct error_category
 	 * The implicit default constructor constructs an object of this base type.
 	 */
-#if __cplusplus >= 201103L
 protected:
 	error_category() = default;
+
 public:
 	error_category(const error_category &) = delete;
 	error_category &operator =(const error_category &) = delete;
-#else // !( __cplusplus >= 201103L )
-protected:
-	error_category() {}
-private:
-	error_category(const error_category &);
-	error_category &operator =(const error_category &);
-public:
-#endif // __cplusplus >= 201103L
 
 	/**
 	 * Relational operators
@@ -250,16 +228,9 @@ public:
 	 * if is_error_condition_enum<ErrorConditionEnum>::value is true. 
 	 * Which is the case when errc is used as the ErrorConditionEnum type.
 	 */
-#if __cplusplus >= 201103L
 	template <class ErrorConditionEnum, typename = typename
 		std::enable_if<is_error_condition_enum<ErrorConditionEnum>::value>::type>
 	error_condition(ErrorConditionEnum e) noexcept
-#else // !( __cplusplus >= 201103L )
-	template <class ErrorConditionEnum>
-	error_condition(ErrorConditionEnum e, typename 
-		std::enable_if<is_error_condition_enum<ErrorConditionEnum>::value
-		>::type * = 0) noexcept
-#endif // __cplusplus >= 201103L
 	{
 		*this = make_error_condition(e);
 	}
@@ -280,15 +251,9 @@ public:
 	 * Calls make_error_condition to construct an error condition from e, 
 	 * whose value is assigned to the error_condition object.
 	 */
-#if __cplusplus >= 201103L
 	template <class ErrorConditionEnum, typename T = typename
 		std::enable_if<is_error_condition_enum<ErrorConditionEnum>::value>::type>
 	error_condition &operator =(ErrorConditionEnum e) noexcept
-#else // !( __cplusplus >= 201103L )
-	template <class ErrorConditionEnum> typename 
-	std::enable_if<is_error_condition_enum<ErrorConditionEnum>::value>::type &
-	operator =(ErrorConditionEnum e) noexcept
-#endif // __cplusplus >= 201103L
 	{
 		*this = make_error_condition(e);
 		return *this;
@@ -330,22 +295,10 @@ public:
 	 * If it is zero (which is generally used to represent no error), 
 	 * the function returns false, otherwise it returns true.
 	 */
-#if __cplusplus >= 201103L
 	explicit operator bool() const 
 	{
 		return value_ != 0 ? true : false; 
 	}
-#else // !( __cplusplus >= 201103L )
-	typedef void (*unspecified_bool_type)();
-	static void unspecified_bool_true() {}
-
-	operator unspecified_bool_type() const
-	{
-		return value_ != 0 ? unspecified_bool_true : 0; 
-	}
-
-	bool operator !() const { return value_ == 0; }
-#endif // __cplusplus >= 201103L
 };
 
 /**
@@ -378,15 +331,9 @@ public:
 	 * This constructor only participates in overload resolution 
 	 * if is_error_code_enum<ErrorCodeEnum>::value is true.
 	 */
-#if __cplusplus >= 201103L
 	template <class ErrorCodeEnum, typename = typename
 		std::enable_if<is_error_code_enum<ErrorCodeEnum>::value>::type>
 	error_code(ErrorCodeEnum e) noexcept
-#else // !( __cplusplus >= 201103L )
-	template <class ErrorCodeEnum>
-	error_code(ErrorCodeEnum e, typename 
-		std::enable_if<is_error_code_enum<ErrorCodeEnum>::value>::type * = 0) noexcept
-#endif // __cplusplus >= 201103L
 	{
 		*this = make_error_code(e);
 	}
@@ -407,15 +354,9 @@ public:
 	 * Calls make_error_code to construct an error code from e, 
 	 * whose value is assigned to the error_code object.
 	 */
-#if __cplusplus >= 201103L
 	template <class ErrorCodeEnum, typename = typename
 		std::enable_if<is_error_code_enum<ErrorCodeEnum>::value>::type>
 	error_code &operator =(ErrorCodeEnum e) noexcept
-#else // !( __cplusplus >= 201103L )
-	template <class ErrorCodeEnum> typename 
-		std::enable_if<is_error_code_enum<ErrorCodeEnum>::value>::type &
-	operator =(ErrorCodeEnum e) noexcept
-#endif // __cplusplus >= 201103L
 	{
 		*this = make_error_code(e);
 		return *this;
@@ -467,22 +408,10 @@ public:
 	 * If it is zero (which is generally used to represent no error), 
 	 * the function returns false, otherwise it returns true.
 	 */
-#if __cplusplus >= 201103L
 	explicit operator bool() const 
 	{
 		return value_ != 0 ? true : false;
 	}
-#else // !( __cplusplus >= 201103L )
-	typedef void (*unspecified_bool_type)();
-	static void unspecified_bool_true() {}
-
-	operator unspecified_bool_type() const
-	{
-		return value_ != 0 ? unspecified_bool_true : 0; 
-	}
-
-	bool operator !() const { return value_ == 0; }
-#endif // __cplusplus >= 201103L
 };
 
 /**
@@ -612,49 +541,24 @@ std::basic_ostream<charT, traits> &operator <<(
  * Creates an error_code object (of the generic_category) 
  * from the errc enum value e.
  */
-#if __cplusplus >= 201103L
 inline error_code make_error_code(errc e) noexcept
 {
 	return error_code(static_cast<int>(e), generic_category());
 }
-#else // !( __cplusplus >= 201103L )
-namespace errc {
-inline error_code make_error_code(errc::errc_t e) noexcept
-{
-	return error_code(static_cast<int>(e), generic_category());
-}
-}	// namespace errc
-#endif // __cplusplus >= 201103L
 
 /**
  * Make error condition
  * Creates an error_condition object from the errc enum value e 
  * (of the generic_category).
  */
-#if __cplusplus >= 201103L
 inline error_condition make_error_condition(errc e) noexcept
 {
 	return error_condition(static_cast<int>(e), generic_category());
 }
-#else // !( __cplusplus >= 201103L )
-namespace errc {
-
-inline error_condition make_error_condition(errc::errc_t e) noexcept
-{
-	return error_condition(static_cast<int>(e), generic_category());
-}
-
-}	// namespace errc
-#endif // __cplusplus >= 201103L
 
 }	// namespace mini_stl
 
-#if __cplusplus >= 201103L
 namespace std {
-#else // !( __cplusplus >= 201103L )
-namespace std {
-namespace tr1 {
-#endif // __cplusplus >= 201103L
 
 template <> struct hash<mini_stl::error_code>
 {
@@ -665,12 +569,7 @@ template <> struct hash<mini_stl::error_code>
 	}
 };
 
-#if __cplusplus >= 201103L
 }	// namespace std
-#else // !( __cplusplus >= 201103L )
-}	// namespace tr1
-}	// namespace std
-#endif // __cplusplus >= 201103L
 
-#endif // HX_ERROR_CODE_H
+#endif // MINI_STL_ERROR_CODE_INC
 

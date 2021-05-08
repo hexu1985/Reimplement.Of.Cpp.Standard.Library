@@ -6,6 +6,7 @@ INCLUDES = -I../include
 LDFLAGS =
 LDPATH =
 
+LIB_SRC = $(shell ls ../src/*.cpp)
 SOURCES = $(shell ls *.cpp)
 PROGS = $(SOURCES:%.cpp=%)
 
@@ -15,5 +16,5 @@ all: $(PROGS)
 clean:
 	$(RM) $(PROGS) *.dSYM
 
-%: %.cpp 
+%: %.cpp $(LIB_SRC)
 	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDES) $^ $(LDFLAGS) $(LDPATH)
