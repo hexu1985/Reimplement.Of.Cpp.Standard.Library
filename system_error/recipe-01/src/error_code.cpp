@@ -34,6 +34,7 @@ public:
 
 std::string generic_error_category::message(int val) const
 {
+    // equivalent to call strerror, but strerror is not thread safe
 	switch (val) {
 	case E2BIG:
 		return "Argument list too long";
@@ -207,109 +208,13 @@ std::string generic_error_category::message(int val) const
 		break;
 	} 
 	
-    char errbuf[256] = {0};
-    strerror_r(val, errbuf, sizeof(errbuf));
-    return std::string(errbuf);
+    return std::string("Unknown error ")+std::to_string(val);
 }
 
 error_condition system_error_category::default_error_condition(int val) 
 	const throw()
 {
-	switch (val) {
-	case 0: return make_error_condition(errc::success);
-	// POSIX-like O/S -> posix_errno decode table  ---------------------------//
-	case E2BIG: return make_error_condition(errc::argument_list_too_long);
-	case EACCES: return make_error_condition(errc::permission_denied);
-	case EADDRINUSE: return make_error_condition(errc::address_in_use);
-	case EADDRNOTAVAIL: return make_error_condition(errc::address_not_available);
-	case EAFNOSUPPORT: return make_error_condition(errc::address_family_not_supported);
-	case EAGAIN: return make_error_condition(errc::resource_unavailable_try_again);
-#if EALREADY != EBUSY  //  EALREADY and EBUSY are the same on QNX Neutrino
-	case EALREADY: return make_error_condition(errc::connection_already_in_progress);
-#endif
-	case EBADF: return make_error_condition(errc::bad_file_descriptor);
-	case EBADMSG: return make_error_condition(errc::bad_message);
-	case EBUSY: return make_error_condition(errc::device_or_resource_busy);
-	case ECANCELED: return make_error_condition(errc::operation_canceled);
-	case ECHILD: return make_error_condition(errc::no_child_process);
-	case ECONNABORTED: return make_error_condition(errc::connection_aborted);
-	case ECONNREFUSED: return make_error_condition(errc::connection_refused);
-	case ECONNRESET: return make_error_condition(errc::connection_reset);
-	case EDEADLK: return make_error_condition(errc::resource_deadlock_would_occur);
-	case EDESTADDRREQ: return make_error_condition(errc::destination_address_required);
-	case EDOM: return make_error_condition(errc::argument_out_of_domain);
-	case EEXIST: return make_error_condition(errc::file_exists);
-	case EFAULT: return make_error_condition(errc::bad_address);
-	case EFBIG: return make_error_condition(errc::file_too_large);
-	case EHOSTUNREACH: return make_error_condition(errc::host_unreachable);
-	case EIDRM: return make_error_condition(errc::identifier_removed);
-	case EILSEQ: return make_error_condition(errc::illegal_byte_sequence);
-	case EINPROGRESS: return make_error_condition(errc::operation_in_progress);
-	case EINTR: return make_error_condition(errc::interrupted);
-	case EINVAL: return make_error_condition(errc::invalid_argument);
-	case EIO: return make_error_condition(errc::io_error);
-	case EISCONN: return make_error_condition(errc::already_connected);
-	case EISDIR: return make_error_condition(errc::is_a_directory);
-	case ELOOP: return make_error_condition(errc::too_many_symbolic_link_levels);
-	case EMFILE: return make_error_condition(errc::too_many_files_open);
-	case EMLINK: return make_error_condition(errc::too_many_links);
-	case EMSGSIZE: return make_error_condition(errc::message_size);
-	case ENAMETOOLONG: return make_error_condition(errc::filename_too_long);
-	case ENETDOWN: return make_error_condition(errc::network_down);
-	case ENETRESET: return make_error_condition(errc::network_reset);
-	case ENETUNREACH: return make_error_condition(errc::network_unreachable);
-	case ENFILE: return make_error_condition(errc::too_many_files_open_in_system);
-	case ENOBUFS: return make_error_condition(errc::no_buffer_space);
-	case ENODATA: return make_error_condition(errc::no_message_available);
-	case ENODEV: return make_error_condition(errc::no_such_device);
-	case ENOENT: return make_error_condition(errc::no_such_file_or_directory);
-	case ENOEXEC: return make_error_condition(errc::executable_format_error);
-	case ENOLCK: return make_error_condition(errc::no_lock_available);
-	case ENOLINK: return make_error_condition(errc::no_link);
-	case ENOMEM: return make_error_condition(errc::not_enough_memory);
-	case ENOMSG: return make_error_condition(errc::no_message);
-	case ENOPROTOOPT: return make_error_condition(errc::no_protocol_option);
-	case ENOSPC: return make_error_condition(errc::no_space_on_device);
-	case ENOSR: return make_error_condition(errc::no_stream_resources);
-	case ENOSTR: return make_error_condition(errc::not_a_stream);
-	case ENOSYS: return make_error_condition(errc::function_not_supported);
-	case ENOTCONN: return make_error_condition(errc::not_connected);
-	case ENOTDIR: return make_error_condition(errc::not_a_directory);
-#if ENOTEMPTY != EEXIST // AIX treats ENOTEMPTY and EEXIST as the same value
-	case ENOTEMPTY: return make_error_condition(errc::directory_not_empty);
-#endif // ENOTEMPTY != EEXIST
-#if ENOTRECOVERABLE != ECONNRESET // the same on some Broadcom chips 
-	case ENOTRECOVERABLE: return make_error_condition(errc::state_not_recoverable); 
-#endif // ENOTRECOVERABLE != ECONNRESET 
-	case ENOTSOCK: return make_error_condition(errc::not_a_socket);
-	case ENOTSUP: return make_error_condition(errc::not_supported);
-	case ENOTTY: return make_error_condition(errc::inappropriate_io_control_operation);
-	case ENXIO: return make_error_condition(errc::no_such_device_or_address);
-#if EOPNOTSUPP != ENOTSUP
-	case EOPNOTSUPP: return make_error_condition(errc::operation_not_supported);
-#endif // EOPNOTSUPP != ENOTSUP
-	case EOVERFLOW: return make_error_condition(errc::value_too_large);
-#if EOWNERDEAD != ECONNABORTED // the same on some Broadcom chips 
-	case EOWNERDEAD: return make_error_condition(errc::owner_dead); 
-#endif // EOWNERDEAD != ECONNABORTED 
-	case EPERM: return make_error_condition(errc::operation_not_permitted);
-	case EPIPE: return make_error_condition(errc::broken_pipe);
-	case EPROTO: return make_error_condition(errc::protocol_error);
-	case EPROTONOSUPPORT: return make_error_condition(errc::protocol_not_supported);
-	case EPROTOTYPE: return make_error_condition(errc::wrong_protocol_type);
-	case ERANGE: return make_error_condition(errc::result_out_of_range);
-	case EROFS: return make_error_condition(errc::read_only_file_system);
-	case ESPIPE: return make_error_condition(errc::invalid_seek);
-	case ESRCH: return make_error_condition(errc::no_such_process);
-	case ETIME: return make_error_condition(errc::stream_timeout);
-	case ETIMEDOUT: return make_error_condition(errc::timed_out);
-	case ETXTBSY: return make_error_condition(errc::text_file_busy);
-#if EAGAIN != EWOULDBLOCK
-	case EWOULDBLOCK: return make_error_condition(errc::operation_would_block);
-#endif // EAGAIN != EWOULDBLOCK
-	case EXDEV: return make_error_condition(errc::cross_device_link);
-	default: return error_condition(val, system_category());
-	}
+	return error_condition(val, system_category());
 }
 
 }	// namespace
