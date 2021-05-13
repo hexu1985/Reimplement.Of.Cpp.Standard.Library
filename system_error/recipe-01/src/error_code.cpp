@@ -36,6 +36,8 @@ std::string generic_error_category::message(int val) const
 {
     // equivalent to call strerror, but strerror is not thread safe
 	switch (val) {
+    case 0:
+        return "Success";
 	case E2BIG:
 		return "Argument list too long";
 	case EACCES:
