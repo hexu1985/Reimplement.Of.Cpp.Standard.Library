@@ -2,8 +2,8 @@
 // HeXu's
 // 2013 Dec
 
-#ifndef MINI_STL_FORWARD_LIST_IMPL_H
-#define MINI_STL_FORWARD_LIST_IMPL_H
+#ifndef MINI_STL_FORWARD_LIST_IMPL_INC
+#define MINI_STL_FORWARD_LIST_IMPL_INC
 
 #ifdef __cplusplus
 #include <cstddef>

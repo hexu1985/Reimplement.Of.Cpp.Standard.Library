@@ -903,8 +903,7 @@ private:
 		node_type *node = get_node();
 		try
 		{
-			allocator_type(node_alloc_).construct(
-				node->valptr(), std::forward<Args>(args)...);
+            new (node->valptr()) T(std::forward<Args>(args)...);
 		}
 		catch (...)
 		{
@@ -995,8 +994,9 @@ private:
 				n--;
 			}
 		} else {	// forward_list.size() > n
-//			list_range_remove_after(keep, nullptr);
-			range_destroy(node, nullptr);
+            while (keep->next != nullptr) {
+                destroy_node(list_delete_after(keep));
+            }
 		} 
 
 		// forward_list.size() == n

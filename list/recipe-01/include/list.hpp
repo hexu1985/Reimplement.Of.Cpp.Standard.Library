@@ -1148,7 +1148,7 @@ private:
         node_type *node = get_node();
         try
         {
-            new(node->valptr()) T(std::forward<Args>(args)...); 
+            new (node->valptr()) T(std::forward<Args>(args)...); 
         }
         catch (...)
         {

@@ -843,7 +843,7 @@ private:
 	template <typename ...Args>
 	void construct(pointer p, Args &&...args)
 	{
-        new(p) T(std::forward<Args>(args)...);
+        new (p) T(std::forward<Args>(args)...);
     }
 
 	void destroy(pointer p)
