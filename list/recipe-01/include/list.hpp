@@ -1148,8 +1148,7 @@ private:
         node_type *node = get_node();
         try
         {
-            allocator_type(node_alloc_).construct(
-                node->valptr(), std::forward<Args>(args)...);
+            new(node->valptr()) T(std::forward<Args>(args)...); 
         }
         catch (...)
         {
