@@ -30,7 +30,7 @@ typedef struct list_node_t {
 } list_node_t;
 
 /**
- * 单链表: 有哑元头结点, 尾结点的next为空
+ * 单链表: 有哑元头节点, 尾节点的next为空
  *
  * [head] -> [N1] -> [N2] -> ... -> NIL
  *
@@ -51,14 +51,14 @@ void list_init(list_t *lst)
 	lst->head.next = NULL;
 }
 
-// 返回链表头部第一个结点(非哑元头结点)的指针
+// 返回链表头部第一个节点(非哑元头节点)的指针
 inline
 list_node_t *list_head(const list_t *lst)
 {
 	return (list_node_t *) lst->head.next;
 }
 
-// 返回链表哑元头结点的指针
+// 返回链表哑元头节点的指针
 inline
 list_node_t *list_before_head(const list_t *lst)
 {
@@ -73,7 +73,7 @@ int list_is_empty(const list_t *lst)
 }
 
 /**
- * 在链表的x结点后插入t结点
+ * 在链表的x节点后插入t节点
  *            ___                ___
  *    ------>|   |------------->|   |------>
  *           |___|              |___|
@@ -109,7 +109,7 @@ void list_insert_after(list_node_t *x, list_node_t *t)
 }
 
 /**
- * 从链表上删除x结点后面的结点
+ * 从链表上删除x节点后面的节点
  *            ___           ___           ___ 
  *    ------>|   |-------->|   |-------->|   |------>
  *           |___|         |___|         |___|
@@ -129,6 +129,13 @@ list_node_t *list_delete_after(list_node_t *x)
 	if (t != NULL)
 		x->next = t->next;	
 	return t;
+}
+
+inline
+list_node_t *list_delete_head(list_t *lst)
+{
+    auto dummy_head = list_before_head(lst);
+    return list_delete_after(dummy_head);
 }
 
 // 返回链表中元素个数
@@ -154,7 +161,7 @@ void list_swap(list_t *a, list_t *b)
 }
 
 /**
- * 将链表上x结点后面的所有结点反序排列
+ * 将链表上x节点后面的所有节点反序排列
  *
  * [head] -> [N1] -> [N2] -> [N3] -> [N4] -> [NIL]
  *    ^-x      ^-y    ^-t
@@ -183,7 +190,7 @@ void list_reverse_after(list_node_t *x)
 	list_node_t *y = x->next;
     while (y->next != NULL) {
         list_node_t *t = list_delete_after(y);
-        list_insert_after(x);
+        list_insert_after(x, t);
     }
 }
 
