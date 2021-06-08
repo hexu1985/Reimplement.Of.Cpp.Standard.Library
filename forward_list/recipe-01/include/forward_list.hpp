@@ -651,8 +651,8 @@ public:
 
     iterator erase_after(const_iterator position, const_iterator last)
     {
-        auto link = (link_type *) position->link;
-        auto nil = (link_type *) last->link;
+        auto link = (link_type *) position.link;
+        auto nil = (link_type *) last.link;
         while (link->next != nil) {
             destroy_node(list_delete_after(link));
         }
