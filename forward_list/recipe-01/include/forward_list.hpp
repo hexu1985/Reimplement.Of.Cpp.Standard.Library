@@ -816,8 +816,7 @@ public:
     template <typename Compare>
     void merge(forward_list &x, Compare comp)
     {
-        list_merge_after(list_before_head(&lst_), nullptr, 
-            list_before_head(&x.lst_), nullptr, comp, get_val);
+        merge(x.lst_, comp);
     }
 
     void merge(forward_list &&x)
@@ -828,8 +827,28 @@ public:
     template <typename Compare>
     void merge(forward_list &&x, Compare comp)
     {
-        list_merge_after(list_before_head(&lst_), nullptr, 
-            list_before_head(&x.lst_), nullptr, comp, get_val);
+        merge(x.lst_, comp);
+    }
+
+    template <typename Compare>
+    void merge(list_type &lst, Compare comp)
+    {
+        link_type *dst_pos = list_before_head(&lst_);
+        link_type *src_pos = list_before_head(&lst);
+        while (src_pos->next != nullptr) {
+            while (dst_pos->next != nullptr) {
+                auto src_val = static_cast<node_type *>(src_pos->next)->valptr();
+                auto dst_val = static_cast<node_type *>(dst_pos->next)->valptr();
+                if (comp(*src_val, *dst_val)) { // src_val < dst_val
+                    break;
+                } else {    // dst_val >= src_val
+                    dst_pos = dst_pos->next;
+                }
+            }
+            auto node = list_delete_after(src_pos);
+            list_insert_after(dst_pos, node);
+            dst_pos = dst_pos->next;
+        }
     }
 
     /**
