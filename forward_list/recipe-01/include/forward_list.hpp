@@ -891,6 +891,7 @@ public:
         sort(std::less<value_type>());
     }
 
+#ifdef USE_STD_SORT
     template <typename Compare>
     void sort(Compare comp)
     {
@@ -913,6 +914,37 @@ public:
 
         delete [] array;
     }
+#else
+    template <typename Compare>
+    void sort(Compare comp)
+    {
+        link_type *sorted_last = list_before_head(&lst_);
+        link_type *unsorted_first = sorted_last->next;
+        while (unsorted_first != nullptr && unsorted_first->next != nullptr) {
+            // get node of minimum value
+            link_type *min_prev = sorted_last;
+            link_type *min = unsorted_first;
+            link_type *prev = unsorted_first;
+            link_type *node = prev->next;
+            while (node != nullptr) {
+                if (comp(*static_cast<node_type *>(node)->valptr(), *static_cast<node_type *>(min)->valptr())) {
+                    min = node;
+                    min_prev = prev;
+                }
+                node = node->next;
+                prev = prev->next;
+            }
+
+            // transplant node of minimum value to front
+            if (min != unsorted_first) {
+                list_delete_after(min_prev);
+                list_insert_after(sorted_last, min);
+            }
+            sorted_last = sorted_last->next;
+            unsorted_first = sorted_last->next;
+        }
+    }
+#endif
 
     /**
      * Reverse the order of elements
