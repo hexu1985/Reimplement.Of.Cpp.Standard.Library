@@ -927,7 +927,6 @@ public:
         auto pos = static_cast<node_type *>(list_head(&lst_));
         auto nil = static_cast<node_type *>(list_nil(&lst_));
         while (pos != nil) {
-            // find pos that not equal first's value
             node_type *next = static_cast<node_type *>(pos->next);
             while (next != nil && binary_pred(*pos->valptr(), *next->valptr())) {
                 list_delete(next);

@@ -713,42 +713,57 @@ public:
 
     void splice_after(const_iterator position, forward_list &fwdlst)
     {
-//        list_transfer_after((link_type *) position.link, 
-//            &fwdlst.lst_.head, nullptr);
+        splice_after((link_type *) position.link, 
+            &fwdlst.lst_.head, nullptr);
     }
 
     void splice_after(const_iterator position, forward_list &&fwdlst)
     {
-//        list_transfer_after((link_type *) position.link, 
-//            &fwdlst.lst_.head, nullptr);
+        splice_after((link_type *) position.link, 
+            &fwdlst.lst_.head, nullptr);
     }
 
     void splice_after(const_iterator position, forward_list &fwdlst,
         const_iterator i)
     {
-//        list_transfer_after((link_type *) position.link, 
-//            (link_type *) i.link, (link_type *) i.link->next->next);
+        splice_after((link_type *) position.link, 
+            (link_type *) i.link, (link_type *) i.link->next->next);
     }
 
     void splice_after(const_iterator position, forward_list &&fwdlst,
         const_iterator i)
     {
-//        list_transfer_after((link_type *) position.link, 
-//            (link_type *) i.link, (link_type *) i.link->next->next);
+        splice_after((link_type *) position.link, 
+            (link_type *) i.link, (link_type *) i.link->next->next);
     }
 
     void splice_after(const_iterator position, forward_list &fwdlst,
         const_iterator first, const_iterator last)
     {
-//        list_transfer_after((link_type *) position.link, 
-//            (link_type *) first.link, (link_type *) last.link);
+        splice_after((link_type *) position.link, 
+            (link_type *) first.link, (link_type *) last.link);
     }
 
     void splice_after(const_iterator position, forward_list &&fwdlst,
         const_iterator first, const_iterator last)
     {
-//        list_transfer_after((link_type *) position.link, 
-//            (link_type *) first.link, (link_type *) last.link);
+        splice_after((link_type *) position.link, 
+            (link_type *) first.link, (link_type *) last.link);
+    }
+
+    void splice_after(link_type *position, link_type *before_head, link_type *nil)
+    {
+        if (before_head == nil || before_head->next == nil)
+            return;
+
+        link_type *head = before_head->next;
+        link_type *tail = head;
+        while (tail->next != nil) { // found tail
+            tail = tail->next;
+        }
+        before_head->next = nil;    // delete (before_head, nil) from list, (before_head, nil) <==> [head, tail]
+        tail->next = position->next;    // insert [head, tail] after position
+        position->next = head;
     }
 
     /**
@@ -759,12 +774,15 @@ public:
      */
     void remove(const value_type &val)
     {
-        link_type *keep = list_before_head(&lst_);
-        link_type *link = nullptr;
-        while ((link = list_search_after(keep, nullptr, val, 
-            std::equal_to<value_type>(), get_val, &keep)) != nullptr) {
-            list_delete_after(keep);
-            destroy_node(link);
+        link_type *link = list_before_head(&lst_);
+        while (link->next != nullptr) {
+            auto node_val = static_cast<node_type *>(link->next)->valptr();
+            if (*node_val == val) {
+                auto node = list_delete_after(link);
+                destroy_node(node);
+            } else {
+                link = link->next;
+            }
         }
     }
 
@@ -777,11 +795,15 @@ public:
     template <typename Predicate>
     void remove_if(Predicate pred)
     {
-        link_type *keep = list_before_head(&lst_);
-        link_type *link = nullptr;
-        while ((link = list_search_after(keep, nullptr, pred, get_val, &keep)) != nullptr) {
-            list_delete_after(keep);
-            destroy_node(link);
+        link_type *link = list_before_head(&lst_);
+        while (link->next != nullptr) {
+            auto node_val = static_cast<node_type *>(link->next)->valptr();
+            if (pred(*node_val)) {
+                auto node = list_delete_after(link);
+                destroy_node(node);
+            } else {
+                link = link->next;
+            }
         }
     }
 
@@ -798,8 +820,16 @@ public:
     template <typename BinaryPredicate>
     void unique(BinaryPredicate binary_pred)
     {
-        list_unique(list_head(&lst_), nullptr, binary_pred, get_val, 
-            destroy(node_alloc_));
+        auto pos = static_cast<node_type *>(list_head(&lst_));
+        while (pos != nullptr) {
+            node_type *next = static_cast<node_type *>(pos->next);
+            while (next != nullptr && binary_pred(*pos->valptr(), *next->valptr())) {
+                list_delete_after(pos);
+                destroy_node(next);
+                next = static_cast<node_type *>(pos->next);
+            }
+            pos = next;
+        }
     }
 
     /**
