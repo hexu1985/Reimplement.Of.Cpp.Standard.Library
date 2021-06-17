@@ -1014,6 +1014,7 @@ public:
         sort(std::less<value_type>());
     }
 
+#ifdef USE_STD_SORT
     template <typename Compare>
     void sort(Compare comp)
     {
@@ -1036,6 +1037,27 @@ public:
 
         delete [] array;
     }
+#else
+    template <typename Compare>
+    void sort(Compare comp)
+    {
+        link_type *nil = list_nil(&lst_);
+
+        link_type *i = nil->next->next;
+        while (i != nil) {
+            link_type *next = i->next;
+            link_type *j = i->prev;
+            while (j != nil && comp(*static_cast<node_type *>(i)->valptr(), *static_cast<node_type *>(j)->valptr())) {
+                j = j->prev;
+            }
+            if (j != i->prev) {
+                list_delete(i);
+                list_insert(j->next, i);
+            }
+            i = next;
+        }
+    }
+#endif
 
     /**
      * Reverse the order of elements
