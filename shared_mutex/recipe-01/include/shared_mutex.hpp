@@ -4,6 +4,8 @@
  * @author hexu_1985@sina.com
  * @version 1.0
  * @date 2020-09-04
+ *
+ * @see UNIX Network Programming, Volume 2: Interprocess Communications, Second Edition, Chapter 8.4
  */
 #ifndef MINI_STL_SHARED_MUTEX_INC
 #define MINI_STL_SHARED_MUTEX_INC
