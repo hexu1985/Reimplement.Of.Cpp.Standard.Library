@@ -75,9 +75,9 @@ struct list_iterator {
 
     this_type operator ++(int)    // postfix increment
     {
-        this_type temp(*this);
+        this_type tmp(*this);
         next();
-        return temp;
+        return tmp;
     }
 
     this_type &operator --()    // prefix decrement
@@ -88,9 +88,9 @@ struct list_iterator {
 
     this_type operator --(int)    // postfix decrement
     {
-        this_type temp(*this);
+        this_type tmp(*this);
         prev();
-        return temp;
+        return tmp;
     }
 
     bool operator ==(const this_type &other) const
@@ -153,9 +153,9 @@ struct list_const_iterator {
 
     this_type operator ++(int)    // postfix increment
     {
-        this_type temp(*this);
+        this_type tmp(*this);
         next();
-        return temp;
+        return tmp;
     }
 
     this_type &operator --()    // prefix decrement
@@ -166,9 +166,9 @@ struct list_const_iterator {
 
     this_type operator --(int)    // postfix decrement
     {
-        this_type temp(*this);
+        this_type tmp(*this);
         prev();
-        return temp;
+        return tmp;
     }
 
     bool operator ==(const this_type &other) const

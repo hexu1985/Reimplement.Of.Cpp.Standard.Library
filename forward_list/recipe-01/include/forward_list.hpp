@@ -144,9 +144,9 @@ struct forward_list_const_iterator {
 
     this_type operator ++(int)
     {
-        this_type temp(*this);
+        this_type tmp(*this);
         next();
-        return temp;
+        return tmp;
     }
 
     bool operator ==(const this_type &other) const
