@@ -64,11 +64,13 @@ struct forward_list_iterator {
 
     reference operator *() const
     {
+        assert(link != nullptr);
         return *static_cast<node_type *>(link)->valptr();
     }
 
     pointer operator ->() const
     {
+        assert(link != nullptr);
         return static_cast<node_type *>(link)->valptr();
     }
 
@@ -97,6 +99,7 @@ struct forward_list_iterator {
 
     void next()
     {
+        assert(link != nullptr);
         link = link->next;
     }
 };
@@ -128,11 +131,13 @@ struct forward_list_const_iterator {
 
     reference operator *() const
     {
+        assert(link != nullptr);
         return *static_cast<node_type *>(link)->valptr();
     }
 
     pointer operator ->() const
     {
+        assert(link != nullptr);
         return static_cast<node_type *>(link)->valptr();
     }
 
@@ -161,6 +166,7 @@ struct forward_list_const_iterator {
 
     void next()
     {
+        assert(link != nullptr);
         link = link->next;
     }
 };
