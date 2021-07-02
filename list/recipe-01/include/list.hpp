@@ -244,8 +244,9 @@ public:
      * empty container constructor (default constructor)
      * Constructs an empty container, with no elements.
      */
-    explicit list(const allocator_type &alloc = allocator_type()):
-        node_alloc_(alloc)
+    list(): list(allocator_type()) {}
+
+    explicit list(const allocator_type &alloc): node_alloc_(alloc)
     {
         initialize();
     }
@@ -366,7 +367,15 @@ public:
         const allocator_type &alloc = allocator_type()): node_alloc_(alloc)
     {
         initialize();
-        copy_from(il.begin(), il.end());
+        try
+        {
+            copy_from(il.begin(), il.end());
+        }
+        catch (...)
+        {
+            finalize();
+            throw;
+        }
     }
 
     /**

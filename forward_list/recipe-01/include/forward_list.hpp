@@ -227,8 +227,9 @@ public:
      * empty container constructor (default constructor)
      * Constructs an empty container, with no elements.
      */
-    explicit forward_list(const allocator_type &alloc = allocator_type()):
-        node_alloc_(alloc)
+    forward_list(): forward_list(allocator_type()) {}
+
+    explicit forward_list(const allocator_type &alloc): node_alloc_(alloc)
     {
         initialize();
     }
