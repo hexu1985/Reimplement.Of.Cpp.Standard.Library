@@ -8,6 +8,7 @@
 #include "set_impl.h"
 
 #include <memory>
+#include <initializer_list>
 
 namespace mini_stl {
 
@@ -131,7 +132,7 @@ struct set_const_iterator {
     typedef ptrdiff_t difference_type;
     typedef std::bidirectional_iterator_tag iterator_category;
 
-    typedef set_iterator<T> this_type;
+    typedef set_const_iterator<T> this_type;
     typedef set_node<T> node_type;
     typedef set_iterator<T> iterator;
 
@@ -269,6 +270,11 @@ public:
 
     explicit set(const allocator_type &alloc): set(key_compare(), alloc) {}
 
+    /**
+     *  range constructor
+     *  Constructs a container with as many elements as the range [first,last), 
+     *  with each element emplace-constructed from its corresponding element in that range.
+     */
     template <typename InputIterator>
     set(InputIterator first, InputIterator last,
         const key_compare &comp = key_compare(),
@@ -283,6 +289,26 @@ public:
             finalize();
             throw;
         }
+    }
+
+    template <typename InputIterator>
+    set(InputIterator first, InputIterator last, 
+        const allocator_type &alloc): set(first, last, key_compare(), alloc)
+    {}
+
+    set(std::initializer_list<value_type> il,
+        const key_compare &comp = key_compare(),
+        const allocator_type &alloc = allocator_type()): set(il.begin(), il.end(), comp, alloc)
+    {
+    }
+
+    /**
+     * Set destructor
+     * Destroys the container object.
+     */
+    ~set()
+    {
+        finalize();
     }
 
     /**
@@ -313,6 +339,26 @@ public:
     }
 
     const_iterator end() const noexcept
+    {
+        return const_iterator(nullptr);
+    }
+
+    /**
+     * Return const_iterator to beginning
+     * Returns a const_iterator pointing to the first element in the container.
+     */
+    const_iterator cbegin() const noexcept
+    {
+        link_type *x = empty() ? nullptr : tree_minimum(tree_.root);
+
+        return const_iterator(x);
+    }
+
+    /**
+     * Return const_iterator to end
+     * Returns a const_iterator pointing to the past-the-end element in the container.
+     */
+    const_iterator cend() const noexcept
     {
         return const_iterator(nullptr);
     }
@@ -382,7 +428,17 @@ private:
 
     void finalize()
     {
-        // TODO
+        destroy_tree(tree_.root);
+    }
+
+    void destroy_tree(link_type *root)
+    {
+        if (root == NULL)
+            return;
+
+        destroy_tree(root->left);
+        destroy_tree(root->right);
+        destroy_node(root);
     }
 
     std::pair<link_type *, bool> insert(link_type *root, const value_type &val)
