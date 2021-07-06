@@ -301,7 +301,7 @@ public:
      * Constructs a container with a copy of each of the elements in x, 
      * in the same order.
      */
-    list(const list &x): node_alloc_(x.node_alloc_)
+    list(const list &x): node_alloc_(std::allocator_traits<allocator_type>::select_on_container_copy_construction(x.get_allocator()))
     {
         initialize();
         try
