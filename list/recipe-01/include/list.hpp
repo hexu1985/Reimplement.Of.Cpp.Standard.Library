@@ -301,19 +301,7 @@ public:
      * Constructs a container with a copy of each of the elements in x, 
      * in the same order.
      */
-    list(const list &x): node_alloc_(std::allocator_traits<allocator_type>::select_on_container_copy_construction(x.get_allocator()))
-    {
-        initialize();
-        try
-        {
-            copy_from(x.begin(), x.end());
-        }
-        catch (...)
-        {
-            finalize();
-            throw;
-        }
-    }
+    list(const list &x): list(x, std::allocator_traits<allocator_type>::select_on_container_copy_construction(x.get_allocator())) {}
 
     list(const list &x, const allocator_type &alloc): node_alloc_(alloc)
     {
@@ -364,19 +352,7 @@ public:
      * in the same order.
      */
     list(std::initializer_list<value_type> il,
-        const allocator_type &alloc = allocator_type()): node_alloc_(alloc)
-    {
-        initialize();
-        try
-        {
-            copy_from(il.begin(), il.end());
-        }
-        catch (...)
-        {
-            finalize();
-            throw;
-        }
-    }
+        const allocator_type &alloc = allocator_type()): list(il.begin(), il.end(), alloc) {}
 
     /**
      * List destructor
