@@ -278,8 +278,9 @@ public:
     template <typename InputIterator>
     set(InputIterator first, InputIterator last,
         const key_compare &comp = key_compare(),
-        const allocator_type &alloc = allocator_type()): set(comp, alloc)
+        const allocator_type &alloc = allocator_type()): less_(comp), node_alloc_(alloc)
     {
+        initialize();
         try
         {
             insert(first, last);
@@ -293,13 +294,58 @@ public:
 
     template <typename InputIterator>
     set(InputIterator first, InputIterator last, 
-        const allocator_type &alloc): set(first, last, key_compare(), alloc)
-    {}
+        const allocator_type &alloc): set(first, last, key_compare(), alloc) {}
 
+    /**
+     * initializer list constructor
+     * Constructs a container with a copy of each of the elements in il.
+     */
     set(std::initializer_list<value_type> il,
         const key_compare &comp = key_compare(),
-        const allocator_type &alloc = allocator_type()): set(il.begin(), il.end(), comp, alloc)
+        const allocator_type &alloc = allocator_type()): set(il.begin(), il.end(), comp, alloc) {}
+
+    set(std::initializer_list<value_type> il, const allocator_type& alloc): set(il, key_compare(), alloc) {}
+
+    /**
+     * copy constructor (and copying with allocator)
+     * Constructs a container with a copy of each of the elements in x.
+     */
+    set(const set &x): set(x, x.get_allocator()) {}
+
+    set(const set &x, const allocator_type &alloc): 
+        less_(x.less_), node_alloc_(alloc)
     {
+        initialize();
+        tree_.root = clone_tree(x.tree_.root);
+    }
+
+    /**
+     * move constructor (and moving with allocator)
+     * Constructs a container that acquires the elements of x.
+     * If alloc is specified and is different from x's allocator, the elements are moved. 
+     * Otherwise, no elements are constructed (their ownership is directly transferred).
+     * x is left in an unspecified but valid state.
+     */
+    set(set &&x): less_(std::move(x.less_)), node_alloc_(std::move(x.node_alloc_))
+    {
+        initialize();
+        tree_.root = x.tree_.root;
+        x.initialize();
+    }
+
+    set(set&& x, const allocator_type& alloc): less_(std::move(x.less_)), node_alloc_(alloc)
+    {
+        initialize();
+        try
+        {
+            tree_.root = move_tree(x.tree_.root);
+            x.clear();
+        }
+        catch (...)
+        {
+            x.clear();
+            throw;
+        }
     }
 
     /**
@@ -372,6 +418,15 @@ public:
         return tree_is_empty(&tree_);
     }
 
+    /**
+     * Return container size
+     * Returns the number of elements in the set container.
+     */
+    size_type size() const noexcept
+    {
+        return tree_size(tree_.root);
+    }
+
     std::pair<iterator, bool> insert(const value_type &val)
     {
         std::pair<link_type *, bool> ret = insert(tree_.root, val);
@@ -384,6 +439,40 @@ public:
         while (first != last) {
             insert(*first++);
         }
+    }
+
+    /**
+     * Clear content
+     * Removes all elements from the set container (which are destroyed), leaving the container with a size of 0.
+     */
+    void clear() noexcept
+    {
+        finalize();
+        initialize();
+    }
+
+    /**
+     * Get iterator to element
+     * Searches the container for an element equivalent to val and returns an iterator to it if found, 
+     * otherwise it returns an iterator to set::end.
+     */
+    const_iterator find(const value_type& val) const
+    {
+        return const_iterator(find(tree_.root, val));
+    }
+
+    iterator find(const value_type& val)
+    {
+        return iterator(find(tree_.root, val));
+    }
+
+    /**
+     * Get allocator
+     * Returns a copy of the allocator object associated with the set.
+     */
+    allocator_type get_allocator() const noexcept
+    {
+        return allocator_type(node_alloc_);
     }
 
 private:
@@ -468,6 +557,82 @@ private:
         return std::make_pair(z, true);
     }
 
+    link_type *find(link_type *root, const value_type &val) {
+        link_type *x = root;
+        while (x != NULL) {
+            const value_type &x_val = *static_cast<node_type *>(x)->valptr();
+            if (less_(val, x_val)) {        // val < x->val
+                x = x->left;
+            } else if (less_(x_val, val)) { // x->val < val
+                x = x->right;
+            } else {    // val == x->val
+                break;
+            }
+        }
+        return x;
+    }
+
+    link_type *clone_tree(link_type *root) {
+        if (root == NULL)
+            return NULL;
+
+        link_type *left = NULL;
+        link_type *right = NULL;
+        link_type *node = NULL;
+
+        try 
+        {
+            // clone left child tree
+            left = clone_tree(root->left);
+
+            // clone right child tree
+            right = clone_tree(root->right);
+
+            // clone root node
+            node = create_node(*static_cast<const node_type *>(root)->valptr());
+            tree_set_left_child(node, left);
+            tree_set_right_child(node, right);
+            return node;
+        }
+        catch (...)
+        {
+            if (left) destroy_tree(left);
+            if (right) destroy_tree(right);
+            if (node) destroy_node(node);
+            throw;
+        }
+    }
+
+    link_type *move_tree(link_type *root) {
+        if (root == NULL)
+            return NULL;
+
+        link_type *left = NULL;
+        link_type *right = NULL;
+        link_type *node = NULL;
+
+        try 
+        {
+            // move left child tree
+            left = move_tree(root->left);
+
+            // move right child tree
+            right = move_tree(root->right);
+
+            // move root node
+            node = create_node(std::move(*static_cast<const node_type *>(root)->valptr()));
+            tree_set_left_child(node, left);
+            tree_set_right_child(node, right);
+            return node;
+        }
+        catch (...)
+        {
+            if (left) destroy_tree(left);
+            if (right) destroy_tree(right);
+            if (node) destroy_node(node);
+            throw;
+        }
+    }
 };
 
 
