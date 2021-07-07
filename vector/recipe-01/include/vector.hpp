@@ -53,8 +53,9 @@ public:
 	 * empty container constructor (default constructor)
 	 * Constructs an empty container, with no elements.
 	 */
-	explicit vector(const allocator_type &alloc = allocator_type()):
-		alloc_(alloc) 
+    vector(): vector(alloc) {}
+
+	explicit vector(const allocator_type &alloc): alloc_(alloc) 
 	{
 		initialize();
 	} 
@@ -121,26 +122,7 @@ public:
 	 * Constructs a container with a copy of each of the elements in x, 
 	 * in the same order.
 	 */
-	vector(const vector &x): alloc_(x.alloc_) 
-	{
-		size_type n = x.size();
-		if (n == 0) {
-			initialize();
-			return;
-		}
-
-		initialize(n);
-
-		try
-		{
-			finish_ = uninitialized_copy(x.begin(), x.end(), start_);
-		}
-		catch (...)
-		{
-			finalize();
-			throw;
-		}
-	}
+	vector(const vector &x): vector(x, x.get_allocator()) {}
 
 	vector(const vector &x, const allocator_type &alloc): alloc_(alloc)
 	{
