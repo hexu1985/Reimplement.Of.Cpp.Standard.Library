@@ -285,19 +285,7 @@ public:
      * Constructs a container with a copy of each of the elements in fwdlst,
      * in the same order.
      */
-    forward_list(const forward_list &x): node_alloc_(x.node_alloc_)
-    {
-        initialize();
-        try
-        {
-            copy_from(x.begin(), x.end());
-        }
-        catch (...)
-        {
-            finalize();
-            throw;
-        }
-    }
+    forward_list(const forward_list &x): forward_list(x, std::allocator_traits<allocator_type>::select_on_container_copy_construction(x.get_allocator())) {}
 
     forward_list(const forward_list &x, const allocator_type &alloc)
         : node_alloc_(alloc)
@@ -341,6 +329,7 @@ public:
             finalize();
             throw;
         }
+        x.clear();
     }
 
     /**
@@ -349,19 +338,7 @@ public:
      * in the same order.
      */
     forward_list(std::initializer_list<value_type> il,
-        const allocator_type &alloc = allocator_type()): node_alloc_(alloc)
-    {
-        initialize();
-        try
-        {
-            copy_from(il.begin(), il.end());
-        }
-        catch (...)
-        {
-            finalize();
-            throw;
-        }
-    }
+        const allocator_type &alloc = allocator_type()): forward_list(il.begin(), il.end(), alloc) {}
 
     /**
      * List destructor
