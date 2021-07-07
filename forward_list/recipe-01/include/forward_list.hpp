@@ -285,7 +285,7 @@ public:
      * Constructs a container with a copy of each of the elements in fwdlst,
      * in the same order.
      */
-    forward_list(const forward_list &x): forward_list(x, std::allocator_traits<allocator_type>::select_on_container_copy_construction(x.get_allocator())) {}
+    forward_list(const forward_list &x): forward_list(x, x.get_allocator()) {}
 
     forward_list(const forward_list &x, const allocator_type &alloc)
         : node_alloc_(alloc)
