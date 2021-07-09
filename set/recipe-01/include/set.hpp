@@ -427,9 +427,19 @@ public:
         return tree_size(tree_.root);
     }
 
+    /**
+     * Insert element
+     * Extends the container by inserting new elements, effectively increasing the container size by the number of elements inserted.
+     */
     std::pair<iterator, bool> insert(const value_type &val)
     {
-        std::pair<link_type *, bool> ret = insert(tree_.root, val);
+        std::pair<link_type *, bool> ret = tree_insert(tree_.root, val);
+        return std::make_pair(iterator(ret.first), ret.second);
+    }
+
+    std::pair<iterator,bool> insert (value_type&& val)
+    {
+        std::pair<link_type *, bool> ret = tree_insert(tree_.root, std::move(val));
         return std::make_pair(iterator(ret.first), ret.second);
     }
 
@@ -452,18 +462,38 @@ public:
     }
 
     /**
+     * Construct and insert element
+     * Inserts a new element in the set, if unique. This new element is constructed in place using args as the arguments for its construction.
+     */
+    template <typename... Args>
+    std::pair<iterator, bool> emplace(Args&&... args)
+    {
+        std::pair<link_type *, bool> ret = tree_emplace(tree_.root, std::forward<Args>(args)...);
+        return std::make_pair(iterator(ret.first), ret.second);
+    }
+
+    /**
      * Get iterator to element
      * Searches the container for an element equivalent to val and returns an iterator to it if found, 
      * otherwise it returns an iterator to set::end.
      */
-    const_iterator find(const value_type& val) const
+    const_iterator find(const value_type &val) const
     {
-        return const_iterator(find(tree_.root, val));
+        return const_iterator(tree_find(tree_.root, val));
     }
 
-    iterator find(const value_type& val)
+    iterator find(const value_type &val)
     {
-        return iterator(find(tree_.root, val));
+        return iterator(tree_find(tree_.root, val));
+    }
+
+    /**
+     * Count elements with a specific value
+     * Searches the container for elements equivalent to val and returns the number of matches.
+     */
+    size_type count(const value_type &val) const
+    {
+        return tree_find(tree_.root, val) == NULL ? 0 : 1;
     }
 
     /**
@@ -476,6 +506,11 @@ public:
     }
 
 private:
+    const value_type &get_value(link_type *node)
+    {
+        return *static_cast<node_type *>(node)->valptr();
+    }
+
     node_type *get_node()
     {
         return node_alloc_.allocate(1);
@@ -530,13 +565,13 @@ private:
         destroy_node(root);
     }
 
-    std::pair<link_type *, bool> insert(link_type *root, const value_type &val)
+    std::pair<link_type *, bool> tree_insert(link_type *root, const value_type &val)
     {
         link_type *y = NULL;
         link_type *x = root;
         while (x != NULL) {
             y = x;
-            const value_type &x_val = *static_cast<node_type *>(x)->valptr();
+            const value_type &x_val = get_value(x);
             if (less_(val, x_val)) {        // val < x->val
                 x = x->left;
             } else if (less_(x_val, val)) { // x->val < val
@@ -547,17 +582,66 @@ private:
         }
 
         link_type *z = create_node(val);
-        if (y == NULL) {
-            tree_set_root(&tree_, z);
-        } else if (less_(val, *static_cast<node_type *>(y)->valptr())) {
-            tree_set_left_child(y, z);
-        } else {
-            tree_set_right_child(y, z);
-        }
+        tree_set_child(y, z);
         return std::make_pair(z, true);
     }
 
-    link_type *find(link_type *root, const value_type &val) {
+    std::pair<link_type *, bool> tree_insert(link_type *root, value_type &&val)
+    {
+        link_type *y = NULL;
+        link_type *x = root;
+        while (x != NULL) {
+            y = x;
+            const value_type &x_val = get_value(x);
+            if (less_(val, x_val)) {        // val < x->val
+                x = x->left;
+            } else if (less_(x_val, val)) { // x->val < val
+                x = x->right;
+            } else {    // val == x->val
+                return std::make_pair(x, false);
+            }
+        }
+
+        link_type *z = create_node(std::move(val));
+        tree_set_child(y, z);
+        return std::make_pair(z, true);
+    }
+
+    template <typename ... Args>
+    std::pair<link_type *, bool> tree_emplace(link_type *root, Args &&... args)
+    {
+        value_type val = value_type(std::forward<Args>(args)...);
+        link_type *y = NULL;
+        link_type *x = root;
+        while (x != NULL) {
+            y = x;
+            const value_type &x_val = get_value(x);
+            if (less_(val, x_val)) {        // val < x->val
+                x = x->left;
+            } else if (less_(x_val, val)) { // x->val < val
+                x = x->right;
+            } else {    // val == x->val
+                return std::make_pair(x, false);
+            }
+        }
+
+        link_type *z = create_node(std::move(val));
+        tree_set_child(y, z);
+        return std::make_pair(z, true);
+    }
+
+    void tree_set_child(link_type *p, link_type *c)
+    {
+        if (p == NULL) {
+            tree_set_root(&tree_, c);
+        } else if (less_(get_value(c), get_value(p))) {
+            tree_set_left_child(p, c);
+        } else {
+            tree_set_right_child(p, c);
+        }
+    }
+
+    link_type *tree_find(link_type *root, const value_type &val) const {
         link_type *x = root;
         while (x != NULL) {
             const value_type &x_val = *static_cast<node_type *>(x)->valptr();
