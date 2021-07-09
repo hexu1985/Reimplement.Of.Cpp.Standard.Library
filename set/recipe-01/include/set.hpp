@@ -23,14 +23,14 @@ struct set_node: public binary_search::tree_node_t {
     typename 
     std::aligned_storage<sizeof (T), std::alignment_of<T>::value>::type storage;
 
-    T *valptr() noexcept
+    T* valptr() noexcept
     {
-        return static_cast<T *>(static_cast<void *>(&storage));
+        return static_cast<T*>(static_cast<void*>(&storage));
     }
 
-    const T *valptr() const noexcept
+    const T* valptr() const noexcept
     {
-        return static_cast<const T *>(static_cast<const void *>(&storage));
+        return static_cast<const T*>(static_cast<const void*>(&storage));
     }
 };
 
@@ -41,11 +41,11 @@ struct set_node: public binary_search::tree_node_t {
 template <typename T>
 struct set_iterator {
     typedef binary_search::tree_node_t link_type;
-    link_type *link = nullptr;
+    link_type* link = nullptr;
 
     typedef T value_type;
-    typedef T *pointer;
-    typedef T &reference;
+    typedef T* pointer;
+    typedef T& reference;
     typedef ptrdiff_t difference_type;
     typedef std::bidirectional_iterator_tag iterator_category;
 
@@ -54,52 +54,52 @@ struct set_iterator {
 
     set_iterator() = default;
 
-    explicit set_iterator(link_type *link_): link(link_) {}
+    explicit set_iterator(link_type* link_): link(link_) {}
 
-    reference operator *() const
+    reference operator* () const
     {
         assert(link != nullptr);
-        return *static_cast<node_type *>(link)->valptr();
+        return *static_cast<node_type*>(link)->valptr();
     }
 
-    pointer operator ->() const
+    pointer operator-> () const
     {
         assert(link != nullptr);
-        return static_cast<node_type *>(link)->valptr();
+        return static_cast<node_type*>(link)->valptr();
     }
 
-    this_type &operator ++()
+    this_type& operator++ ()
     {
         next();
         return *this;
     }
 
-    this_type operator ++(int)
+    this_type operator++ (int)
     {
         this_type tmp(*this);
         next();
         return tmp;
     }
 
-    this_type &operator --()
+    this_type& operator-- ()
     {
         prev();
         return *this;
     }
 
-    this_type operator --(int)
+    this_type operator-- (int)
     {
         this_type tmp(*this);
         prev();
         return tmp;
     }
 
-    bool operator ==(const this_type &other) const
+    bool operator== (const this_type& other) const
     {
         return (this->link == other.link);
     }
 
-    bool operator !=(const this_type &other) const
+    bool operator!= (const this_type& other) const
     {
         return !(*this == other);
     }
@@ -124,11 +124,11 @@ struct set_iterator {
 template <typename T>
 struct set_const_iterator {
     typedef binary_search::tree_node_t link_type;
-    link_type *link = nullptr;
+    link_type* link = nullptr;
 
     typedef T value_type;
-    typedef const T *pointer;
-    typedef const T &reference;
+    typedef const T* pointer;
+    typedef const T& reference;
     typedef ptrdiff_t difference_type;
     typedef std::bidirectional_iterator_tag iterator_category;
 
@@ -138,54 +138,54 @@ struct set_const_iterator {
 
     set_const_iterator() = default;
 
-    explicit set_const_iterator(link_type *link_): link(link_) {}
+    explicit set_const_iterator(link_type* link_): link(link_) {}
 
-    set_const_iterator(const iterator &iter): link(iter.link) {}
+    set_const_iterator(const iterator& iter): link(iter.link) {}
 
-    reference operator *() const
+    reference operator* () const
     {
         assert(link != nullptr);
-        return *static_cast<node_type *>(link)->valptr();
+        return *static_cast<node_type*>(link)->valptr();
     }
 
-    pointer operator ->() const
+    pointer operator-> () const
     {
         assert(link != nullptr);
-        return static_cast<node_type *>(link)->valptr();
+        return static_cast<node_type*>(link)->valptr();
     }
 
-    this_type &operator ++()
+    this_type& operator++ ()
     {
         next();
         return *this;
     }
 
-    this_type operator ++(int)
+    this_type operator++ (int)
     {
         this_type tmp(*this);
         next();
         return tmp;
     }
 
-    this_type &operator --()
+    this_type& operator--()
     {
         prev();
         return *this;
     }
 
-    this_type operator --(int)
+    this_type operator-- (int)
     {
         this_type tmp(*this);
         prev();
         return tmp;
     }
 
-    bool operator ==(const this_type &other) const
+    bool operator== (const this_type& other) const
     {
         return (this->link == other.link);
     }
 
-    bool operator !=(const this_type &other) const
+    bool operator!= (const this_type& other) const
     {
         return !(*this == other);
     }
@@ -208,7 +208,7 @@ struct set_const_iterator {
  */
 template <typename T>
 inline
-bool operator ==(const set_iterator<T> &x, const set_const_iterator<T> &y)
+bool operator== (const set_iterator<T>& x, const set_const_iterator<T>& y)
 {
     return (x.link == y.link);
 }
@@ -218,7 +218,7 @@ bool operator ==(const set_iterator<T> &x, const set_const_iterator<T> &y)
  */
 template <typename T>
 inline
-bool operator !=(const set_iterator<T> &x, const set_const_iterator<T> &y)
+bool operator!= (const set_iterator<T>& x, const set_const_iterator<T>& y)
 {
     return !(x == y);
 }
@@ -243,8 +243,8 @@ public:
     typedef Compare key_compare;
     typedef Compare value_compare;
     typedef Alloc allocator_type;
-    typedef value_type &reference;
-    typedef const value_type &const_reference;
+    typedef value_type& reference;
+    typedef const value_type& const_reference;
     typedef typename std::allocator_traits<allocator_type>::pointer pointer;
     typedef typename std::allocator_traits<allocator_type>::const_pointer const_pointer;
     typedef set_iterator<const value_type> iterator;
@@ -261,14 +261,14 @@ public:
      */
     set(): set(key_compare(), allocator_type()) {}
 
-    explicit set(const key_compare &comp,
-                 const allocator_type &alloc = allocator_type()):
+    explicit set(const key_compare& comp,
+                 const allocator_type& alloc = allocator_type()):
         less_(comp), node_alloc_(alloc)
     {
         initialize();
     }
 
-    explicit set(const allocator_type &alloc): set(key_compare(), alloc) {}
+    explicit set(const allocator_type& alloc): set(key_compare(), alloc) {}
 
     /**
      *  range constructor
@@ -277,8 +277,8 @@ public:
      */
     template <typename InputIterator>
     set(InputIterator first, InputIterator last,
-        const key_compare &comp = key_compare(),
-        const allocator_type &alloc = allocator_type()): less_(comp), node_alloc_(alloc)
+        const key_compare& comp = key_compare(),
+        const allocator_type& alloc = allocator_type()): less_(comp), node_alloc_(alloc)
     {
         initialize();
         try
@@ -294,15 +294,15 @@ public:
 
     template <typename InputIterator>
     set(InputIterator first, InputIterator last, 
-        const allocator_type &alloc): set(first, last, key_compare(), alloc) {}
+        const allocator_type& alloc): set(first, last, key_compare(), alloc) {}
 
     /**
      * initializer list constructor
      * Constructs a container with a copy of each of the elements in il.
      */
     set(std::initializer_list<value_type> il,
-        const key_compare &comp = key_compare(),
-        const allocator_type &alloc = allocator_type()): set(il.begin(), il.end(), comp, alloc) {}
+        const key_compare& comp = key_compare(),
+        const allocator_type& alloc = allocator_type()): set(il.begin(), il.end(), comp, alloc) {}
 
     set(std::initializer_list<value_type> il, const allocator_type& alloc): set(il, key_compare(), alloc) {}
 
@@ -310,9 +310,9 @@ public:
      * copy constructor (and copying with allocator)
      * Constructs a container with a copy of each of the elements in x.
      */
-    set(const set &x): set(x, x.get_allocator()) {}
+    set(const set& x): set(x, x.get_allocator()) {}
 
-    set(const set &x, const allocator_type &alloc): 
+    set(const set& x, const allocator_type& alloc): 
         less_(x.less_), node_alloc_(alloc)
     {
         initialize();
@@ -326,7 +326,7 @@ public:
      * Otherwise, no elements are constructed (their ownership is directly transferred).
      * x is left in an unspecified but valid state.
      */
-    set(set &&x): less_(std::move(x.less_)), node_alloc_(std::move(x.node_alloc_))
+    set(set&& x): less_(std::move(x.less_)), node_alloc_(std::move(x.node_alloc_))
     {
         initialize();
         tree_.root = x.tree_.root;
@@ -363,14 +363,14 @@ public:
      */
     iterator begin() noexcept
     {
-        link_type *x = empty() ? nullptr : tree_minimum(tree_.root);
+        link_type* x = empty() ? nullptr : tree_minimum(tree_.root);
 
         return iterator(x);
     }
 
     const_iterator begin() const noexcept
     {
-        link_type *x = empty() ? nullptr : tree_minimum(tree_.root);
+        link_type* x = empty() ? nullptr : tree_minimum(tree_.root);
 
         return const_iterator(x);
     }
@@ -431,7 +431,7 @@ public:
      * Insert element
      * Extends the container by inserting new elements, effectively increasing the container size by the number of elements inserted.
      */
-    std::pair<iterator, bool> insert(const value_type &val)
+    std::pair<iterator, bool> insert(const value_type& val)
     {
         link_type *node = create_node(val);
         std::pair<link_type *, bool> ret = tree_insert(tree_.root, node);
@@ -441,7 +441,7 @@ public:
         return std::make_pair(iterator(ret.first), ret.second);
     }
 
-    std::pair<iterator,bool> insert (value_type&& val)
+    std::pair<iterator,bool> insert(value_type&& val)
     {
         link_type *node = create_node(std::move(val));
         std::pair<link_type *, bool> ret = tree_insert(tree_.root, node);
@@ -451,12 +451,27 @@ public:
         return std::make_pair(iterator(ret.first), ret.second);
     }
 
+    iterator insert(const_iterator position, const value_type& val)
+    {
+        return insert(val).first;
+    }
+
+    iterator insert(const_iterator position, value_type&& val)
+    {
+        return insert(std::move(val)).first;
+    }
+
     template <typename InputIterator>
     void insert(InputIterator first, InputIterator last)
     {
         while (first != last) {
             insert(*first++);
         }
+    }
+
+    void insert(std::initializer_list<value_type> il)
+    {
+        insert(il.begin(), il.end());
     }
 
     /**
@@ -484,17 +499,20 @@ public:
         return std::make_pair(iterator(ret.first), ret.second);
     }
 
+    template <typename... Args>
+    iterator emplace_hint(const_iterator position, Args&&... args);
+
     /**
      * Get iterator to element
      * Searches the container for an element equivalent to val and returns an iterator to it if found, 
      * otherwise it returns an iterator to set::end.
      */
-    const_iterator find(const value_type &val) const
+    const_iterator find(const value_type& val) const
     {
         return const_iterator(tree_find(tree_.root, val));
     }
 
-    iterator find(const value_type &val)
+    iterator find(const value_type& val)
     {
         return iterator(tree_find(tree_.root, val));
     }
@@ -503,7 +521,7 @@ public:
      * Count elements with a specific value
      * Searches the container for elements equivalent to val and returns the number of matches.
      */
-    size_type count(const value_type &val) const
+    size_type count(const value_type& val) const
     {
         return tree_find(tree_.root, val) == NULL ? 0 : 1;
     }
@@ -518,25 +536,25 @@ public:
     }
 
 private:
-    const value_type &get_value(link_type *node)
+    const value_type& get_value(link_type* node)
     {
-        return *static_cast<node_type *>(node)->valptr();
+        return *static_cast<node_type*>(node)->valptr();
     }
 
-    node_type *get_node()
+    node_type* get_node()
     {
         return node_alloc_.allocate(1);
     }
 
-    void put_node(node_type *node)
+    void put_node(node_type* node)
     {
         node_alloc_.deallocate(node, 1);
     }
 
     template <typename ...Args>
-    link_type *create_node(Args &&...args)
+    link_type* create_node(Args&&... args)
     {
-        node_type *node = get_node();
+        node_type* node = get_node();
         tree_node_init(node);
         try
         {
@@ -547,12 +565,12 @@ private:
             put_node(node);
             throw;
         }
-        return static_cast<link_type *>(node);
+        return static_cast<link_type*>(node);
     }
 
-    void destroy_node(link_type *link)
+    void destroy_node(link_type* link)
     {
-        node_type *node = static_cast<node_type *>(link);
+        node_type* node = static_cast<node_type*>(link);
         node->valptr()->~T();
         node_alloc_.deallocate(node, 1);
     }
@@ -567,7 +585,7 @@ private:
         destroy_tree(tree_.root);
     }
 
-    void destroy_tree(link_type *root)
+    void destroy_tree(link_type* root)
     {
         if (root == NULL)
             return;
@@ -577,14 +595,14 @@ private:
         destroy_node(root);
     }
 
-    std::pair<link_type *, bool> tree_insert(link_type *root, link_type *z)
+    std::pair<link_type*, bool> tree_insert(link_type* root, link_type* z)
     {
-        const value_type &z_val = get_value(z);
-        link_type *y = NULL;
-        link_type *x = root;
+        const value_type& z_val = get_value(z);
+        link_type* y = NULL;
+        link_type* x = root;
         while (x != NULL) {
             y = x;
-            const value_type &x_val = get_value(x);
+            const value_type& x_val = get_value(x);
             if (less_(z_val, x_val)) {          // z->val < x->val
                 x = x->left;
             } else if (less_(x_val, z_val)) {     // x->val < z->val
@@ -604,10 +622,10 @@ private:
         return std::make_pair(z, true);
     }
 
-    link_type *tree_find(link_type *root, const value_type &val) const {
-        link_type *x = root;
+    link_type* tree_find(link_type* root, const value_type& val) const {
+        link_type* x = root;
         while (x != NULL) {
-            const value_type &x_val = *static_cast<node_type *>(x)->valptr();
+            const value_type& x_val = *static_cast<node_type*>(x)->valptr();
             if (less_(val, x_val)) {        // val < x->val
                 x = x->left;
             } else if (less_(x_val, val)) { // x->val < val
@@ -619,13 +637,13 @@ private:
         return x;
     }
 
-    link_type *clone_tree(link_type *root) {
+    link_type* clone_tree(link_type* root) {
         if (root == NULL)
             return NULL;
 
-        link_type *left = NULL;
-        link_type *right = NULL;
-        link_type *node = NULL;
+        link_type* left = NULL;
+        link_type* right = NULL;
+        link_type* node = NULL;
 
         try 
         {
@@ -636,7 +654,7 @@ private:
             right = clone_tree(root->right);
 
             // clone root node
-            node = create_node(*static_cast<const node_type *>(root)->valptr());
+            node = create_node(*static_cast<const node_type*>(root)->valptr());
             tree_set_left_child(node, left);
             tree_set_right_child(node, right);
             return node;
@@ -650,13 +668,13 @@ private:
         }
     }
 
-    link_type *move_tree(link_type *root) {
+    link_type* move_tree(link_type* root) {
         if (root == NULL)
             return NULL;
 
-        link_type *left = NULL;
-        link_type *right = NULL;
-        link_type *node = NULL;
+        link_type* left = NULL;
+        link_type* right = NULL;
+        link_type* node = NULL;
 
         try 
         {
@@ -667,7 +685,7 @@ private:
             right = move_tree(root->right);
 
             // move root node
-            node = create_node(std::move(*static_cast<const node_type *>(root)->valptr()));
+            node = create_node(std::move(*static_cast<const node_type*>(root)->valptr()));
             tree_set_left_child(node, left);
             tree_set_right_child(node, right);
             return node;

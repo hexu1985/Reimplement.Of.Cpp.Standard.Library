@@ -22,21 +22,21 @@ namespace binary_search {
 // 以及指向左右子节点的指针,
 // 不包含数据
 typedef struct tree_node_t {
-    tree_node_t *parent;
-    tree_node_t *left;
-    tree_node_t *right;
+    tree_node_t* parent;
+    tree_node_t* left;
+    tree_node_t* right;
 } tree_node_t;
 
 // 初始化二叉搜素树节点
 inline
-void tree_node_init(tree_node_t *x)
+void tree_node_init(tree_node_t* x)
 {
     x->parent = x->left = x->right = NULL; 
 }
 
 // 设置左子节点, p -> parent, l -> left child
 inline
-void tree_set_left_child(tree_node_t *p, tree_node_t *l)
+void tree_set_left_child(tree_node_t* p, tree_node_t* l)
 {
     assert(p->left == NULL);
     p->left = l;
@@ -45,7 +45,7 @@ void tree_set_left_child(tree_node_t *p, tree_node_t *l)
 
 // 设置右子节点, p -> parent, r -> right child
 inline
-void tree_set_right_child(tree_node_t *p, tree_node_t *r)
+void tree_set_right_child(tree_node_t* p, tree_node_t* r)
 {
     assert(p->right == NULL);
     p->right = r;
@@ -54,7 +54,7 @@ void tree_set_right_child(tree_node_t *p, tree_node_t *r)
 
 // 返回以节点x为根的子树的最小元素的指针,
 inline
-tree_node_t *tree_minimum(tree_node_t *x)
+tree_node_t* tree_minimum(tree_node_t* x)
 {
 	while (x->left != NULL)
 		x = x->left;
@@ -63,7 +63,7 @@ tree_node_t *tree_minimum(tree_node_t *x)
 
 // 返回以节点x为根的子树的最大元素的指针,
 inline
-tree_node_t *tree_maximum(tree_node_t *x)
+tree_node_t* tree_maximum(tree_node_t* x)
 {
 	while (x->right != NULL)
 		x = x->right;
@@ -72,12 +72,12 @@ tree_node_t *tree_maximum(tree_node_t *x)
 
 // 返回以节点x的后继节点
 inline
-tree_node_t *tree_successor(tree_node_t *x)
+tree_node_t* tree_successor(tree_node_t* x)
 {
 	if (x->right != NULL)
 		return tree_minimum(x->right);
 
-	tree_node_t *y = x->parent;
+	tree_node_t* y = x->parent;
 	while (y != NULL && x == y->right) {
 		x = y;
 		y = y->parent;
@@ -87,12 +87,12 @@ tree_node_t *tree_successor(tree_node_t *x)
 
 // 返回以节点x的前驱节点
 inline
-tree_node_t *tree_predecessor(tree_node_t *x)
+tree_node_t* tree_predecessor(tree_node_t* x)
 {
 	if (x->left != NULL)
 		return tree_maximum(x->left);
 
-	tree_node_t *y = x->parent;
+	tree_node_t* y = x->parent;
 	while (y != NULL && x == y->left) {
 		x = y;
 		y = y->parent;
@@ -102,7 +102,7 @@ tree_node_t *tree_predecessor(tree_node_t *x)
 
 // 返回以节点x为根节点的子树的节点个数
 inline
-int tree_size(tree_node_t *x)
+int tree_size(tree_node_t* x)
 {
     if (x == NULL)
         return 0;
@@ -112,19 +112,19 @@ int tree_size(tree_node_t *x)
 
 // 二叉搜索树
 typedef struct tree_t {
-	tree_node_t *root;
+	tree_node_t* root;
 } tree_t;
 
 // 初始化二叉搜索树
 inline
-void tree_init(tree_t *bst)
+void tree_init(tree_t* bst)
 {
 	bst->root = NULL;
 }
 
 // 设置二叉树的根节点
 inline 
-void tree_set_root(tree_t *bst, tree_node_t *root)
+void tree_set_root(tree_t* bst, tree_node_t* root)
 {
     assert(bst->root == NULL);
     bst->root = root;
@@ -132,7 +132,7 @@ void tree_set_root(tree_t *bst, tree_node_t *root)
 
 // 判断二叉搜索树是否为空,
 inline
-bool tree_is_empty(const tree_t *bst)
+bool tree_is_empty(const tree_t* bst)
 {
 	return (bst->root == NULL);
 }
@@ -158,7 +158,7 @@ bool tree_is_empty(const tree_t *bst)
  *
  */
 inline
-void tree_transplant(tree_t *bst, tree_node_t *u, tree_node_t *v)
+void tree_transplant(tree_t* bst, tree_node_t* u, tree_node_t* v)
 {
 	if (u->parent == NULL) {            // u为树的根节点
         tree_set_root(bst, v);
@@ -221,14 +221,14 @@ void tree_transplant(tree_t *bst, tree_node_t *u, tree_node_t *v)
  *
  */
 inline
-void tree_delete(tree_t *bst, tree_node_t *z)
+void tree_delete(tree_t* bst, tree_node_t* z)
 {
 	if (z->left == NULL)
 		tree_transplant(bst, z, z->right);      // a)
 	else if (z->right == NULL)          
 		tree_transplant(bst, z, z->left);       // b)
 	else {
-		tree_node_t *y = tree_minimum(z->right);
+		tree_node_t* y = tree_minimum(z->right);
 		if (y->parent != z) {
 			tree_transplant(bst, y, y->right);  // d)
             tree_set_right_child(y, z->right);  // d)
@@ -240,16 +240,18 @@ void tree_delete(tree_t *bst, tree_node_t *z)
 
 // 获取二叉树节点个数
 inline
-int tree_size(const tree_t *bst)
+int tree_size(const tree_t* bst)
 {
     return tree_size(bst->root);
 }
 
 // 交换两棵二叉树
 inline 
-void tree_swap(tree_t *t1, tree_t *t2)
+void tree_swap(tree_t* t1, tree_t* t2)
 {
-    std::swap(t1->root, t2->root);
+    tree_node_t* tmp = t1->root;
+    t1->root = t2->root;
+    t2->root = tmp;
 }
 
 #ifdef __cplusplus
