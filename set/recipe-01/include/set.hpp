@@ -433,13 +433,21 @@ public:
      */
     std::pair<iterator, bool> insert(const value_type &val)
     {
-        std::pair<link_type *, bool> ret = tree_insert(tree_.root, val);
+        link_type *node = create_node(val);
+        std::pair<link_type *, bool> ret = tree_insert(tree_.root, node);
+        if (ret.second == false) {
+            destroy_node(node);
+        }
         return std::make_pair(iterator(ret.first), ret.second);
     }
 
     std::pair<iterator,bool> insert (value_type&& val)
     {
-        std::pair<link_type *, bool> ret = tree_insert(tree_.root, std::move(val));
+        link_type *node = create_node(std::move(val));
+        std::pair<link_type *, bool> ret = tree_insert(tree_.root, node);
+        if (ret.second == false) {
+            destroy_node(node);
+        }
         return std::make_pair(iterator(ret.first), ret.second);
     }
 
@@ -468,7 +476,11 @@ public:
     template <typename... Args>
     std::pair<iterator, bool> emplace(Args&&... args)
     {
-        std::pair<link_type *, bool> ret = tree_emplace(tree_.root, std::forward<Args>(args)...);
+        link_type *node = create_node(std::forward<Args>(args)...);
+        std::pair<link_type *, bool> ret = tree_insert(tree_.root, node);
+        if (ret.second == false) {
+            destroy_node(node);
+        }
         return std::make_pair(iterator(ret.first), ret.second);
     }
 
@@ -565,80 +577,31 @@ private:
         destroy_node(root);
     }
 
-    std::pair<link_type *, bool> tree_insert(link_type *root, const value_type &val)
+    std::pair<link_type *, bool> tree_insert(link_type *root, link_type *z)
     {
+        const value_type &z_val = get_value(z);
         link_type *y = NULL;
         link_type *x = root;
         while (x != NULL) {
             y = x;
             const value_type &x_val = get_value(x);
-            if (less_(val, x_val)) {        // val < x->val
+            if (less_(z_val, x_val)) {          // z->val < x->val
                 x = x->left;
-            } else if (less_(x_val, val)) { // x->val < val
+            } else if (less_(x_val, z_val)) {     // x->val < z->val
                 x = x->right;
             } else {    // val == x->val
                 return std::make_pair(x, false);
             }
         }
 
-        link_type *z = create_node(val);
-        tree_set_child(y, z);
-        return std::make_pair(z, true);
-    }
-
-    std::pair<link_type *, bool> tree_insert(link_type *root, value_type &&val)
-    {
-        link_type *y = NULL;
-        link_type *x = root;
-        while (x != NULL) {
-            y = x;
-            const value_type &x_val = get_value(x);
-            if (less_(val, x_val)) {        // val < x->val
-                x = x->left;
-            } else if (less_(x_val, val)) { // x->val < val
-                x = x->right;
-            } else {    // val == x->val
-                return std::make_pair(x, false);
-            }
-        }
-
-        link_type *z = create_node(std::move(val));
-        tree_set_child(y, z);
-        return std::make_pair(z, true);
-    }
-
-    template <typename ... Args>
-    std::pair<link_type *, bool> tree_emplace(link_type *root, Args &&... args)
-    {
-        value_type val = value_type(std::forward<Args>(args)...);
-        link_type *y = NULL;
-        link_type *x = root;
-        while (x != NULL) {
-            y = x;
-            const value_type &x_val = get_value(x);
-            if (less_(val, x_val)) {        // val < x->val
-                x = x->left;
-            } else if (less_(x_val, val)) { // x->val < val
-                x = x->right;
-            } else {    // val == x->val
-                return std::make_pair(x, false);
-            }
-        }
-
-        link_type *z = create_node(std::move(val));
-        tree_set_child(y, z);
-        return std::make_pair(z, true);
-    }
-
-    void tree_set_child(link_type *p, link_type *c)
-    {
-        if (p == NULL) {
-            tree_set_root(&tree_, c);
-        } else if (less_(get_value(c), get_value(p))) {
-            tree_set_left_child(p, c);
+        if (y == NULL) {
+            tree_set_root(&tree_, z);
+        } else if (less_(get_value(z), get_value(y))) {
+            tree_set_left_child(y, z);
         } else {
-            tree_set_right_child(p, c);
+            tree_set_right_child(y, z);
         }
+        return std::make_pair(z, true);
     }
 
     link_type *tree_find(link_type *root, const value_type &val) const {
