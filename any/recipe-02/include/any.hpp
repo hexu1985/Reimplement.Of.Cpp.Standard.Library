@@ -18,18 +18,18 @@ public: // structors
     }
 
     template <typename ValueType>
-    any(const ValueType &value)
+    any(const ValueType& value)
         : content(new holder<typename std::remove_cv<typename std::decay<const ValueType>::type>::type>(value))
     {
     }
 
-    any(const any &other)
+    any(const any& other)
         : content(other.content ? other.content->clone() : 0)
     {
     }
 
     // Move constructor
-    any(any &&other) noexcept
+    any(any&& other) noexcept
         : content(other.content)
     {
         other.content = 0;
@@ -37,10 +37,10 @@ public: // structors
 
     // Perfect forwarding of ValueType
     template <typename ValueType,
-        typename = typename std::enable_if<!std::is_same<any &, ValueType>::value>::type,
+        typename = typename std::enable_if<!std::is_same<any&, ValueType>::value>::type,
         typename = typename std::enable_if<!std::is_const<ValueType>::value>::type>
-    any(ValueType &&value)
-        : content(new holder<typename std::decay<ValueType>::type>(static_cast<ValueType &&>(value)))
+    any(ValueType&& value)
+        : content(new holder<typename std::decay<ValueType>::type>(static_cast<ValueType&&>(value)))
     {
     }
 
@@ -50,20 +50,20 @@ public: // structors
     }
 
 public: // modifiers
-    any &swap(any &rhs) noexcept
+    any& swap(any& rhs) noexcept
     {
         std::swap(content, rhs.content);
         return *this;
     }
 
-    any &operator =(const any &rhs)
+    any& operator= (const any& rhs)
     {
         any(rhs).swap(*this);
         return *this;
     }
 
     // move assignment
-    any &operator =(any &&rhs) noexcept
+    any& operator= (any&& rhs) noexcept
     {
         rhs.swap(*this);
         any().swap(rhs);
@@ -72,9 +72,9 @@ public: // modifiers
 
     // Perfect forwading of ValueType
     template <typename ValueType>
-    any &operator =(ValueType &&rhs)
+    any& operator= (ValueType&& rhs)
     {
-        any(static_cast<ValueType &&>(rhs)).swap(*this);
+        any(static_cast<ValueType&&>(rhs)).swap(*this);
         return *this;
     }
 
@@ -94,7 +94,7 @@ public: // queries
         any().swap(*this);
     }
 
-    const std::type_info &type() const noexcept
+    const std::type_info& type() const noexcept
     {
         return content ? content->type() : typeid(void);
     }
@@ -107,31 +107,31 @@ private: // types
         }
 
     public: // queries
-        virtual const std::type_info &type() const noexcept = 0;
+        virtual const std::type_info& type() const noexcept = 0;
 
-        virtual placeholder *clone() const = 0;
+        virtual placeholder* clone() const = 0;
     };
 
     template <typename ValueType>
     class holder final: public placeholder {
     public: // structors
-        holder(const ValueType &value)
+        holder(const ValueType& value)
             : held(value)
         {
         }
 
-        holder(ValueType &&value)
-            : held(static_cast<ValueType &&>(value))
+        holder(ValueType&& value)
+            : held(static_cast<ValueType&&>(value))
         {
         }
 
     public: // queries
-        virtual const std::type_info &type() const noexcept
+        virtual const std::type_info& type() const noexcept
         {
             return typeid(ValueType);
         }
 
-        virtual placeholder *clone() const
+        virtual placeholder* clone() const
         {
             return new holder(held);
         }
@@ -140,52 +140,52 @@ private: // types
         ValueType held;
 
     private: // intentionally left unimplemented
-        holder &operator =(const holder &) = delete;
+        holder& operator= (const holder&) = delete;
     };
 
 private: // representation
     template <typename ValueType>
-    friend ValueType *any_cast(any *) noexcept;
+    friend ValueType* any_cast(any*) noexcept;
 
     template <typename ValueType>
-    friend ValueType *unsafe_any_cast(any *) noexcept;
+    friend ValueType* unsafe_any_cast(any*) noexcept;
 
-    placeholder *content;
+    placeholder* content;
 };
 
-inline void swap(any &lhs, any &rhs) noexcept
+inline void swap(any& lhs, any& rhs) noexcept
 {
     lhs.swap(rhs);
 }
 
 class bad_any_cast: public std::bad_cast {
 public:
-    virtual const char *what() const noexcept
+    virtual const char* what() const noexcept
     {
         return "bad_any_cast: failed conversion using any_cast";
     }
 };
 
 template <typename ValueType>
-ValueType *any_cast(any *operand) noexcept
+ValueType* any_cast(any* operand) noexcept
 {
     return operand && operand->type() == typeid(ValueType)
-        ? &static_cast<any::holder<typename std::remove_cv<ValueType>::type> *>(operand->content)->held
+        ? &static_cast<any::holder<typename std::remove_cv<ValueType>::type>*>(operand->content)->held
         : 0;
 }
 
 template <typename ValueType>
-inline const ValueType *any_cast(const any *operand) noexcept
+inline const ValueType* any_cast(const any* operand) noexcept
 {
-    return any_cast<ValueType>(const_cast<any *>(operand));
+    return any_cast<ValueType>(const_cast<any*>(operand));
 }
 
 template <typename ValueType>
-ValueType any_cast(any &operand)
+ValueType any_cast(any& operand)
 {
     typedef typename std::remove_reference<ValueType>::type nonref;
 
-    nonref *result = any_cast<nonref>(&operand);
+    nonref* result = any_cast<nonref>(&operand);
     if(!result)
         throw bad_any_cast();
 
@@ -196,17 +196,17 @@ ValueType any_cast(any &operand)
     typedef typename std::conditional<
         std::is_reference<ValueType>::value,
         ValueType,
-        ValueType &
+        ValueType& 
     >::type ref_type;
 
     return static_cast<ref_type>(*result);
 }
 
 template <typename ValueType>
-inline ValueType any_cast(const any &operand)
+inline ValueType any_cast(const any& operand)
 {
     typedef typename std::remove_reference<ValueType>::type nonref;
-    return any_cast<const nonref &>(const_cast<any &>(operand));
+    return any_cast<const nonref&>(const_cast<any&>(operand));
 }
 
 // Note: The "unsafe" versions of any_cast are not part of the
@@ -215,17 +215,17 @@ inline ValueType any_cast(const any &operand)
 // use typeid() comparison, e.g., when our types may travel across
 // different shared libraries.
 template <typename ValueType>
-inline ValueType *unsafe_any_cast(any *operand) noexcept
+inline ValueType* unsafe_any_cast(any* operand) noexcept
 {
-    return &static_cast<any::holder<ValueType> *>(operand->content)->held;
+    return &static_cast<any::holder<ValueType>*>(operand->content)->held;
 }
 
 template <typename ValueType>
-inline const ValueType *unsafe_any_cast(const any *operand) noexcept
+inline const ValueType* unsafe_any_cast(const any* operand) noexcept
 {
-    return unsafe_any_cast<ValueType>(const_cast<any *>(operand));
+    return unsafe_any_cast<ValueType>(const_cast<any*>(operand));
 }
 
-}    // namespace mini_stl
+}   // namespace mini_stl
 
 #endif // MINI_STL_ANY_INC
