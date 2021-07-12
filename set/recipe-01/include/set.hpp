@@ -8,6 +8,7 @@
 #include "set_impl.h"
 
 #include <memory>
+#include <limits>
 #include <initializer_list>
 
 namespace mini_stl {
@@ -21,7 +22,7 @@ template <typename T>
 struct set_node: public binary_search::tree_node_t {
     // raw storage buffer for type T
     typename 
-    std::aligned_storage<sizeof (T), std::alignment_of<T>::value>::type storage;
+    std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type storage;
 
     T* valptr() noexcept
     {
@@ -34,194 +35,8 @@ struct set_node: public binary_search::tree_node_t {
     }
 };
 
-/**
- * A set::iterator.
- * All the functions are op overloads.
- */
-template <typename T>
-struct set_iterator {
-    typedef binary_search::tree_node_t link_type;
-    link_type* link = nullptr;
-
-    typedef T value_type;
-    typedef T* pointer;
-    typedef T& reference;
-    typedef ptrdiff_t difference_type;
-    typedef std::bidirectional_iterator_tag iterator_category;
-
-    typedef set_iterator<T> this_type;
-    typedef set_node<T> node_type;
-
-    set_iterator() = default;
-
-    explicit set_iterator(link_type* link_): link(link_) {}
-
-    reference operator* () const
-    {
-        assert(link != nullptr);
-        return *static_cast<node_type*>(link)->valptr();
-    }
-
-    pointer operator-> () const
-    {
-        assert(link != nullptr);
-        return static_cast<node_type*>(link)->valptr();
-    }
-
-    this_type& operator++ ()
-    {
-        next();
-        return *this;
-    }
-
-    this_type operator++ (int)
-    {
-        this_type tmp(*this);
-        next();
-        return tmp;
-    }
-
-    this_type& operator-- ()
-    {
-        prev();
-        return *this;
-    }
-
-    this_type operator-- (int)
-    {
-        this_type tmp(*this);
-        prev();
-        return tmp;
-    }
-
-    bool operator== (const this_type& other) const
-    {
-        return (this->link == other.link);
-    }
-
-    bool operator!= (const this_type& other) const
-    {
-        return !(*this == other);
-    }
-
-    void next()
-    {
-        assert(link != nullptr);
-        link = tree_successor(link);
-    }
-
-    void prev()
-    {
-        assert(link != nullptr);
-        link = tree_predecessor(link);
-    }
-};
-
-/**
- * A set::const_iterator.
- * All the functions are op overloads.
- */
-template <typename T>
-struct set_const_iterator {
-    typedef binary_search::tree_node_t link_type;
-    link_type* link = nullptr;
-
-    typedef T value_type;
-    typedef const T* pointer;
-    typedef const T& reference;
-    typedef ptrdiff_t difference_type;
-    typedef std::bidirectional_iterator_tag iterator_category;
-
-    typedef set_const_iterator<T> this_type;
-    typedef set_node<T> node_type;
-    typedef set_iterator<T> iterator;
-
-    set_const_iterator() = default;
-
-    explicit set_const_iterator(link_type* link_): link(link_) {}
-
-    set_const_iterator(const iterator& iter): link(iter.link) {}
-
-    reference operator* () const
-    {
-        assert(link != nullptr);
-        return *static_cast<node_type*>(link)->valptr();
-    }
-
-    pointer operator-> () const
-    {
-        assert(link != nullptr);
-        return static_cast<node_type*>(link)->valptr();
-    }
-
-    this_type& operator++ ()
-    {
-        next();
-        return *this;
-    }
-
-    this_type operator++ (int)
-    {
-        this_type tmp(*this);
-        next();
-        return tmp;
-    }
-
-    this_type& operator--()
-    {
-        prev();
-        return *this;
-    }
-
-    this_type operator-- (int)
-    {
-        this_type tmp(*this);
-        prev();
-        return tmp;
-    }
-
-    bool operator== (const this_type& other) const
-    {
-        return (this->link == other.link);
-    }
-
-    bool operator!= (const this_type& other) const
-    {
-        return !(*this == other);
-    }
-
-    void next()
-    {
-        assert(link != nullptr);
-        link = tree_successor(link);
-    }
-
-    void prev()
-    {
-        assert(link != nullptr);
-        link = tree_predecessor(link);
-    }
-};
-
-/**
- * set iterator equality comparison.
- */
-template <typename T>
-inline
-bool operator== (const set_iterator<T>& x, const set_const_iterator<T>& y)
-{
-    return (x.link == y.link);
-}
-
-/**
- * set iterator inequality comparison.
- */
-template <typename T>
-inline
-bool operator!= (const set_iterator<T>& x, const set_const_iterator<T>& y)
-{
-    return !(x == y);
-}
+#include "set_iterator.hpp"
+#include "set_reverse_iterator.hpp"
 
 /**
  * Sets are containers that store unique elements following a specific order.
@@ -249,8 +64,8 @@ public:
     typedef typename std::allocator_traits<allocator_type>::const_pointer const_pointer;
     typedef set_iterator<const value_type> iterator;
     typedef set_const_iterator<const value_type> const_iterator;
-    typedef std::reverse_iterator<iterator> reverse_iterator;
-    typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+    typedef set_reverse_iterator<const value_type> reverse_iterator;
+    typedef set_const_reverse_iterator<const value_type> const_reverse_iterator;
     typedef ptrdiff_t difference_type;
     typedef size_t size_type;
     typedef set_node<value_type> node_type;
@@ -349,6 +164,39 @@ public:
     }
 
     /**
+     * Copy container content
+     * Assigns new contents to the container, replacing its current content.
+     */
+    set& operator= (const set& x)
+    {
+        if (this == &x) {
+            return *this;
+        }
+
+        link_type *new_root = clone_tree(x.tree_.root);
+        finalize();
+        initialize();
+        tree_.root = new_root;
+        return *this;
+    }
+
+    set& operator= (set&& x)
+    {
+        if (this == &x) {
+            return *this;
+        }
+
+        set(std::move(x)).swap(*this);
+        return *this;
+    }
+
+    set& operator= (std::initializer_list<value_type> il)
+    {
+        set(il).swap(*this);
+        return *this;
+    }
+
+    /**
      * Set destructor
      * Destroys the container object.
      */
@@ -364,14 +212,12 @@ public:
     iterator begin() noexcept
     {
         link_type* x = empty() ? nullptr : tree_minimum(tree_.root);
-
         return iterator(x);
     }
 
     const_iterator begin() const noexcept
     {
         link_type* x = empty() ? nullptr : tree_minimum(tree_.root);
-
         return const_iterator(x);
     }
 
@@ -396,7 +242,6 @@ public:
     const_iterator cbegin() const noexcept
     {
         link_type *x = empty() ? nullptr : tree_minimum(tree_.root);
-
         return const_iterator(x);
     }
 
@@ -407,6 +252,38 @@ public:
     const_iterator cend() const noexcept
     {
         return const_iterator(nullptr);
+    }
+
+    /**
+     * Return reverse iterator to reverse beginning
+     * Returns a reverse iterator pointing to the last element in the container (i.e., its reverse beginning).
+     *
+     * Reverse iterators iterate backwards: increasing them moves them towards the beginning of the container.
+     */
+    reverse_iterator rbegin() noexcept
+    {
+        link_type *x = empty() ? nullptr : tree_maximum(tree_.root);
+        return reverse_iterator(x);
+    }
+
+    const_reverse_iterator rbegin() const noexcept
+    {
+        link_type *x = empty() ? nullptr : tree_maximum(tree_.root);
+        return const_reverse_iterator(x);
+    }
+
+    /**
+     * Return reverse iterator to reverse end
+     * Returns a reverse iterator pointing to the theoretical element right before the first element in the set container (which is considered its reverse end).
+     */
+    reverse_iterator rend() noexcept
+    {
+        return reverse_iterator(nullptr);
+    }
+
+    const_reverse_iterator rend() const noexcept
+    {
+        return const_reverse_iterator(nullptr);
     }
 
     /**
@@ -425,6 +302,15 @@ public:
     size_type size() const noexcept
     {
         return tree_size(tree_.root);
+    }
+
+    /**
+     * Return maximum size
+     * Returns the maximum number of elements that the set container can hold.
+     */
+    size_type max_size() const noexcept
+    {
+        return std::numeric_limits<size_type>::max() / sizeof(node_type);
     }
 
     /**
@@ -508,6 +394,18 @@ public:
     }
 
     /**
+     * Swap content
+     * Exchanges the content of the container by the content of x, which is another set of the same type. Sizes may differ.
+     */
+    void swap(set& x)
+    {
+        using std::swap;
+        swap(tree_, x.tree_);
+        swap(less_, x.less_);
+        swap(node_alloc_, x.node_alloc_);
+    }
+
+    /**
      * Clear content
      * Removes all elements from the set container (which are destroyed), leaving the container with a size of 0.
      */
@@ -536,6 +434,24 @@ public:
     iterator emplace_hint(const_iterator position, Args&&... args)
     {
         return emplace(std::forward<Args>(args)...).first;
+    }
+
+    /**
+     * Return comparison object
+     * Returns a copy of the comparison object used by the container.
+     */
+    key_compare key_comp() const
+    {
+        return less_;
+    }
+
+    /**
+     * Return comparison object
+     * Returns a copy of the comparison object used by the container.
+     */
+    value_compare value_comp() const
+    {
+        return less_;
     }
 
     /**
@@ -855,6 +771,51 @@ private:
     }
 };
 
+template <typename T, typename Compare, typename Alloc>
+inline
+bool operator== (const set<T, Compare, Alloc> &lhs, const set<T, Compare, Alloc> &rhs)
+{
+    if (lhs.size() != rhs.size())
+        return false;
+
+    return std::equal(lhs.begin(), lhs.end(), rhs.begin());
+}
+
+template <typename T, typename Compare, typename Alloc>
+inline
+bool operator!= (const set<T, Compare, Alloc> &lhs, const set<T, Compare, Alloc> &rhs)
+{
+    return !(lhs == rhs);
+}
+
+template <typename T, typename Compare, typename Alloc>
+inline
+bool operator< (const set<T, Compare, Alloc> &lhs, const set<T, Compare, Alloc> &rhs)
+{
+    return std::lexicographical_compare(lhs.begin(), lhs.end(),
+        rhs.begin(), rhs.end());
+}
+
+template <typename T, typename Compare, typename Alloc>
+inline
+bool operator> (const set<T, Compare, Alloc> &lhs, const set<T, Compare, Alloc> &rhs)
+{
+    return (rhs < lhs);
+}
+
+template <typename T, typename Compare, typename Alloc>
+inline
+bool operator<= (const set<T, Compare, Alloc> &lhs, const set<T, Compare, Alloc> &rhs)
+{
+    return !(lhs > rhs);
+}
+
+template <typename T, typename Compare, typename Alloc>
+inline
+bool operator>= (const set<T, Compare, Alloc> &lhs, const set<T, Compare, Alloc> &rhs)
+{
+    return !(lhs < rhs);
+}
 
 } // namespace mini_stl
 
