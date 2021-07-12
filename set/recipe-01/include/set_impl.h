@@ -38,7 +38,6 @@ void tree_node_init(tree_node_t* x)
 inline
 void tree_set_left_child(tree_node_t* p, tree_node_t* l)
 {
-    assert(p->left == NULL);
     p->left = l;
     if (l != NULL) l->parent = p;
 }
@@ -47,7 +46,6 @@ void tree_set_left_child(tree_node_t* p, tree_node_t* l)
 inline
 void tree_set_right_child(tree_node_t* p, tree_node_t* r)
 {
-    assert(p->right == NULL);
     p->right = r;
     if (r != NULL) r->parent = p;
 }
@@ -56,48 +54,48 @@ void tree_set_right_child(tree_node_t* p, tree_node_t* r)
 inline
 tree_node_t* tree_minimum(tree_node_t* x)
 {
-	while (x->left != NULL)
-		x = x->left;
-	return x;
+    while (x->left != NULL)
+        x = x->left;
+    return x;
 }
 
 // 返回以节点x为根的子树的最大元素的指针,
 inline
 tree_node_t* tree_maximum(tree_node_t* x)
 {
-	while (x->right != NULL)
-		x = x->right;
-	return x;
+    while (x->right != NULL)
+        x = x->right;
+    return x;
 }
 
 // 返回以节点x的后继节点
 inline
 tree_node_t* tree_successor(tree_node_t* x)
 {
-	if (x->right != NULL)
-		return tree_minimum(x->right);
+    if (x->right != NULL)
+        return tree_minimum(x->right);
 
-	tree_node_t* y = x->parent;
-	while (y != NULL && x == y->right) {
-		x = y;
-		y = y->parent;
-	}	
-	return y;
+    tree_node_t* y = x->parent;
+    while (y != NULL && x == y->right) {
+        x = y;
+        y = y->parent;
+    }    
+    return y;
 }
 
 // 返回以节点x的前驱节点
 inline
 tree_node_t* tree_predecessor(tree_node_t* x)
 {
-	if (x->left != NULL)
-		return tree_maximum(x->left);
+    if (x->left != NULL)
+        return tree_maximum(x->left);
 
-	tree_node_t* y = x->parent;
-	while (y != NULL && x == y->left) {
-		x = y;
-		y = y->parent;
-	}	
-	return y;
+    tree_node_t* y = x->parent;
+    while (y != NULL && x == y->left) {
+        x = y;
+        y = y->parent;
+    }    
+    return y;
 }
 
 // 返回以节点x为根节点的子树的节点个数
@@ -112,29 +110,28 @@ int tree_size(tree_node_t* x)
 
 // 二叉搜索树
 typedef struct tree_t {
-	tree_node_t* root;
+    tree_node_t* root;
 } tree_t;
 
 // 初始化二叉搜索树
 inline
-void tree_init(tree_t* bst)
+void tree_init(tree_t* tree)
 {
-	bst->root = NULL;
+    tree->root = NULL;
 }
 
 // 设置二叉树的根节点
 inline 
-void tree_set_root(tree_t* bst, tree_node_t* root)
+void tree_set_root(tree_t* tree, tree_node_t* root)
 {
-    assert(bst->root == NULL);
-    bst->root = root;
+    tree->root = root;
 }
 
 // 判断二叉搜索树是否为空,
 inline
-bool tree_is_empty(const tree_t* bst)
+bool tree_is_empty(const tree_t* tree)
 {
-	return (bst->root == NULL);
+    return (tree->root == NULL);
 }
 
 /**
@@ -158,15 +155,18 @@ bool tree_is_empty(const tree_t* bst)
  *
  */
 inline
-void tree_transplant(tree_t* bst, tree_node_t* u, tree_node_t* v)
+void tree_transplant(tree_t* tree, tree_node_t* u, tree_node_t* v)
 {
-	if (u->parent == NULL) {            // u为树的根节点
-        tree_set_root(bst, v);
-	} else if (u == u->parent->left) {  // u为父节点的左子树
-        tree_set_left_child(u->parent, v);
-	} else {                            // u为父节点的右子树
-        tree_set_right_child(u->parent, v);
-	}
+    if (u->parent == NULL) {            // u为树的根结点
+        tree->root = v;
+    } else if (u == u->parent->left) {  // u为父结点的左子树
+        u->parent->left = v;
+    } else {                            // u为父结点的右子树
+        u->parent->right = v;
+    }
+
+    if (v != NULL)
+        v->parent = u->parent;
 }
 
 /**
@@ -221,28 +221,30 @@ void tree_transplant(tree_t* bst, tree_node_t* u, tree_node_t* v)
  *
  */
 inline
-void tree_delete(tree_t* bst, tree_node_t* z)
+void tree_delete(tree_t* tree, tree_node_t* z)
 {
-	if (z->left == NULL)
-		tree_transplant(bst, z, z->right);      // a)
-	else if (z->right == NULL)          
-		tree_transplant(bst, z, z->left);       // b)
-	else {
-		tree_node_t* y = tree_minimum(z->right);
-		if (y->parent != z) {
-			tree_transplant(bst, y, y->right);  // d)
-            tree_set_right_child(y, z->right);  // d)
-		} 
-		tree_transplant(bst, z, y);             // c)
-        tree_set_left_child(y, z->left);        // c)
-	}
+    if (z->left == NULL)
+        tree_transplant(tree, z, z->right);     // a)
+    else if (z->right == NULL)
+        tree_transplant(tree, z, z->left);      // b)
+    else {
+        tree_node_t* y = tree_minimum(z->right);
+        if (y->parent != z) {
+            tree_transplant(tree, y, y->right); // d)
+            y->right = z->right;                // d)
+            y->right->parent = y;               // d)
+        }
+        tree_transplant(tree, z, y);            // c)
+        y->left = z->left;                      // c)
+        y->left->parent = y;                    // c)
+    }
 }
 
 // 获取二叉树节点个数
 inline
-int tree_size(const tree_t* bst)
+int tree_size(const tree_t* tree)
 {
-    return tree_size(bst->root);
+    return tree_size(tree->root);
 }
 
 // 交换两棵二叉树

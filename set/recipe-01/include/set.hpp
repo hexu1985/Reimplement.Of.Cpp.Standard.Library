@@ -434,7 +434,7 @@ public:
     std::pair<iterator, bool> insert(const value_type& val)
     {
         link_type *node = create_node(val);
-        std::pair<link_type *, bool> ret = tree_insert(tree_.root, node);
+        std::pair<link_type*, bool> ret = insert(tree_.root, node);
         if (ret.second == false) {
             destroy_node(node);
         }
@@ -444,7 +444,7 @@ public:
     std::pair<iterator,bool> insert(value_type&& val)
     {
         link_type *node = create_node(std::move(val));
-        std::pair<link_type *, bool> ret = tree_insert(tree_.root, node);
+        std::pair<link_type*, bool> ret = insert(tree_.root, node);
         if (ret.second == false) {
             destroy_node(node);
         }
@@ -475,6 +475,39 @@ public:
     }
 
     /**
+     * Erase elements
+     * Removes from the set container either a single element or a range of elements ([first,last)).
+     */
+    iterator erase(const_iterator position)
+    {
+        assert(position != end());
+        link_type *node = position.link;
+        iterator next(node);
+        ++next;
+        tree_delete(&tree_, node);
+        destroy_node(node);
+        return next;
+    }
+
+    size_type erase(const value_type& val)
+    {
+        iterator it = find(val);
+        if (it = end())
+            return 0;
+        erase(it);
+        return 1;
+    }
+
+    iterator erase(const_iterator first, const_iterator last)
+    {
+        const_iterator it = first;
+        while (it != last) {
+            it = erase(it);
+        }
+        return iterator(last.link);
+    }
+
+    /**
      * Clear content
      * Removes all elements from the set container (which are destroyed), leaving the container with a size of 0.
      */
@@ -492,7 +525,7 @@ public:
     std::pair<iterator, bool> emplace(Args&&... args)
     {
         link_type *node = create_node(std::forward<Args>(args)...);
-        std::pair<link_type *, bool> ret = tree_insert(tree_.root, node);
+        std::pair<link_type*, bool> ret = insert(tree_.root, node);
         if (ret.second == false) {
             destroy_node(node);
         }
@@ -500,7 +533,10 @@ public:
     }
 
     template <typename... Args>
-    iterator emplace_hint(const_iterator position, Args&&... args);
+    iterator emplace_hint(const_iterator position, Args&&... args)
+    {
+        return emplace(std::forward<Args>(args)...).first;
+    }
 
     /**
      * Get iterator to element
@@ -509,12 +545,12 @@ public:
      */
     const_iterator find(const value_type& val) const
     {
-        return const_iterator(tree_find(tree_.root, val));
+        return const_iterator(find(tree_.root, val));
     }
 
     iterator find(const value_type& val)
     {
-        return iterator(tree_find(tree_.root, val));
+        return iterator(find(tree_.root, val));
     }
 
     /**
@@ -523,7 +559,53 @@ public:
      */
     size_type count(const value_type& val) const
     {
-        return tree_find(tree_.root, val) == NULL ? 0 : 1;
+        return find(tree_.root, val) == NULL ? 0 : 1;
+    }
+
+    /**
+     * Return iterator to lower bound
+     * Returns an iterator pointing to the first element in the container which is not considered to go before val (i.e., either it is equivalent or goes after).
+     */
+    iterator lower_bound(const value_type& val)
+    {
+        return iterator(lower_bound(tree_.root, val));
+    }
+
+    const_iterator lower_bound(const value_type& val) const
+    {
+        return const_iterator(lower_bound(tree_.root, val));
+    }
+
+    /**
+     * Return iterator to upper bound
+     * Returns an iterator pointing to the first element in the container which is considered to go after val.
+     */
+    iterator upper_bound(const value_type& val)
+    {
+        return iterator(upper_bound(tree_.root, val));
+    }
+
+    const_iterator upper_bound(const value_type& val) const
+    {
+        return const_iterator(upper_bound(tree_.root, val));
+    }
+
+    /**
+     * Get range of equal elements
+     * Returns the bounds of a range that includes all the elements in the container that are equivalent to val.
+     *
+     * Because all elements in a set container are unique, the range returned will contain a single element at most.
+     */
+    std::pair<iterator,iterator> equal_range(const value_type& val)
+    {
+        auto ret = equal_range(tree_.root, val);
+        return std::make_pair(iterator(ret.first), iterator(ret.second));
+    }
+
+    std::pair<const_iterator,const_iterator> equal_range(const value_type& val) const
+    {
+        auto ret = equal_range(tree_.root, val);
+        return std::make_pair(const_iterator(ret.first), const_iterator(ret.second));
     }
 
     /**
@@ -536,7 +618,7 @@ public:
     }
 
 private:
-    const value_type& get_value(link_type* node)
+    const value_type& get_value(link_type* node) const
     {
         return *static_cast<node_type*>(node)->valptr();
     }
@@ -595,7 +677,7 @@ private:
         destroy_node(root);
     }
 
-    std::pair<link_type*, bool> tree_insert(link_type* root, link_type* z)
+    std::pair<link_type*, bool> insert(link_type* root, link_type* z)
     {
         const value_type& z_val = get_value(z);
         link_type* y = NULL;
@@ -622,7 +704,8 @@ private:
         return std::make_pair(z, true);
     }
 
-    link_type* tree_find(link_type* root, const value_type& val) const {
+    link_type* find(link_type* root, const value_type& val) const 
+    {
         link_type* x = root;
         while (x != NULL) {
             const value_type& x_val = *static_cast<node_type*>(x)->valptr();
@@ -637,7 +720,78 @@ private:
         return x;
     }
 
-    link_type* clone_tree(link_type* root) {
+    link_type* lower_bound(link_type* root, const value_type& val) const 
+    {
+        link_type* y = NULL;
+        link_type* x = root;
+        while (x != NULL) {
+            y = x;
+            const value_type& x_val = get_value(x);
+            if (less_(val, x_val)) {          // z->val < x->val
+                x = x->left;
+            } else if (less_(x_val, val)) {     // x->val < z->val
+                x = x->right;
+            } else {    // val == x->val
+                return x;
+            }
+        }
+
+        if (less_(get_value(y), val)) {
+            return tree_successor(y);
+        } else {
+            return y;
+        }
+    }
+
+    link_type* upper_bound(link_type* root, const value_type& val) const 
+    {
+        link_type* y = NULL;
+        link_type* x = root;
+        while (x != NULL) {
+            y = x;
+            const value_type& x_val = get_value(x);
+            if (less_(val, x_val)) {          // z->val < x->val
+                x = x->left;
+            } else if (less_(x_val, val)) {     // x->val < z->val
+                x = x->right;
+            } else {    // val == x->val
+                return tree_successor(x);
+            }
+        }
+
+        if (less_(get_value(y), val)) {
+            return tree_successor(y);
+        } else {
+            return y;
+        }
+    }
+
+    std::pair<link_type*,link_type*> equal_range(link_type* root, const value_type& val) const
+    {
+        link_type* y = NULL;
+        link_type* x = root;
+        while (x != NULL) {
+            y = x;
+            const value_type& x_val = get_value(x);
+            if (less_(val, x_val)) {          // z->val < x->val
+                x = x->left;
+            } else if (less_(x_val, val)) {     // x->val < z->val
+                x = x->right;
+            } else {    // val == x->val
+                return std::make_pair(x, tree_successor(x));
+            }
+        }
+
+        if (less_(get_value(y), val)) {
+            link_type *z = tree_successor(y);
+            return std::make_pair(z, z);
+        } else {
+            return std::make_pair(y, y);
+        }
+    }
+
+    link_type* clone_tree(link_type* root) 
+    {
         if (root == NULL)
             return NULL;
 
@@ -668,7 +822,8 @@ private:
         }
     }
 
-    link_type* move_tree(link_type* root) {
+    link_type* move_tree(link_type* root) 
+    {
         if (root == NULL)
             return NULL;
 
