@@ -24,8 +24,8 @@ namespace double_linked {
  *       prev
  */
 typedef struct list_node_t {
-    struct list_node_t *next;
-    struct list_node_t *prev;
+    struct list_node_t* next;
+    struct list_node_t* prev;
 } list_node_t;
 
 /**
@@ -45,7 +45,7 @@ typedef struct list_t {
  *   |____|     
  */
 inline
-void list_nil_init(list_node_t *nil)
+void list_nil_init(list_node_t* nil)
 {
     nil->prev = nil->next = nil;
 }
@@ -54,7 +54,7 @@ void list_nil_init(list_node_t *nil)
  * 初始化链表
  */
 inline
-void list_init(list_t *lst)
+void list_init(list_t* lst)
 {
     list_nil_init(&lst->nil);
 }
@@ -63,27 +63,27 @@ void list_init(list_t *lst)
  * 获取链表头节点指针
  */
 inline
-list_node_t *list_head(const list_t *lst)
+list_node_t* list_head(const list_t* lst)
 {
-    return (list_node_t *) lst->nil.next;
+    return (list_node_t*) lst->nil.next;
 }
 
 /**
  * 获取链表尾节点指针
  */
 inline
-list_node_t *list_tail(const list_t *lst)
+list_node_t* list_tail(const list_t* lst)
 {
-    return (list_node_t *) lst->nil.prev;
+    return (list_node_t*) lst->nil.prev;
 }
 
 /**
  * 获取NIL节点指针
  */
 inline
-list_node_t *list_nil(const list_t *lst)
+list_node_t* list_nil(const list_t* lst)
 {
-    return (list_node_t *) &lst->nil;
+    return (list_node_t*) &lst->nil;
 }
 
 /**
@@ -116,7 +116,7 @@ list_node_t *list_nil(const list_t *lst)
  *                   ^-t
  */
 inline
-void list_insert(list_node_t *x, list_node_t *t)
+void list_insert(list_node_t* x, list_node_t* t)
 {
 	t->prev = x->prev;      // (1)
 	t->next = x;            // (2)
@@ -154,7 +154,7 @@ void list_insert(list_node_t *x, list_node_t *t)
  *                   ^-a         ^-b
  */
 inline
-void list_insert_range(list_node_t *x, list_node_t *a, list_node_t *b)
+void list_insert_range(list_node_t* x, list_node_t* a, list_node_t* b)
 {
 	a->prev = x->prev;      // (1)
 	b->next = x;            // (2)
@@ -179,7 +179,7 @@ void list_insert_range(list_node_t *x, list_node_t *a, list_node_t *b)
  *             '--------------------'
  */
 inline
-void list_delete(list_node_t *x)
+void list_delete(list_node_t* x)
 {
 	x->prev->next = x->next;    // (1)
 	x->next->prev = x->prev;    // (2)
@@ -202,7 +202,7 @@ void list_delete(list_node_t *x)
  *             '----------------------------------'
  */
 inline
-void list_delete_range(list_node_t *a, list_node_t *b)
+void list_delete_range(list_node_t* a, list_node_t* b)
 {
 	a->prev->next = b->next;    // (1)
 	b->next->prev = a->prev;    // (2)
@@ -219,7 +219,7 @@ void list_delete_range(list_node_t *a, list_node_t *b)
  *                              ^-t      ^-x
  */
 inline
-void list_transfer(list_node_t *x, list_node_t *t)
+void list_transfer(list_node_t* x, list_node_t* t)
 {
     list_delete(t);            // 移除节点t
     list_insert(x, t);         // 将t节点插入到x节点前
@@ -242,7 +242,7 @@ void list_transfer(list_node_t *x, list_node_t *t)
  *
  */
 inline
-void list_transfer_range(list_node_t *x, list_node_t *a, list_node_t *b)
+void list_transfer_range(list_node_t* x, list_node_t* a, list_node_t* b)
 {
     list_delete_range(a, b);
     list_insert_range(x, a, b);
@@ -252,7 +252,7 @@ void list_transfer_range(list_node_t *x, list_node_t *a, list_node_t *b)
  * 检查链表是否为空
  */
 inline 
-int list_is_empty(const list_t *lst)
+int list_is_empty(const list_t* lst)
 {
     return (lst->nil.next == &lst->nil);
 }
@@ -279,11 +279,11 @@ int list_is_empty(const list_t *lst)
  *    ^-y                                  ^-x
  */
 inline
-void list_reverse(list_node_t *x, list_node_t *nil)
+void list_reverse(list_node_t* x, list_node_t* nil)
 {
     if (x == nil) return;
 
-    list_node_t *y = x->prev;
+    list_node_t* y = x->prev;
     while (x->next != nil) {
         list_transfer(y->next, x->next);
     }
@@ -293,10 +293,10 @@ void list_reverse(list_node_t *x, list_node_t *nil)
  * 获取列表大小
  */
 inline
-size_t list_size(const list_t *lst)
+size_t list_size(const list_t* lst)
 {
-    const list_node_t *x = lst->nil.next;
-    const list_node_t *nil = &lst->nil;
+    const list_node_t* x = lst->nil.next;
+    const list_node_t* nil = &lst->nil;
     size_t n = 0;
     while (x != nil) {
         x = x->next;
@@ -309,10 +309,10 @@ size_t list_size(const list_t *lst)
  * 交换两个链表
  */
 inline
-void list_swap(list_t *a, list_t *b)
+void list_swap(list_t* a, list_t* b)
 {
     list_t tmp;
-    list_t *lst = &tmp;
+    list_t* lst = &tmp;
     list_init(lst);
     if (!list_is_empty(a)) {    // lst <- a
         list_transfer_range(list_nil(lst), list_head(a), list_tail(a));
