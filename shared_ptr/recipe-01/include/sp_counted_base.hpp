@@ -19,8 +19,8 @@ class sp_counted_base {
 private:
     std::atomic<long> use_count_;   // #shared: 共享引用计数
 
-    sp_counted_base(const sp_counted_base &) = delete;
-    sp_counted_base &operator =(const sp_counted_base &) = delete;
+    sp_counted_base(const sp_counted_base&) = delete;
+    sp_counted_base& operator= (const sp_counted_base&) = delete;
 
 public:
     /**
@@ -60,14 +60,14 @@ public:
      *
      * @return *this管理的共享对象的指针
      */
-    virtual void *get_pointer() = 0;
+    virtual void* get_pointer() = 0;
 
     /**
      * @brief 获取指向deleter的指针
      *
      * @return 指向deleter的指针
      */
-    virtual void *get_deleter() = 0;
+    virtual void* get_deleter() = 0;
 
     /**
      * @brief 获取当前共享引用计数
