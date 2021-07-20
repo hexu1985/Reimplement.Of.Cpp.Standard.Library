@@ -41,7 +41,7 @@ protected:
      *
      * @note 不复制weak_this_变量
      */
-    enable_shared_from_this(const enable_shared_from_this &) noexcept {}
+    enable_shared_from_this(const enable_shared_from_this&) noexcept {}
 
     /**
      * @brief 不做任何事: 返回*this
@@ -50,7 +50,7 @@ protected:
      *
      * @note 私有的std::weak_ptr<T>成员不受此赋值运算符影响
      */
-    enable_shared_from_this &operator =(const enable_shared_from_this &) noexcept
+    enable_shared_from_this& operator= (const enable_shared_from_this&) noexcept
     {
         return *this;
     }
@@ -90,7 +90,7 @@ public:
     }
 
     // 只由构造shared_ptr时候调用
-    void internal_accept_owner(const shared_ptr<T> *sp) const
+    void internal_accept_owner(const shared_ptr<T>* sp) const
     {
         if (weak_this_.expired()) {
             weak_this_ = shared_ptr<T>(*sp);

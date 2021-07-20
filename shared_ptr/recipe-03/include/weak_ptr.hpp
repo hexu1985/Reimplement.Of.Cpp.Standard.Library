@@ -29,8 +29,8 @@ public:
     typedef T element_type;
 
 private:
-    sp_counted_base *pi_ = nullptr;
-    element_type *px_ = nullptr;
+    sp_counted_base* pi_ = nullptr;
+    element_type* px_ = nullptr;
 
     typedef weak_ptr<T> this_type;
 
@@ -49,7 +49,7 @@ public:
      *
      * @param r 被共享的weak_ptr
      */
-    weak_ptr(const weak_ptr &r): pi_(r.pi_), px_(r.px_)
+    weak_ptr(const weak_ptr& r): pi_(r.pi_), px_(r.px_)
     {
         if (pi_ != nullptr) pi_->weak_add_ref();
     }
@@ -62,7 +62,7 @@ public:
      * @param r 被共享的weak_ptr
      */
     template <typename Y>
-    weak_ptr(const weak_ptr<Y> &r): pi_(r.pi_), px_(r.px_)
+    weak_ptr(const weak_ptr<Y>& r): pi_(r.pi_), px_(r.px_)
     {
         if (pi_ != nullptr) pi_->weak_add_ref();
     }
@@ -74,7 +74,7 @@ public:
      *
      * @param r 被移动的weak_ptr
      */
-    weak_ptr(weak_ptr &&r) noexcept: pi_(r.pi_)
+    weak_ptr(weak_ptr&& r) noexcept: pi_(r.pi_)
     {
         r.pi_ = nullptr;
     }
@@ -87,7 +87,7 @@ public:
      * @param r 被共享shared_ptr
      */
     template <typename Y>
-    weak_ptr(const shared_ptr<Y> &r): pi_(r.pi_), px_(r.px_)
+    weak_ptr(const shared_ptr<Y>& r): pi_(r.pi_), px_(r.px_)
     {
         if (pi_ != nullptr) pi_->weak_add_ref();
     }
@@ -108,7 +108,7 @@ public:
      *
      * @return *this
      */
-    weak_ptr &operator =(const weak_ptr &r)
+    weak_ptr& operator= (const weak_ptr& r)
     {
         /**
         if (this != &r) {
@@ -123,13 +123,13 @@ public:
     }
 
     template <typename Y>
-    weak_ptr &operator =(const weak_ptr<Y> &r)
+    weak_ptr& operator= (const weak_ptr<Y>& r)
     {
         this_type(r).swap(*this);
         return *this;
     }
 
-    weak_ptr &operator =(weak_ptr &&r) noexcept
+    weak_ptr& operator= (weak_ptr&& r) noexcept
     {
         /**
         if (this != &r) {
@@ -144,7 +144,7 @@ public:
     }
 
     template <typename Y>
-    weak_ptr &operator =(weak_ptr<Y> &&r) noexcept
+    weak_ptr& operator= (weak_ptr<Y>&& r) noexcept
     {
         this_type(std::move(r)).swap(*this);
         return *this;
@@ -158,7 +158,7 @@ public:
      *
      * @return *this
      */
-    weak_ptr &operator =(const shared_ptr<T> &r)
+    weak_ptr& operator= (const shared_ptr<T>& r)
     {
         /**
         if (pi_ != r.pi_) {
@@ -176,7 +176,7 @@ public:
      *
      * @param r 要与之交换内容的智能指针
      */
-    void swap(weak_ptr &r)
+    void swap(weak_ptr& r)
     {
         using std::swap;
         swap(this->pi_, r.pi_);
@@ -266,7 +266,7 @@ public:
      * @return 若*this前于r则为true, 否则为false. 常见实现比较控制块的地址.
      */
     template <typename Y>
-    bool owner_before(const weak_ptr<Y> &r) const
+    bool owner_before(const weak_ptr<Y>& r) const
     {
         return this->pi_ < r.pi_;
     }
@@ -283,7 +283,7 @@ public:
      * @return 若*this前于r则为true, 否则为false. 常见实现比较控制块的地址.
      */
     template <typename Y>
-    bool owner_before(const shared_ptr<Y> &r) const
+    bool owner_before(const shared_ptr<Y>& r) const
     {
         return this->pi_ < r.pi_;
     }
@@ -297,7 +297,7 @@ public:
  * @param rhs 要交换内容的智能指针
  */
 template <typename T>
-void swap(weak_ptr<T> &lhs, weak_ptr<T> &rhs)
+void swap(weak_ptr<T>& lhs, weak_ptr<T>& rhs)
 {
     lhs.swap(rhs);
 }

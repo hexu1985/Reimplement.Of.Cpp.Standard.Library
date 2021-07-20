@@ -20,8 +20,8 @@ private:
     std::atomic<long> use_count_;   // #shared: 共享引用计数
     std::atomic<long> weak_count_;  // #weak + (#shared != 0): 弱引用计数+1/0(共享引用计数是否非0)
 
-    sp_counted_base(const sp_counted_base &) = delete;
-    sp_counted_base &operator =(const sp_counted_base &) = delete;
+    sp_counted_base(const sp_counted_base&) = delete;
+    sp_counted_base& operator= (const sp_counted_base&) = delete;
 
 public:
     /**
@@ -81,14 +81,14 @@ public:
      *
      * @return *this管理的共享对象的指针
      */
-    virtual void *get_pointer() = 0;
+    virtual void* get_pointer() = 0;
 
     /**
      * @brief 获取指向deleter的指针
      *
      * @return 指向deleter的指针
      */
-    virtual void *get_deleter() = 0;
+    virtual void* get_deleter() = 0;
 
     /**
      * @brief 获取当前共享引用计数
