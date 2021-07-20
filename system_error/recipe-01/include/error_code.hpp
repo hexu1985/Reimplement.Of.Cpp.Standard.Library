@@ -185,8 +185,7 @@ public:
      * Checks whether, for the category, an error code is equivalent to 
      * an error condition.
      */
-    virtual bool equivalent(int valcode, const error_condition& cond) 
-        const noexcept;
+    virtual bool equivalent(int valcode, const error_condition& cond) const noexcept;
     virtual bool equivalent(const error_code& code, int valcond) const noexcept;
 
     /**

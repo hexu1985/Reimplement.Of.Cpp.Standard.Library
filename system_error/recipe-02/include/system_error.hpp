@@ -34,21 +34,21 @@ public:
      */
     system_error(error_code ec): std::runtime_error(""), code_(ec) {}
 
-    system_error(error_code ec, const std::string &what_arg):
+    system_error(error_code ec, const std::string& what_arg):
         std::runtime_error(what_arg), code_(ec) {}
 
-    system_error(error_code ec, const char *what_arg):
+    system_error(error_code ec, const char* what_arg):
         std::runtime_error(what_arg), code_(ec) {}
 
-    system_error(int val, const error_category &cat):
+    system_error(int val, const error_category& cat):
         std::runtime_error(""), code_(val, cat) {}
 
-    system_error(int val, const error_category &cat, 
-        const std::string &what_arg): 
+    system_error(int val, const error_category& cat, 
+        const std::string& what_arg): 
         std::runtime_error(what_arg), code_(val, cat) {}
 
-    system_error(int val, const error_category &cat, 
-        const char *what_arg):
+    system_error(int val, const error_category& cat, 
+        const char* what_arg):
         std::runtime_error(what_arg), code_(val, cat) {}
 
     /**
@@ -61,13 +61,13 @@ public:
      * Get error code
      * Returns the error_code object associated with the exception.
      */
-    const error_code &code() const throw() { return code_; }
+    const error_code& code() const throw() { return code_; }
 
     /**
      * Get message associated to exception    
      * Returns the message that describes the exception.
      */
-    const char *what() const throw();
+    const char* what() const throw();
 };
 
 }    // namespace mini_stl
