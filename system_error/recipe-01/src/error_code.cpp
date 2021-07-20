@@ -13,7 +13,7 @@ class generic_error_category: public error_category {
 public:
     generic_error_category() = default;
 
-    const char *name() const throw() { return "generic"; }
+    const char* name() const throw() { return "generic"; }
 
     std::string message(int val) const;
 };
@@ -22,7 +22,7 @@ class system_error_category: public error_category {
 public:
     system_error_category() = default;
 
-    const char *name() const throw() { return "system"; }
+    const char* name() const throw() { return "system"; }
 
     std::string message(int val) const
     {
@@ -222,13 +222,13 @@ error_condition system_error_category::default_error_condition(int val)
 
 }   // namespace
 
-const error_category &generic_category() throw()
+const error_category& generic_category() throw()
 {
     static const generic_error_category generic_category_;
     return generic_category_;
 }
 
-const error_category &system_category() throw()
+const error_category& system_category() throw()
 {
     static const system_error_category system_category_;
     return system_category_;

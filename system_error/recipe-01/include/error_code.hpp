@@ -113,7 +113,7 @@ class error_condition;
  * Its name member function returns a pointer to 
  * the character sequence "generic".
  */
-const error_category &generic_category() noexcept;
+const error_category& generic_category() noexcept;
 
 /**
  * Return system category
@@ -122,7 +122,7 @@ const error_category &generic_category() noexcept;
  * Its name member function returns a pointer to 
  * the character sequence "system".
  */
-const error_category &system_category() noexcept;
+const error_category& system_category() noexcept;
 
 /**
  * Error category
@@ -138,27 +138,27 @@ protected:
     error_category() = default;
 
 public:
-    error_category(const error_category &) = delete;
-    error_category &operator =(const error_category &) = delete;
+    error_category(const error_category&) = delete;
+    error_category& operator= (const error_category&) = delete;
 
     /**
      * Relational operators
      * These member functions compare whether two error_category objects 
      * are the same.
      */
-    bool operator ==(const error_category &rhs) const noexcept
+    bool operator== (const error_category& rhs) const noexcept
     {
         return this == &rhs;
     }
 
-    bool operator !=(const error_category &rhs) const noexcept
+    bool operator!= (const error_category& rhs) const noexcept
     {
         return this != &rhs;
     }
 
-    bool operator <(const error_category &rhs) const noexcept
+    bool operator< (const error_category& rhs) const noexcept
     {
-        return std::less<const error_category *>()(this, &rhs);
+        return std::less<const error_category*>()(this, &rhs);
     }
 
     /**
@@ -171,7 +171,7 @@ public:
      * Return category name
      * In derived classes, the function returns a C-string naming the category.
      */
-    virtual const char *name() const noexcept = 0;
+    virtual const char* name() const noexcept = 0;
 
     /**
      * Default error condition
@@ -185,9 +185,9 @@ public:
      * Checks whether, for the category, an error code is equivalent to 
      * an error condition.
      */
-    virtual bool equivalent(int valcode, const error_condition &cond) 
+    virtual bool equivalent(int valcode, const error_condition& cond) 
         const noexcept;
-    virtual bool equivalent(const error_code &code, int valcond) const noexcept;
+    virtual bool equivalent(const error_code& code, int valcond) const noexcept;
 
     /**
      * Error message
@@ -218,7 +218,7 @@ public:
      * initialization constructor
      * Error condition with a value of val of the category specified by cat.
      */
-    error_condition(int val, const error_category & cat) noexcept: 
+    error_condition(int val, const error_category& cat) noexcept: 
         value_(val), category_(&cat) {}
 
     /**
@@ -240,7 +240,7 @@ public:
      * Assigns the error_condition object a value of val associated with 
      * the error_category cat.
      */
-    void assign(int val, const error_category &cat) noexcept
+    void assign(int val, const error_category& cat) noexcept
     {
         value_ = val;
         category_ = &cat;
@@ -253,7 +253,7 @@ public:
      */
     template <class ErrorConditionEnum, typename T = typename
         std::enable_if<is_error_condition_enum<ErrorConditionEnum>::value>::type>
-    error_condition &operator =(ErrorConditionEnum e) noexcept
+    error_condition& operator= (ErrorConditionEnum e) noexcept
     {
         *this = make_error_condition(e);
         return *this;
@@ -281,7 +281,7 @@ public:
      * Returns a reference to the error category associated with 
      * the error_condition object.
      */
-    const error_category &category() const noexcept { return *category_; }
+    const error_category& category() const noexcept { return *category_; }
 
     /**
      * Get message
@@ -308,7 +308,7 @@ public:
 class error_code {
 private:
     int value_;
-    const error_category *category_;
+    const error_category* category_;
 
 public:
     /**
@@ -322,7 +322,7 @@ public:
      * initialization constructor
      * Error code with a value of val of the category specified by cat.
      */
-    error_code(int val, const error_category &cat) noexcept: 
+    error_code(int val, const error_category& cat) noexcept: 
         value_(val), category_(&cat) {}
 
     /**
@@ -343,7 +343,7 @@ public:
      * Assigns the error_code object a value of val associated with 
      * the error_category cat.
      */
-    void assign(int val, const error_category &cat) noexcept 
+    void assign(int val, const error_category& cat) noexcept 
     {
         value_ = val; 
         category_ = &cat;
@@ -356,7 +356,7 @@ public:
      */
     template <class ErrorCodeEnum, typename = typename
         std::enable_if<is_error_code_enum<ErrorCodeEnum>::value>::type>
-    error_code &operator =(ErrorCodeEnum e) noexcept
+    error_code& operator= (ErrorCodeEnum e) noexcept
     {
         *this = make_error_code(e);
         return *this;
@@ -384,7 +384,7 @@ public:
      * Returns a reference to the error category associated with 
      * the error_code object.
      */
-    const error_category &category() const noexcept { return *category_; }
+    const error_category& category() const noexcept { return *category_; }
 
     /**
      * Default error condition
@@ -424,19 +424,19 @@ public:
  * applying the operator (==, !=, <) to their categories.
  */
 inline 
-bool operator ==(const error_code &lhs, const error_code &rhs) noexcept
+bool operator== (const error_code& lhs, const error_code& rhs) noexcept
 {
     return lhs.category() == rhs.category() && lhs.value() == rhs.value();
 }
 
 inline 
-bool operator !=(const error_code &lhs, const error_code &rhs) noexcept
+bool operator!= (const error_code& lhs, const error_code& rhs) noexcept
 {
     return !(lhs == rhs);
 }
 
 inline 
-bool operator <(const error_code &lhs, const error_code &rhs) noexcept
+bool operator< (const error_code& lhs, const error_code& rhs) noexcept
 {
     return lhs.category() < rhs.category() || 
         (lhs.category() == rhs.category() && lhs.value() < rhs.value());
@@ -452,19 +452,19 @@ bool operator <(const error_code &lhs, const error_code &rhs) noexcept
  * applying the operator (==, !=, <) to their categories.
  */
 inline 
-bool operator ==(const error_condition &lhs, const error_condition &rhs) noexcept
+bool operator== (const error_condition& lhs, const error_condition& rhs) noexcept
 {
     return lhs.category() == rhs.category() && lhs.value() == rhs.value();
 }
 
 inline 
-bool operator !=(const error_condition &lhs, const error_condition &rhs) noexcept
+bool operator!= (const error_condition& lhs, const error_condition& rhs) noexcept
 {
     return !(lhs == rhs);
 }
 
 inline 
-bool operator <(const error_condition &lhs, const error_condition &rhs) noexcept
+bool operator< (const error_condition& lhs, const error_condition& rhs) noexcept
 {
     return lhs.category() < rhs.category() || 
         (lhs.category() == rhs.category() && lhs.value() < rhs.value());
@@ -478,27 +478,27 @@ bool operator <(const error_condition &lhs, const error_condition &rhs) noexcept
  * whether they are equivalent.
  */
 inline 
-bool operator ==(const error_code &code, const error_condition &cond) noexcept
+bool operator== (const error_code& code, const error_condition& cond) noexcept
 {
     return code.category().equivalent(code.value(), cond) ||
         cond.category().equivalent(code, cond.value());
 }
 
 inline 
-bool operator ==(const error_condition &cond, const error_code &code) noexcept
+bool operator== (const error_condition& cond, const error_code& code) noexcept
 {
     return cond.category().equivalent(code, cond.value()) ||
         code.category().equivalent(code.value(), cond);
 }
 
 inline 
-bool operator !=(const error_code &lhs, const error_condition &rhs) noexcept
+bool operator!= (const error_code& lhs, const error_condition& rhs) noexcept
 {
     return !(lhs == rhs);
 }
 
 inline 
-bool operator !=(const error_condition &lhs, const error_code &rhs) noexcept
+bool operator!= (const error_condition& lhs, const error_code& rhs) noexcept
 {
     return !(lhs == rhs);
 }
@@ -510,14 +510,14 @@ error_condition error_category::default_error_condition(int val) const noexcept
 }
 
 inline 
-bool error_category::equivalent(int valcode, const error_condition &cond)
+bool error_category::equivalent(int valcode, const error_condition& cond)
     const noexcept
 {
     return default_error_condition(valcode) == cond;
 }
 
 inline 
-bool error_category::equivalent(const error_code &code, int valcond)
+bool error_category::equivalent(const error_code& code, int valcond)
     const noexcept
 {
     return *this == code.category() && code.value() == valcond;
@@ -529,8 +529,7 @@ bool error_category::equivalent(const error_code &code, int valcond)
  */
 template <class charT, class traits>
 inline 
-std::basic_ostream<charT, traits> &operator <<(
-    std::basic_ostream<charT, traits> &os, error_code ec)
+std::basic_ostream<charT, traits>& operator<< (std::basic_ostream<charT, traits>& os, error_code ec)
 {
     os << ec.category().name() << ":" << ec.value();
     return os;
@@ -562,7 +561,7 @@ namespace std {
 
 template <> struct hash<mini_stl::error_code>
 {
-    size_t operator ()(const mini_stl::error_code &ec) const noexcept
+    size_t operator ()(const mini_stl::error_code& ec) const noexcept
     {
         return static_cast<size_t>(ec.value())
             + reinterpret_cast<size_t>(&ec.category());
