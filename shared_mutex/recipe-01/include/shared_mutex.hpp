@@ -39,12 +39,12 @@ public:
     /**
      * @brief 复制构造函数被删除。
      */
-	shared_mutex(const shared_mutex &) = delete;
+	shared_mutex(const shared_mutex&) = delete;
 
     /**
      * @brief 赋值运算符被删除，不可复制。
      */
-	shared_mutex &operator =(const shared_mutex &) = delete;
+	shared_mutex& operator= (const shared_mutex&) = delete;
 
     /**
      * @brief 销毁互斥。
