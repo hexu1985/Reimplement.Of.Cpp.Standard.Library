@@ -14,7 +14,7 @@ namespace mini_stl {
 
 class bad_weak_ptr: public std::exception {
 public:
-    const char *what() const noexcept override;
+    const char* what() const noexcept override;
 };
 
 }   // namespace mini_stl
