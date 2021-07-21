@@ -42,24 +42,24 @@ void thread::join()
 
 void thread::detach()
 {
-	if (!joinable()) {
-		  throw std::system_error(EINVAL, std::system_category(), __func__);
-	}
+    if (!joinable()) {
+        throw std::system_error(EINVAL, std::system_category(), __func__);
+    }
 
-  CloseHandle(id_.native_handle());
-	id_ = id();
+    CloseHandle(id_.native_handle());
+    id_ = id();
 }
 
 void thread::create_thread(routine_base *rtn)
 {
-  HANDLE hThread;
-  unsigned threadID;
-  hThread = (HANDLE) _beginthreadex(NULL, 0, ThreadFunc, (void *) rtn, 0, &threadID);
-  if (hThread == 0) {
-		  delete rtn;
-      throw std::system_error(GetLastError(), std::system_category(), __func__);
-  }
-	id_ = thread_id(hThread, threadID);
+    HANDLE hThread;
+    unsigned threadID;
+    hThread = (HANDLE) _beginthreadex(NULL, 0, ThreadFunc, (void *) rtn, 0, &threadID);
+    if (hThread == 0) {
+        delete rtn;
+        throw std::system_error(GetLastError(), std::system_category(), __func__);
+    }
+    id_ = thread_id(hThread, threadID);
 }
 
 }   // namespace mini_stl

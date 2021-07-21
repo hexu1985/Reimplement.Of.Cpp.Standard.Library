@@ -34,13 +34,13 @@ public:
     /**
      * @brief 复制构造函数被删除； thread 不可复制。没有二个 std::thread 对象可表示同一执行线程。
      */
-    thread(const thread &) = delete;
+    thread(const thread&) = delete;
 
 
     /**
      * @brief 赋值运算符被删除； thread 不可赋值。没有二个 std::thread 对象可表示同一执行线程。
      */
-    thread &operator =(const thread &) = delete; 
+    thread& operator= (const thread&) = delete; 
 
     /**
      * @brief 构造新的 std::thread 对象并将它与执行线程关联。
@@ -50,8 +50,8 @@ public:
      * @param fn 在新线程中执行的函数
      * @param ...args 参数列表
      */
-    template <typename Fn, typename ...Args>
-    explicit thread(Fn &&fn, Args &&...args)
+    template <typename Fn, typename... Args>
+    explicit thread(Fn&& fn, Args&&... args)
     {
         create_thread(make_routine(std::bind(
             std::forward<Fn>(fn), std::forward<Args>(args)...)));
@@ -62,7 +62,7 @@ public:
      *
      * @param other 用以构造此 thread 的另一 thread 对象。
      */
-    thread(thread &&other) noexcept: id_(other.id_) 
+    thread(thread&& other) noexcept: id_(other.id_) 
     {
         other.id_ = id(); 
     }
@@ -78,7 +78,7 @@ public:
      *       否则，赋值 other 的状态给 *this 并设置 other 为默认构造的状态。
      *       此调用后， this->get_id() 等于 other.get_id() 在调用前的值，而 other 不在表示执行的线程。
      */
-    thread &operator =(thread &&other)
+    thread& operator= (thread&& other)
     {
         if (&other == this) {
             return *this;
@@ -157,7 +157,7 @@ public:
      *
      * @note 交换二个 thread 对象的底层柄。
      */
-    void swap(thread &other) noexcept { id_.swap(other.id_); }
+    void swap(thread& other) noexcept { id_.swap(other.id_); }
 
 public:
     /**
@@ -176,7 +176,7 @@ private:
      */
     template <typename Fn>
     struct routine: public routine_base {
-        routine(Fn &&fn): f_(std::forward<Fn>(fn)) {}
+        routine(Fn&& fn): f_(std::forward<Fn>(fn)) {}
 
         virtual void run() { f_(); }
 
@@ -192,7 +192,7 @@ private:
      * @return 例程对象指针
      */
     template <typename Fn>
-    routine<Fn> *make_routine(Fn &&fn)
+    routine<Fn>* make_routine(Fn&& fn)
     {
         return new routine<Fn>(std::forward<Fn>(fn));
     }
@@ -202,11 +202,11 @@ private:
      *
      * @param rtn 例程对象指针
      */
-    void create_thread(routine_base *rtn);
+    void create_thread(routine_base* rtn);
 };
 
 inline 
-void swap(mini_stl::thread &a, mini_stl::thread &b) noexcept
+void swap(mini_stl::thread& a, mini_stl::thread& b) noexcept
 {
     a.swap(b);
 }

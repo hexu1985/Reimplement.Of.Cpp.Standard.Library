@@ -7,7 +7,7 @@ namespace {
 
 void *pthread_function(void *arg)
 {
-    auto routine = reinterpret_cast<mini_stl::thread::routine_base *>(arg);
+    auto routine = reinterpret_cast<mini_stl::thread::routine_base*>(arg);
     try 
     {
         routine->run();
@@ -59,7 +59,7 @@ void thread::detach()
 	id_ = id();
 }
 
-void thread::create_thread(routine_base *rtn)
+void thread::create_thread(routine_base* rtn)
 {
 	pthread_t tid;
 	int error = pthread_create(&tid, NULL, &pthread_function, rtn);
