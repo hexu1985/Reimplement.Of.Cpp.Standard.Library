@@ -6,7 +6,7 @@
 
 namespace mini_stl {
 
-const char *system_error::what() const throw()
+const char* system_error::what() const throw()
 {
     if (what_.empty()) {
         try 
