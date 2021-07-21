@@ -1,5 +1,6 @@
 #include "thread.hpp"
 #include <system_error>
+#include <process.h>
 
 static unsigned WINAPI ThreadFunc(void *arg)
 {

@@ -8,9 +8,9 @@
 #ifndef MINI_STL_THREAD_INC
 #define MINI_STL_THREAD_INC
 
+#include "thread_id.hpp"
 #include <memory>
 #include <functional>
-#include "thread_id.hpp"
 
 namespace mini_stl {
 

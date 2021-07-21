@@ -11,7 +11,6 @@
 #include "thread_id.hpp"
 #include <memory>
 #include <functional>
-#include <process.h>
 
 namespace mini_stl {
 
