@@ -18,14 +18,14 @@
 namespace mini_stl {
 
 /* vector class */
-template <typename T, typename Alloc = std::allocator<T> >
+template <typename T, typename Alloc = std::allocator<T>>
 class vector {
 public:
     /* Type Definitions of Vectors */
     typedef T value_type;
     typedef Alloc allocator_type;
-    typedef T &reference;
-    typedef const T &const_reference;
+    typedef T& reference;
+    typedef const T& const_reference;
     typedef typename std::allocator_traits<allocator_type>::pointer pointer;
     typedef typename std::allocator_traits<allocator_type>::const_pointer const_pointer;
     typedef pointer iterator;
@@ -53,9 +53,9 @@ public:
      * empty container constructor (default constructor)
      * Constructs an empty container, with no elements.
      */
-    vector(): vector(alloc) {}
+    vector(): vector(allocator_type()) {}
 
-    explicit vector(const allocator_type &alloc): alloc_(alloc) 
+    explicit vector(const allocator_type& alloc): alloc_(alloc) 
     {
         initialize();
     } 
@@ -66,8 +66,8 @@ public:
      */
     explicit vector(size_type n): vector(n, value_type(), allocator_type()) {}
 
-    vector(size_type n, const value_type &val, 
-        const allocator_type &alloc = allocator_type()): alloc_(alloc)
+    vector(size_type n, const value_type& val, 
+        const allocator_type& alloc = allocator_type()): alloc_(alloc)
     {
         if (n == 0) {
             initialize();
@@ -96,7 +96,7 @@ public:
     template <typename InputIterator, typename = typename
         std::enable_if<!std::is_integral<InputIterator>::value>::type>
     vector(InputIterator first, InputIterator last,
-        const allocator_type &alloc = allocator_type()): alloc_(alloc)
+        const allocator_type& alloc = allocator_type()): alloc_(alloc)
     {
         size_type n = std::distance(first, last);
         if (n == 0) {
@@ -122,9 +122,9 @@ public:
      * Constructs a container with a copy of each of the elements in x, 
      * in the same order.
      */
-    vector(const vector &x): vector(x, x.get_allocator()) {}
+    vector(const vector& x): vector(x, x.get_allocator()) {}
 
-    vector(const vector &x, const allocator_type &alloc): alloc_(alloc)
+    vector(const vector& x, const allocator_type& alloc): alloc_(alloc)
     {
         size_type n = x.size();
         if (n == 0) {
@@ -153,14 +153,14 @@ public:
      * (their ownership is directly transferred).
      * x is left in an unspecified but valid state.
      */
-    vector(vector &&x): 
+    vector(vector&& x): 
         alloc_(std::move(x.alloc_)),
         start_(x.start_), finish_(x.finish_), end_of_storage_(x.end_of_storage_)
     {
         x.initialize();
     }
 
-    vector(vector &&x, const allocator_type &alloc): alloc_(alloc)
+    vector(vector&& x, const allocator_type& alloc): alloc_(alloc)
     {
         size_type n = x.size();
         if (n == 0) {
@@ -188,7 +188,7 @@ public:
      * in the same order.
      */
     vector(std::initializer_list<value_type> il,
-        const allocator_type &alloc = allocator_type()): 
+        const allocator_type& alloc = allocator_type()): 
         vector(il.begin(), il.end(), alloc) {}
 
     /**
@@ -202,7 +202,7 @@ public:
      * copies all the elements from x into the container 
      * (with x preserving its contents).
      */
-    vector &operator =(const vector &x)
+    vector& operator= (const vector& x)
     {
         if (this == &x)
             return *this;
@@ -216,7 +216,7 @@ public:
      * moves the elements of x into the container 
      * (x is left in an unspecified but valid state).
      */
-    vector &operator =(vector &&x)
+    vector& operator= (vector&& x)
     {
         if (this == &x)
             return *this;
@@ -230,7 +230,7 @@ public:
      * The initializer list assignment 
      * copies the elements of il into the container.
      */
-    vector &operator =(std::initializer_list<value_type> il)
+    vector& operator= (std::initializer_list<value_type> il)
     {
         assign(il.begin(), il.end());
         return *this;
@@ -336,7 +336,7 @@ public:
         resize(n, value_type());
     }
 
-    void resize(size_type n, const value_type &val)
+    void resize(size_type n, const value_type& val)
     {
         if (n > capacity()) {
             reserve(adjust_capacity(n));
@@ -418,8 +418,8 @@ public:
      * Access element
      * Returns a reference to the element at position n in the vector container.
      */
-    reference operator [](size_type n) { return *(start_+n); }
-    const_reference operator [](size_type n) const { return *(start_+n); }
+    reference operator[] (size_type n) { return *(start_+n); }
+    const_reference operator[] (size_type n) const { return *(start_+n); }
     
     /**
      * Access element
@@ -476,8 +476,8 @@ public:
      * Returns a direct pointer to the memory array used internally by 
      * the vector to store its owned elements.
      */
-    value_type *data() noexcept { return start_; }
-    const value_type *data() const noexcept { return start_; }
+    value_type* data() noexcept { return start_; }
+    const value_type* data() const noexcept { return start_; }
 
     /**
      * Assign vector content
@@ -520,7 +520,7 @@ public:
      * In the fill version, the new contents are n elements, 
      * each initialized to a copy of val.
      */
-    void assign(size_type n, const value_type &val)
+    void assign(size_type n, const value_type& val)
     {
         if (n > capacity()) {
             vector x(n, val, alloc_);
@@ -557,7 +557,7 @@ public:
      * Adds a new element at the end of the vector, after its current last 
      * element. The content of val is copied (or moved) to the new element.
      */
-    void push_back(const value_type &val)
+    void push_back(const value_type& val)
     {
         if (full()) {
             reserve(adjust_capacity());
@@ -566,7 +566,7 @@ public:
         construct(finish_++, val);
     }
 
-    void push_back(value_type &&val)
+    void push_back(value_type&& val)
     {
         if (full()) {
             reserve(adjust_capacity());
@@ -592,12 +592,12 @@ public:
      * at the specified position, effectively increasing the container size 
      * by the number of elements inserted.
      */
-    iterator insert(const_iterator position, const value_type &val)
+    iterator insert(const_iterator position, const value_type& val)
     {
         return insert(position, 1, val);
     }
 
-    iterator insert(const_iterator position, size_type n, const value_type &val)
+    iterator insert(const_iterator position, size_type n, const value_type& val)
     {
         assert(position <= finish_); 
 
@@ -648,7 +648,7 @@ public:
         return (iterator) pos;
     }
     
-    iterator insert(const_iterator position, value_type &&val)
+    iterator insert(const_iterator position, value_type&& val)
     {
         if (full()) {    // need reallocate
             size_t idx = position-start_;
@@ -706,7 +706,7 @@ public:
      * Exchanges the content of the container by the content of x, 
      * which is another vector object of the same type. Sizes may differ.
      */
-    void swap(vector &x)
+    void swap(vector& x)
     {
         using std::swap;
 
@@ -731,8 +731,8 @@ public:
      * This new element is constructed in place using args as the arguments 
      * for its construction.
      */
-    template <typename ... Args>
-    iterator emplace(const_iterator position, Args &&... args)
+    template <typename... Args>
+    iterator emplace(const_iterator position, Args&&... args)
     {
         if (full()) {    // need reallocate
             size_t off = position-start_;
@@ -742,9 +742,9 @@ public:
 
         pointer pos = (pointer) position;
         if (pos == finish_ || vacate(pos, 1)) {
-            construct(finish_, std::forward<Args>(args) ...);
+            construct(finish_, std::forward<Args>(args)...);
         } else {
-            *pos = value_type(std::forward<Args>(args) ...);
+            *pos = value_type(std::forward<Args>(args)...);
         }
         finish_++;
         return (iterator) pos;
@@ -756,14 +756,14 @@ public:
      * current last element. This new element is constructed in place 
      * using args as the arguments for its constructoe.
      */
-    template <typename ... Args>
-    void emplace_back(Args &&... args)
+    template <typename... Args>
+    void emplace_back(Args&&... args)
     {
         if (full()) {
             reserve(adjust_capacity());
         }
 
-        construct(finish_++, std::forward<Args>(args) ...);
+        construct(finish_++, std::forward<Args>(args)...);
     }
 
     /**
@@ -782,7 +782,7 @@ private:
         return std::max(hint, 2*capacity());
     }
 
-    void swap_data(vector &x)
+    void swap_data(vector& x)
     {
         std::swap(start_, x.start_);
         std::swap(finish_, x.finish_);
@@ -823,8 +823,8 @@ private:
         std::allocator_traits<allocator_type>::deallocate(alloc_, p, n);
     }
 
-    template <typename ...Args>
-    void construct(pointer p, Args &&...args)
+    template <typename... Args>
+    void construct(pointer p, Args&&... args)
     {
         new (p) T(std::forward<Args>(args)...);
     }
@@ -858,8 +858,7 @@ private:
     }
 
     template <typename InputIterator>
-    pointer uninitialized_copy(InputIterator first, InputIterator last,
-        pointer result)
+    pointer uninitialized_copy(InputIterator first, InputIterator last, pointer result)
     {
         pointer save(result);
         try
@@ -877,8 +876,7 @@ private:
     }
 
     template <typename InputIterator>
-    pointer uninitialized_move(InputIterator first, InputIterator last,
-        pointer result)
+    pointer uninitialized_move(InputIterator first, InputIterator last, pointer result)
     {
         pointer save(result);
         try
@@ -896,8 +894,7 @@ private:
     }
 
     template <typename InputIterator>
-    pointer uninitialized_copy_n(InputIterator first, size_type n, 
-        pointer result)
+    pointer uninitialized_copy_n(InputIterator first, size_type n, pointer result)
     {
         pointer save(result);
         try
@@ -915,8 +912,7 @@ private:
     }
 
     template <typename InputIterator>
-    pointer uninitialized_move_n(InputIterator first, size_type n, 
-        pointer result)
+    pointer uninitialized_move_n(InputIterator first, size_type n, pointer result)
     {
         pointer save(result);
         try
@@ -933,7 +929,7 @@ private:
         return result;
     }
 
-    void uninitialized_fill(pointer first, pointer last, const value_type &x)
+    void uninitialized_fill(pointer first, pointer last, const value_type& x)
     {
         pointer save(first);
         try
@@ -949,8 +945,7 @@ private:
         }
     }
 
-    pointer uninitialized_fill_n(pointer first, size_type n, 
-        const value_type &x)
+    pointer uninitialized_fill_n(pointer first, size_type n, const value_type& x)
     {
         pointer save(first);
         try
@@ -974,7 +969,7 @@ private:
  * lhs and rhs.
  */
 template <typename T, typename Alloc>
-bool operator ==(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+bool operator== (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
 {
     if (lhs.size() != rhs.size())
         return false;
@@ -984,32 +979,32 @@ bool operator ==(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
 
 template <typename T, typename Alloc>
 inline
-bool operator !=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+bool operator!= (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
 {
     return !(lhs == rhs);
 }
 
 template <typename T, typename Alloc>
-bool operator <(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+bool operator< (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
 {
     return std::lexicographical_compare(lhs.begin(), lhs.end(),
         rhs.begin(), rhs.end());
 }
 
 template <typename T, typename Alloc>
-bool operator >(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+bool operator> (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
 {
     return (rhs < lhs);
 }
 
 template <typename T, typename Alloc>
-bool operator <=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+bool operator<= (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
 {
     return !(lhs > rhs);
 }
 
 template <typename T, typename Alloc>
-bool operator >=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+bool operator>= (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
 {
     return !(lhs < rhs);
 }
@@ -1022,7 +1017,7 @@ bool operator >=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
  */
 template <typename T, typename Alloc>
 inline
-void swap(vector<T, Alloc> &x, vector<T, Alloc> &y)
+void swap(vector<T, Alloc>& x, vector<T, Alloc>& y)
 {
     return x.swap(y);
 }
