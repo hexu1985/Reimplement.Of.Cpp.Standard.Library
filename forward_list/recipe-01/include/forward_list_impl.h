@@ -135,7 +135,7 @@ list_node_t* list_delete_after(list_node_t* x)
 inline
 list_node_t* list_delete_head(list_t* lst)
 {
-    auto dummy_head = list_before_head(lst);
+    list_node_t* dummy_head = list_before_head(lst);
     return list_delete_after(dummy_head);
 }
 

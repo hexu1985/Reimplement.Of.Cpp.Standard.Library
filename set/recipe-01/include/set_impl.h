@@ -157,11 +157,11 @@ bool tree_is_empty(const tree_t* tree)
 inline
 void tree_transplant(tree_t* tree, tree_node_t* u, tree_node_t* v)
 {
-    if (u->parent == NULL) {            // u为树的根结点
+    if (u->parent == NULL) {            // u为树的根节点
         tree->root = v;
-    } else if (u == u->parent->left) {  // u为父结点的左子树
+    } else if (u == u->parent->left) {  // u为父节点的左子树
         u->parent->left = v;
-    } else {                            // u为父结点的右子树
+    } else {                            // u为父节点的右子树
         u->parent->right = v;
     }
 
