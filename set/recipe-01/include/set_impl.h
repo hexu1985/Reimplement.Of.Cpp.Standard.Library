@@ -251,9 +251,9 @@ int tree_size(const tree_t* tree)
 inline 
 void tree_swap(tree_t* t1, tree_t* t2)
 {
-    tree_node_t* tmp = t1->root;
-    t1->root = t2->root;
-    t2->root = tmp;
+    tree_t t = *t1;
+    *t1 = *t2;
+    *t2 = t;
 }
 
 #ifdef __cplusplus
