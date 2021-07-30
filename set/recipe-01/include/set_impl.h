@@ -261,4 +261,4 @@ void tree_swap(tree_t* t1, tree_t* t2)
 } // namespace mini_stl
 #endif // __cplusplus
 
-#endif // MINI_STL_LIST_IMPL_INC
+#endif // MINI_STL_LIST_SET_INC
