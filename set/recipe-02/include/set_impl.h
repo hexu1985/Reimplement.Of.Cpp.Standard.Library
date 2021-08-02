@@ -15,7 +15,7 @@
 
 #ifdef __cplusplus
 namespace mini_stl {
-namespace binary_search {
+namespace red_black {
 #endif // __cplusplus
 
 // 红黑树节点颜色
@@ -557,7 +557,7 @@ void tree_swap(tree_t* t1, tree_t* t2)
 }
 
 #ifdef __cplusplus
-} // namespace binary_search
+} // namespace red_black
 } // namespace mini_stl
 #endif // __cplusplus
 
