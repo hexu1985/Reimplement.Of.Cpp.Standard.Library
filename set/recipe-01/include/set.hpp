@@ -159,6 +159,7 @@ public:
         catch (...)
         {
             x.clear();
+            finalize();
             throw;
         }
     }

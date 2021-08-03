@@ -124,7 +124,9 @@ void tree_init(tree_t* tree)
 inline 
 void tree_set_root(tree_t* tree, tree_node_t* root)
 {
+    assert(root != NULL);
     tree->root = root;
+    root->parent = NULL;
 }
 
 // 判断二叉搜索树是否为空,
@@ -238,13 +240,6 @@ void tree_delete(tree_t* tree, tree_node_t* z)
         y->left = z->left;                      // c)
         y->left->parent = y;                    // c)
     }
-}
-
-// 获取二叉树节点个数
-inline
-int tree_size(const tree_t* tree)
-{
-    return tree_size(tree->root);
 }
 
 #ifdef __cplusplus
