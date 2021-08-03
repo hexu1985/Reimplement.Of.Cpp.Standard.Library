@@ -62,7 +62,7 @@ struct set_reverse_iterator {
 
     bool operator== (const this_type& other) const
     {
-        return (this->tree == other && this->link == other.link);
+        return (this->tree == other.tree && this->link == other.link);
     }
 
     bool operator!= (const this_type& other) const
@@ -73,7 +73,7 @@ struct set_reverse_iterator {
     void next()
     {
         assert(link != nullptr && link != nullptr);
-        if (link != tree->nil)
+        if (link != &tree->nil)
             link = tree_predecessor(tree, link);
         else
             link = tree_maximum(tree, tree->root);
@@ -82,7 +82,7 @@ struct set_reverse_iterator {
     void prev()
     {
         assert(link != nullptr && link != nullptr);
-        if (link != tree->nil) 
+        if (link != &tree->nil) 
             link = tree_successor(tree, link);
         else
             link = tree_minimum(tree, tree->root);
@@ -156,7 +156,7 @@ struct set_const_reverse_iterator {
 
     bool operator== (const this_type& other) const
     {
-        return (this->tree == other && this->link == other.link);
+        return (this->tree == other.tree && this->link == other.link);
     }
 
     bool operator!= (const this_type& other) const
@@ -167,7 +167,7 @@ struct set_const_reverse_iterator {
     void next()
     {
         assert(link != nullptr && link != nullptr);
-        if (link != tree->nil)
+        if (link != &tree->nil)
             link = tree_predecessor(tree, link);
         else
             link = tree_maximum(tree, tree->root);
@@ -176,7 +176,7 @@ struct set_const_reverse_iterator {
     void prev()
     {
         assert(link != nullptr && link != nullptr);
-        if (link != tree->nil) 
+        if (link != &tree->nil) 
             link = tree_successor(tree, link);
         else
             link = tree_minimum(tree, tree->root);

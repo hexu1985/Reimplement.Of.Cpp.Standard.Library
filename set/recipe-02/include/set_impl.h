@@ -44,7 +44,7 @@ typedef struct tree_node_t {
 //    均包含相同数目的黑色节点.
 typedef struct tree_t {
     tree_node_t* root;
-    tree_node_t* nil;
+    tree_node_t nil;
 } tree_t;
 
 // 初始化红黑树节点
@@ -81,25 +81,26 @@ void tree_nil_init(tree_node_t *nil)
 
 // 初始化红黑树
 inline
-void tree_init(tree_t* tree, tree_node_t *nil)
+void tree_init(tree_t* tree)
 {
-    tree->nil = nil;
-    tree->root = nil;
+    tree_nil_init(&tree->nil);
+    tree->root = &tree->nil;
 }
 
 // 设置红黑树的根节点
 inline 
 void tree_set_root(tree_t* tree, tree_node_t* root)
 {
+    assert(root != NULL);
     tree->root = root;
-    root->parent = tree->nil;
+    root->parent = &tree->nil;
 }
 
 // 返回以节点x为根的子树的最小元素的指针,
 inline
 tree_node_t* tree_minimum(tree_t *tree, tree_node_t* x)
 {
-    tree_node_t* nil = tree->nil;
+    tree_node_t* nil = &tree->nil;
     while (x->left != nil)
         x = x->left;
     return x;
@@ -109,7 +110,7 @@ tree_node_t* tree_minimum(tree_t *tree, tree_node_t* x)
 inline
 tree_node_t* tree_maximum(tree_t *tree, tree_node_t* x)
 {
-    tree_node_t* nil = tree->nil;
+    tree_node_t* nil = &tree->nil;
     while (x->right != nil)
         x = x->right;
     return x;
@@ -119,7 +120,7 @@ tree_node_t* tree_maximum(tree_t *tree, tree_node_t* x)
 inline
 tree_node_t* tree_successor(tree_t *tree, tree_node_t* x)
 {
-    tree_node_t* nil = tree->nil;
+    tree_node_t* nil = &tree->nil;
     if (x->right != nil)
         return tree_minimum(tree, x->right);
 
@@ -135,9 +136,9 @@ tree_node_t* tree_successor(tree_t *tree, tree_node_t* x)
 inline
 tree_node_t* tree_predecessor(tree_t *tree, tree_node_t* x)
 {
-    tree_node_t* nil = tree->nil;
+    tree_node_t* nil = &tree->nil;
     if (x->left != nil)
-        return tree_maximum(x->left);
+        return tree_maximum(tree, x->left);
 
     tree_node_t* y = x->parent;
     while (y != nil && x == y->left) {
@@ -149,9 +150,9 @@ tree_node_t* tree_predecessor(tree_t *tree, tree_node_t* x)
 
 // 返回以节点x为根节点的子树的节点个数
 inline
-int tree_size(tree_t *tree, tree_node_t* x)
+int tree_size(const tree_t *tree, const tree_node_t* x)
 {
-    if (x == tree->nil)
+    if (x == &tree->nil)
         return 0;
 
     return 1+tree_size(tree, x->left)+tree_size(tree, x->right);
@@ -161,7 +162,7 @@ int tree_size(tree_t *tree, tree_node_t* x)
 inline
 bool tree_is_empty(const tree_t* tree)
 {
-    return (tree->root == tree->nil);
+    return (tree->root == &tree->nil);
 }
 
 /**
@@ -179,11 +180,11 @@ void tree_left_rotate(tree_t *tree, tree_node_t* x)
 {
     tree_node_t* y = x->right;
     x->right = y->left;
-    if (y->left != tree->nil) {
+    if (y->left != &tree->nil) {
         y->left->parent = x;
     }
     y->parent = x->parent;
-    if (x->parent == tree->nil) {       // x是根节点
+    if (x->parent == &tree->nil) {      // x是根节点
         tree->root = y;
     } else if (x == x->parent->left) {  // x是左子树
         x->parent->left = y;
@@ -209,11 +210,11 @@ void tree_right_rotate(tree_t *tree, tree_node_t* x)
 {
     tree_node_t* y = x->left;
     x->left = y->right;
-    if (y->right != tree->nil) {
+    if (y->right != &tree->nil) {
         y->right->parent = x;
     }
     y->parent = x->parent;
-    if (x->parent == tree->nil) {       // x是根节点
+    if (x->parent == &tree->nil) {      // x是根节点
         tree->root = y;
     } else if (x == x->parent->left) {  // x是左子树
         x->parent->left = y;
@@ -327,7 +328,7 @@ void tree_insert_fixup(tree_t *tree, tree_node_t* z)
 inline
 void tree_transplant(tree_t* tree, tree_node_t* u, tree_node_t* v)
 {
-    if (u->parent == tree->nil) {       // u为树的根节点
+    if (u->parent == &tree->nil) {      // u为树的根节点
         tree->root = v;
     } else if (u == u->parent->left) {  // u为父节点的左子树
         u->parent->left = v;
@@ -514,10 +515,10 @@ void tree_delete(tree_t* tree, tree_node_t* z)
     tree_node_t* x = NULL;
     tree_node_t* y = z;
     tree_node_color_t y_original_color = y->color;
-	if (z->left == tree->nil) {
+	if (z->left == &tree->nil) {
         x = z->right;
 		tree_transplant(tree, z, z->right);     // a)
-    } else if (z->right == tree->nil) {          
+    } else if (z->right == &tree->nil) {          
         x = z->left;
 		tree_transplant(tree, z, z->left);      // b)
     } else {
@@ -538,22 +539,6 @@ void tree_delete(tree_t* tree, tree_node_t* z)
 	}
     if (y_original_color == kBlack)
         tree_delete_fixup(tree, x);
-}
-
-// 获取红黑树节点个数
-inline
-int tree_size(const tree_t* tree)
-{
-    return tree_size(tree->root);
-}
-
-// 交换两棵红黑树
-inline 
-void tree_swap(tree_t* t1, tree_t* t2)
-{
-    tree_t t = *t1;
-    *t1 = *t2;
-    *t2 = t;
 }
 
 #ifdef __cplusplus
