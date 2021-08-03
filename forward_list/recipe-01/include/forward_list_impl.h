@@ -46,30 +46,30 @@ typedef struct list_t {
  *
  */
 inline
-void list_init(list_t* lst)
+void list_init(list_t* list)
 {
-    lst->head.next = NULL;
+    list->head.next = NULL;
 }
 
 // 返回链表头部第一个节点(非哑元头节点)的指针
 inline
-list_node_t* list_head(const list_t* lst)
+list_node_t* list_head(const list_t* list)
 {
-    return (list_node_t* ) lst->head.next;
+    return (list_node_t* ) list->head.next;
 }
 
 // 返回链表哑元头节点的指针
 inline
-list_node_t* list_before_head(const list_t* lst)
+list_node_t* list_before_head(const list_t* list)
 {
-    return (list_node_t* ) &lst->head;
+    return (list_node_t* ) &list->head;
 }
 
 // 判断链表是否为空
 inline
-int list_is_empty(const list_t* lst)
+int list_is_empty(const list_t* list)
 {
-    return (lst->head.next == NULL);
+    return (list->head.next == NULL);
 }
 
 /**
@@ -133,18 +133,18 @@ list_node_t* list_delete_after(list_node_t* x)
 
 // 删除链表头节点
 inline
-list_node_t* list_delete_head(list_t* lst)
+list_node_t* list_delete_head(list_t* list)
 {
-    list_node_t* dummy_head = list_before_head(lst);
+    list_node_t* dummy_head = list_before_head(list);
     return list_delete_after(dummy_head);
 }
 
 // 返回链表中元素个数
 inline
-size_t list_size(const list_t* lst)
+size_t list_size(const list_t* list)
 {
     size_t n = 0;
-    list_node_t* node = list_head(lst);
+    list_node_t* node = list_head(list);
     while (node != NULL) {
         node = node->next;
         n++;
