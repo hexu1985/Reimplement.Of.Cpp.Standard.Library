@@ -649,7 +649,7 @@ public:
      */
     void swap(forward_list& fwdlst)
     {
-        swap_data(fwdlst);
+        std::swap(lst_, fwdlst.lst_);
         std::swap(node_alloc_, fwdlst.node_alloc_);
     }
 
@@ -950,11 +950,6 @@ public:
     }
 
 private:
-    void swap_data(forward_list& fwdlst)
-    {
-        list_swap(&lst_, &fwdlst.lst_);
-    }
-
     node_type* get_node()
     {
         return node_alloc_.allocate(1);

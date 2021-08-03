@@ -152,15 +152,6 @@ size_t list_size(const list_t* lst)
     return n;
 }
 
-// 交换两个链表
-inline
-void list_swap(list_t* a, list_t* b)
-{
-    list_t tmp = *a;
-    *a = *b;
-    *b = tmp;
-}
-
 /**
  * 将链表上x节点后面的所有节点反序排列
  *
