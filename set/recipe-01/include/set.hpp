@@ -175,7 +175,6 @@ public:
 
         link_type *new_root = clone_tree(x.tree_.root);
         finalize();
-        initialize();
         tree_.root = new_root;
         return *this;
     }

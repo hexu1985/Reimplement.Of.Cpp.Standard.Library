@@ -247,15 +247,6 @@ int tree_size(const tree_t* tree)
     return tree_size(tree->root);
 }
 
-// 交换两棵二叉树
-inline 
-void tree_swap(tree_t* t1, tree_t* t2)
-{
-    tree_t t = *t1;
-    *t1 = *t2;
-    *t2 = t;
-}
-
 #ifdef __cplusplus
 } // namespace binary_search
 } // namespace mini_stl
