@@ -54,36 +54,36 @@ void list_nil_init(list_node_t* nil)
  * 初始化链表
  */
 inline
-void list_init(list_t* lst)
+void list_init(list_t* list)
 {
-    list_nil_init(&lst->nil);
+    list_nil_init(&list->nil);
 }
 
 /**
  * 获取链表头节点指针
  */
 inline
-list_node_t* list_head(const list_t* lst)
+list_node_t* list_head(const list_t* list)
 {
-    return (list_node_t*) lst->nil.next;
+    return (list_node_t*) list->nil.next;
 }
 
 /**
  * 获取链表尾节点指针
  */
 inline
-list_node_t* list_tail(const list_t* lst)
+list_node_t* list_tail(const list_t* list)
 {
-    return (list_node_t*) lst->nil.prev;
+    return (list_node_t*) list->nil.prev;
 }
 
 /**
  * 获取NIL节点指针
  */
 inline
-list_node_t* list_nil(const list_t* lst)
+list_node_t* list_nil(const list_t* list)
 {
-    return (list_node_t*) &lst->nil;
+    return (list_node_t*) &list->nil;
 }
 
 /**
@@ -252,9 +252,9 @@ void list_transfer_range(list_node_t* x, list_node_t* a, list_node_t* b)
  * 检查链表是否为空
  */
 inline 
-int list_is_empty(const list_t* lst)
+int list_is_empty(const list_t* list)
 {
-    return (lst->nil.next == &lst->nil);
+    return (list->nil.next == &list->nil);
 }
 
 /**
@@ -293,36 +293,16 @@ void list_reverse(list_node_t* x, list_node_t* nil)
  * 获取列表大小
  */
 inline
-size_t list_size(const list_t* lst)
+size_t list_size(const list_t* list)
 {
-    const list_node_t* x = lst->nil.next;
-    const list_node_t* nil = &lst->nil;
+    const list_node_t* x = list->nil.next;
+    const list_node_t* nil = &list->nil;
     size_t n = 0;
     while (x != nil) {
         x = x->next;
         n++;
     }
     return n;
-}
-
-/**
- * 交换两个链表
- */
-inline
-void list_swap(list_t* a, list_t* b)
-{
-    list_t tmp;
-    list_t* lst = &tmp;
-    list_init(lst);
-    if (!list_is_empty(a)) {    // lst <- a
-        list_transfer_range(list_nil(lst), list_head(a), list_tail(a));
-    }
-    if (!list_is_empty(b)) {    // a <- b
-        list_transfer_range(list_nil(a), list_head(b), list_tail(b));
-    }
-    if (!list_is_empty(lst)) { // b <- lst
-        list_transfer_range(list_nil(b), list_head(lst), list_tail(lst));
-    }
 }
 
 #ifdef __cplusplus

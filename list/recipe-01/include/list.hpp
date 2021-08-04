@@ -223,7 +223,7 @@ class list {
     typedef typename Alloc::template rebind<node_type>::other node_alloc_type;
 
     node_alloc_type node_alloc_;
-    list_type lst_;
+    list_type* list_ = nullptr;
 
 public:
     /* Type Definitions of Lists */
@@ -327,8 +327,8 @@ public:
      */
     list(list&& x): node_alloc_(std::move(x.node_alloc_))
     {
-        initialize();
-        list_transfer_range(list_nil(&lst_), list_head(&x.lst_), list_tail(&x.lst_));
+        list_ = x.list_;
+        x.initialize();
     }
 
     list(list&& x, const allocator_type& alloc): node_alloc_(alloc)
@@ -392,7 +392,7 @@ public:
             return *this;
 
         this->clear();
-        swap_data(x);
+        swap(list_, x.list_);
         swap(node_alloc_, x.node_alloc_);
         return *this;
     }
@@ -413,12 +413,12 @@ public:
      */
     iterator begin() noexcept
     {
-        return iterator(list_head(&lst_));
+        return iterator(list_head(list_));
     }
 
     const_iterator begin() const noexcept
     {
-        return const_iterator(list_head(&lst_));
+        return const_iterator(list_head(list_));
     }
 
     /**
@@ -428,12 +428,12 @@ public:
      */
     iterator end() noexcept
     {
-        return iterator(list_nil(&lst_));
+        return iterator(list_nil(list_));
     }
 
     const_iterator end() const noexcept
     {
-        return const_iterator(list_nil(&lst_));
+        return const_iterator(list_nil(list_));
     }
 
     /**
@@ -466,7 +466,7 @@ public:
      */
     const_iterator cbegin() const noexcept
     {
-        return const_iterator(list_head(&lst_));
+        return const_iterator(list_head(list_));
     }
 
     /**
@@ -477,7 +477,7 @@ public:
      */
     const_iterator cend() const noexcept
     {
-        return const_iterator(list_head(&lst_));
+        return const_iterator(list_head(list_));
     }
 
     /**
@@ -505,7 +505,7 @@ public:
      * Test whether container is empty
      * Returns whether the list container is empty (i.e. whether its size is 0).
      */
-    bool empty() const noexcept { return list_is_empty(&lst_); }
+    bool empty() const noexcept { return list_is_empty(list_); }
 
     /**
      * Return size
@@ -513,7 +513,7 @@ public:
      */
     size_type size() const noexcept 
     {
-        return list_size(&lst_); 
+        return list_size(list_); 
     }
 
     /**
@@ -532,13 +532,13 @@ public:
     reference front()
     {
         assert(!empty());
-        return get_ref(list_head(&lst_));
+        return get_ref(list_head(list_));
     }
 
     const_reference front() const
     {
         assert(!empty());
-        return get_ref(list_head(&lst_));
+        return get_ref(list_head(list_));
     }
 
     /**
@@ -548,13 +548,13 @@ public:
     reference back()
     {
         assert(!empty());
-        return get_ref(list_tail(&lst_));
+        return get_ref(list_tail(list_));
     }
 
     const_reference back() const
     {
         assert(!empty());
-        return get_ref(list_tail(&lst_));
+        return get_ref(list_tail(list_));
     }
 
     /**
@@ -599,7 +599,7 @@ public:
     template <typename... Args>
     void emplace_front(Args&&... args)
     {
-        list_insert(list_head(&lst_), create_node(std::forward<Args>(args)...));
+        list_insert(list_head(list_), create_node(std::forward<Args>(args)...));
     }
 
     /**
@@ -610,12 +610,12 @@ public:
      */
     void push_front(const value_type& val)
     {
-        list_insert(list_head(&lst_), create_node(val));
+        list_insert(list_head(list_), create_node(val));
     }
 
     void push_front(value_type&& val)
     {
-        list_insert(list_head(&lst_), create_node(std::forward<value_type>(val)));
+        list_insert(list_head(list_), create_node(std::forward<value_type>(val)));
     }
 
     /**
@@ -626,7 +626,7 @@ public:
     void pop_front()
     {
         assert(!empty());
-        link_type* link = list_head(&lst_);
+        link_type* link = list_head(list_);
         list_delete(link);
         destroy_node(link);
     }
@@ -640,7 +640,7 @@ public:
     template <typename... Args>
     void emplace_back(Args&&... args)
     {
-        list_insert(list_nil(&lst_), create_node(std::forward<Args>(args)...));
+        list_insert(list_nil(list_), create_node(std::forward<Args>(args)...));
     }
 
     /**
@@ -650,7 +650,7 @@ public:
      */
     void push_back(const value_type& val)
     {
-        list_insert(list_nil(&lst_), create_node(val));
+        list_insert(list_nil(list_), create_node(val));
     }
 
     /**
@@ -660,7 +660,7 @@ public:
      */
     void push_back(value_type&& val)
     {
-        list_insert(list_nil(&lst_), create_node(std::forward<value_type>(val)));
+        list_insert(list_nil(list_), create_node(std::forward<value_type>(val)));
     }
 
     /**
@@ -671,7 +671,7 @@ public:
     void pop_back()
     {
         assert(!empty());
-        link_type* link = list_tail(&lst_);
+        link_type* link = list_tail(list_);
         list_delete(link);
         destroy_node(link);
     }
@@ -769,7 +769,7 @@ public:
     void swap(list& x)
     {
         using std::swap;
-        swap_data(x);
+        swap(list_, x.list_);
         swap(node_alloc_, x.node_alloc_);
     }
 
@@ -784,9 +784,9 @@ public:
 
     void resize(size_type n, const value_type& val)
     {
-        link_type* link = lst_.nil.next;
+        link_type* link = list_head(list_);
         size_type i = 0;
-        link_type* nil = &lst_.nil;
+        link_type* nil = list_nil(list_);
         for ( ; link != nil && i < n; ++i) {
             link = link->next;
         }
@@ -820,7 +820,7 @@ public:
         if (x.empty()) return;
 
         list_transfer_range((link_type*) position.link, 
-            list_head(&x.lst_), list_tail(&x.lst_));
+            list_head(x.list_), list_tail(x.list_));
     }
 
     void splice(const_iterator position, list& x, const_iterator i)
@@ -844,7 +844,7 @@ public:
         if (x.empty()) return;
 
         list_transfer_range((link_type*) position.link, 
-            list_head(&x.lst_), list_tail(&x.lst_));
+            list_head(x.list_), list_tail(x.list_));
     }
 
     void splice(const_iterator position, list&& x, const_iterator i)
@@ -883,8 +883,8 @@ public:
     template <typename Predicate>
     void remove_if(Predicate pred)
     {
-        auto pos = static_cast<node_type*>(list_head(&lst_));
-        auto nil = static_cast<node_type*>(list_nil(&lst_));
+        auto pos = static_cast<node_type*>(list_head(list_));
+        auto nil = static_cast<node_type*>(list_nil(list_));
         while (pos != nil) {
             link_type* next = pos->next;
             if (pred(*pos->valptr())) {
@@ -908,8 +908,8 @@ public:
     template <typename BinaryPredicate>
     void unique(BinaryPredicate binary_pred)
     {
-        auto pos = static_cast<node_type*>(list_head(&lst_));
-        auto nil = static_cast<node_type*>(list_nil(&lst_));
+        auto pos = static_cast<node_type*>(list_head(list_));
+        auto nil = static_cast<node_type*>(list_nil(list_));
         while (pos != nil) {
             node_type* next = static_cast<node_type*>(pos->next);
             while (next != nil && binary_pred(*pos->valptr(), *next->valptr())) {
@@ -935,10 +935,10 @@ public:
     template <typename Compare>
     void merge(list& x, Compare comp)
     {
-        auto dst_pos = static_cast<node_type*>(list_head(&lst_));
-        auto dst_nil = static_cast<node_type*>(list_nil(&lst_));
-        auto src_pos = static_cast<node_type*>(list_head(&x.lst_));
-        auto src_nil = static_cast<node_type*>(list_nil(&x.lst_));
+        auto dst_pos = static_cast<node_type*>(list_head(list_));
+        auto dst_nil = static_cast<node_type*>(list_nil(list_));
+        auto src_pos = static_cast<node_type*>(list_head(x.list_));
+        auto src_nil = static_cast<node_type*>(list_nil(x.list_));
         merge(dst_pos, dst_nil, src_pos, src_nil, comp);
     }
 
@@ -950,10 +950,10 @@ public:
     template <typename Compare>
     void merge(list&& x, Compare comp)
     {
-        auto dst_pos = static_cast<node_type*>(list_head(&lst_));
-        auto dst_nil = static_cast<node_type*>(list_nil(&lst_));
-        auto src_pos = static_cast<node_type*>(list_head(&x.lst_));
-        auto src_nil = static_cast<node_type*>(list_nil(&x.lst_));
+        auto dst_pos = static_cast<node_type*>(list_head(list_));
+        auto dst_nil = static_cast<node_type*>(list_nil(list_));
+        auto src_pos = static_cast<node_type*>(list_head(x.list_));
+        auto src_nil = static_cast<node_type*>(list_nil(x.list_));
         merge(dst_pos, dst_nil, src_pos, src_nil, comp);
     }
 
@@ -1007,8 +1007,8 @@ public:
 
         link_type** array = new link_type*[n];
 
-        link_type* link = list_head(&lst_); 
-        link_type* nil = list_nil(&lst_);
+        link_type* link = list_head(list_); 
+        link_type* nil = list_nil(list_);
         for (link_type** ptr = array; link != nil; link = link->next) {
             *ptr++ = link;
         }
@@ -1027,7 +1027,7 @@ public:
     template <typename Compare>
     void sort(Compare comp)
     {
-        link_type* nil = list_nil(&lst_);
+        link_type* nil = list_nil(list_);
 
         link_type* i = nil->next->next;
         while (i != nil) {
@@ -1051,7 +1051,7 @@ public:
      */
     void reverse() noexcept
     {
-        list_reverse(list_head(&lst_), list_nil(&lst_));
+        list_reverse(list_head(list_), list_nil(list_));
     }
 
     /**
@@ -1065,15 +1065,10 @@ public:
     }
 
 private:
-    void swap_data(list& x)
-    {
-        list_swap(&lst_, &x.lst_);
-    }
-
     void fill(size_type n, const value_type& val)
     {
-        link_type* link = lst_.nil.next;
-        link_type* nil = &lst_.nil;
+        link_type* link = list_head(list_);
+        link_type* nil = list_nil(list_);
         while ((link != nil) && (n > 0)) {
             *static_cast<node_type*>(link)->valptr() = val;
             n--;
@@ -1096,8 +1091,8 @@ private:
     template <typename InputIterator>
     void copy_from(InputIterator first, InputIterator last)
     {
-        link_type* link = lst_.nil.next;
-        link_type* nil = &lst_.nil;
+        link_type* link = list_head(list_);
+        link_type* nil = list_nil(list_);
         while ((link != nil) && (first != last)) {
             *static_cast<node_type*>(link)->valptr() = *first;
             ++first;
@@ -1119,8 +1114,8 @@ private:
     template <typename InputIterator>
     void move_from(InputIterator first, InputIterator last)
     {
-        link_type* link = lst_.nil.next;
-        link_type* nil = &lst_.nil;
+        link_type* link = list_head(list_);
+        link_type* nil = list_nil(list_);
         while ((link != nil) && (first != last)) {
             *static_cast<node_type*>(link)->valptr() = std::move(*first);
             ++first;
@@ -1214,12 +1209,14 @@ private:
 
     void initialize() 
     {
-        list_init(&lst_); 
+        list_ = new list_type{};
+        list_init(list_); 
     }
 
     void finalize()
     {
-        range_destroy(list_head(&lst_), list_nil(&lst_));
+        range_destroy(list_head(list_), list_nil(list_));
+        delete list_;
     }
 };
 
