@@ -95,7 +95,7 @@ R>::type invoke(F&& f, P&&... par)
     return std::forward<F>(f)(std::forward<P>(par)...);
 }
 
-template<typename Fun, typename... Args>
+template <typename Fun, typename... Args>
 struct bind_t {
     typedef typename std::decay<Fun>::type FunType;
     typedef std::tuple<typename std::decay<Args>::type...> ArgType;
@@ -103,7 +103,7 @@ struct bind_t {
     typedef typename result_traits<FunType>::type     ResultType;
 
 public:
-    template<class F, class... BArgs>
+    template <class F, class... BArgs>
     bind_t(F&& f,  BArgs&&... args) : func_(std::forward<F>(f)), args_(std::forward<BArgs>(args)...)
     {
     }
@@ -115,7 +115,7 @@ public:
                 std::forward_as_tuple(std::forward<CArgs>(args)...));
     }
 
-    template<typename ArgTuple, std::size_t... Indexes>
+    template <typename ArgTuple, std::size_t... Indexes>
     ResultType do_call(index_sequence<Indexes...>&& in, ArgTuple&& argtp)
     {
         return invoke<ResultType>(func_, select(std::get<Indexes>(args_), argtp)...);
