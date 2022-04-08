@@ -364,10 +364,6 @@ struct is_ratio: public std::false_type {};
 template <intmax_t N, intmax_t D>
 struct is_ratio<ratio<N, D> >: public std::true_type {};
 
-template <typename R1, typename R2>
-struct ratio_gcd: ratio<ratio_detail::gcd<R1::num, R2::num>::value, 
-	ratio_detail::lcm<R1::den, R2::den>::value>::type {};
-
 }	// namespace mini_stl
 
 #endif
