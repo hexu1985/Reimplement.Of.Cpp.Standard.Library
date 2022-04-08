@@ -1,5 +1,7 @@
-#ifndef ALL_OF_INC
-#define ALL_OF_INC
+#ifndef MINI_STLALL_OF_INC
+#define MINI_STLALL_OF_INC
+
+namespace mini_stl {
 
 template <typename InputIterator, typename UnaryPredicate>
 bool all_of(InputIterator first, InputIterator last, UnaryPredicate pred)
@@ -10,5 +12,7 @@ bool all_of(InputIterator first, InputIterator last, UnaryPredicate pred)
     }
     return true;
 }
+
+}   // mini_stl
 
 #endif

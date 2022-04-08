@@ -1,5 +1,7 @@
-#ifndef NONE_OF_INC
-#define NONE_OF_INC
+#ifndef MINI_STL_NONE_OF_INC
+#define MINI_STL_NONE_OF_INC
+
+namespace mini_stl {
 
 template <typename InputIterator, typename UnaryPredicate>
 bool none_of(InputIterator first, InputIterator last, UnaryPredicate pred)
@@ -10,5 +12,7 @@ bool none_of(InputIterator first, InputIterator last, UnaryPredicate pred)
     }
     return true;
 }
+
+}   // namespace mini_stl
 
 #endif
