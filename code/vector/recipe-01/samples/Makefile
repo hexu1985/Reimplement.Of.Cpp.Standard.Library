@@ -13,7 +13,7 @@ all: $(PROGS)
 	@echo "PROGS = $(PROGS)" 
 
 clean:
-	$(RM) $(PROGS) *.dSYM
+	$(RM) $(PROGS)
 
 %: %.cpp 
 	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDES) $^ $(LDFLAGS) $(LDPATH)
