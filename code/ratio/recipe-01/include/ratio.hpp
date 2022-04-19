@@ -12,23 +12,23 @@ namespace mini_stl {
 namespace ratio_detail {
 
 template <intmax_t Pn>
-struct sign: std::integral_constant<intmax_t, (Pn < 0) ? -1 : 1> {};
+struct static_sign: std::integral_constant<intmax_t, (Pn < 0) ? -1 : 1> {};
 
 template <intmax_t Pn>
-struct abs: std::integral_constant<intmax_t, Pn * sign<Pn>::value> {};
+struct static_abs: std::integral_constant<intmax_t, Pn * static_sign<Pn>::value> {};
 
 template <intmax_t Pn, intmax_t Qn>
-struct gcd: gcd<Qn, (Pn % Qn)> {};
+struct static_gcd: static_gcd<Qn, (Pn % Qn)> {};
 
 template <intmax_t Pn>
-struct gcd<Pn, 0>: std::integral_constant<intmax_t, abs<Pn>::value> {};
+struct static_gcd<Pn, 0>: std::integral_constant<intmax_t, static_abs<Pn>::value> {};
 
 template <intmax_t Qn>
-struct gcd<0, Qn>: std::integral_constant<intmax_t, abs<Qn>::value> {};
+struct static_gcd<0, Qn>: std::integral_constant<intmax_t, static_abs<Qn>::value> {};
 
 template <intmax_t Pn, intmax_t Qn>
-struct lcm: 
-	std::integral_constant<intmax_t, Pn / gcd<Pn, Qn>::value * Qn> {};
+struct static_lcm: 
+	std::integral_constant<intmax_t, Pn / static_gcd<Pn, Qn>::value * Qn> {};
 
 // Let c = 2^(half # of bits in an intmax_t)
 // then we find a1, a0, b1, b0 s.t. N = a1*c + a0, M = b1*c + b0
@@ -41,10 +41,10 @@ struct multiply {
 private:
 	static constexpr uintmax_t c = uintmax_t(1) << (sizeof(intmax_t) * 4);
 
-	static constexpr uintmax_t a0 = abs<Pn>::value % c;
-	static constexpr uintmax_t a1 = abs<Pn>::value / c;
-	static constexpr uintmax_t b0 = abs<Qn>::value % c;
-	static constexpr uintmax_t b1 = abs<Qn>::value / c;
+	static constexpr uintmax_t a0 = static_abs<Pn>::value % c;
+	static constexpr uintmax_t a1 = static_abs<Pn>::value / c;
+	static constexpr uintmax_t b0 = static_abs<Qn>::value % c;
+	static constexpr uintmax_t b1 = static_abs<Qn>::value / c;
 
 	static_assert(a1 == 0 || b1 == 0, "overflow in multiplication");
 	static_assert(a0 * b1 + b0 * a1 < (c >> 1), "overflow in multiplication");
@@ -56,7 +56,7 @@ public:
 	static constexpr intmax_t value = Pn * Qn;
 };
 
-template <intmax_t Pn, intmax_t Qn, intmax_t Qn_sign = sign<Qn>::value>
+template <intmax_t Pn, intmax_t Qn, intmax_t Qn_sign = static_sign<Qn>::value>
 struct add;
 
 template <intmax_t Pn, intmax_t Qn>
@@ -82,7 +82,7 @@ public:
 	static constexpr intmax_t value = Pn + Qn;
 };
 
-template <intmax_t Pn, intmax_t Qn, intmax_t = sign<Qn>::value>
+template <intmax_t Pn, intmax_t Qn, intmax_t = static_sign<Qn>::value>
 struct sub;
 
 template <intmax_t Pn, intmax_t Qn>
@@ -121,9 +121,9 @@ template <intmax_t N, intmax_t D = 1>
 struct ratio {	// N: numerator, D: denominator
     static_assert(D != 0, "denominator cannot be zero");
 	static constexpr intmax_t num = 
-		N * ratio_detail::sign<D>::value / ratio_detail::gcd<N, D>::value;
+		N * ratio_detail::static_sign<D>::value / ratio_detail::static_gcd<N, D>::value;
 	static constexpr intmax_t den = 
-		ratio_detail::abs<D>::value / ratio_detail::gcd<N, D>::value;
+		ratio_detail::static_abs<D>::value / ratio_detail::static_gcd<N, D>::value;
 	typedef ratio<num, den> type;
 };
 
@@ -136,9 +136,9 @@ template <typename R1, typename R2>
 struct ratio_multiply {
 private:
 	static constexpr intmax_t gcd_n1_d2 = 
-		ratio_detail::gcd<R1::num, R2::den>::value;
+		ratio_detail::static_gcd<R1::num, R2::den>::value;
 	static constexpr intmax_t gcd_n2_d1 = 
-		ratio_detail::gcd<R2::num, R1::den>::value;
+		ratio_detail::static_gcd<R2::num, R1::den>::value;
 
 public:
 	typedef ratio<
@@ -174,9 +174,9 @@ template <typename R1, typename R2>
 struct ratio_add {
 private:
 	static constexpr intmax_t gcd_n1_n2 = 
-		ratio_detail::gcd<R1::num, R2::num>::value;
+		ratio_detail::static_gcd<R1::num, R2::num>::value;
 	static constexpr intmax_t gcd_d1_d2 = 
-		ratio_detail::gcd<R1::den, R2::den>::value;
+		ratio_detail::static_gcd<R1::den, R2::den>::value;
 
 public:
 	typedef typename ratio_multiply<
@@ -204,9 +204,9 @@ template <typename R1, typename R2>
 struct ratio_subtract {
 private:
 	static constexpr intmax_t gcd_n1_n2 = 
-		ratio_detail::gcd<R1::num, R2::num>::value;
+		ratio_detail::static_gcd<R1::num, R2::num>::value;
 	static constexpr intmax_t gcd_d1_d2 = 
-		ratio_detail::gcd<R1::den, R2::den>::value;
+		ratio_detail::static_gcd<R1::den, R2::den>::value;
 
 public:
 	typedef typename ratio_multiply<
@@ -275,8 +275,8 @@ struct ratio_less_impl_1<R1, R2, Q, M1, Q, M2> {
 };
 
 template <typename R1, typename R2, 
-	intmax_t S1 = sign<R1::num>::value, 
-	intmax_t S2 = sign<R2::num>::value>
+	intmax_t S1 = static_sign<R1::num>::value, 
+	intmax_t S2 = static_sign<R2::num>::value>
 struct ratio_less_impl {
 	static constexpr bool value = S1 < S2;
 };
@@ -363,6 +363,10 @@ struct is_ratio: public std::false_type {};
 
 template <intmax_t N, intmax_t D>
 struct is_ratio<ratio<N, D> >: public std::true_type {};
+
+template <typename R1, typename R2>
+struct ratio_gcd: ratio<ratio_detail::static_gcd<R1::num, R2::num>::value, 
+	ratio_detail::static_lcm<R1::den, R2::den>::value>::type {};
 
 }	// namespace mini_stl
 
