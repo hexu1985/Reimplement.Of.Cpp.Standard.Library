@@ -18,6 +18,12 @@ class duration;
 
 namespace detail {
 
+template<typename _Tp>
+struct is_ratio: std::false_type {};
+
+template<intmax_t N, intmax_t D>
+struct is_ratio<std::ratio<N, D>>: std::true_type {};
+
 template <typename T>
 struct is_duration: std::false_type {};
 
@@ -51,11 +57,6 @@ struct ratio_gcd: std::ratio<static_gcd<R1::num, R2::num>::value, static_lcm<R1:
 template <typename Rep>
 struct treat_as_floating_point: std::is_floating_point<Rep> {};
 
-template <typename Rep1, typename Period1, typename Rep2, typename Period2>
-struct common_type<duration<Rep1, Period1>, duration<Rep2, Period2>> {
-	typedef duration<typename std::common_type<Rep1, Rep2>::type, typename detail::ratio_gcd<Period1, Period2>::type> type;
-};
-
 /**
  * Duration values
  * This is a traits class to provide the limits and zero value of the type 
@@ -79,7 +80,17 @@ struct duration_values {
 
 }	// namespace mini_stl
 
-namespace Hx {
+namespace std {
+
+template <typename Rep1, typename Period1, typename Rep2, typename Period2>
+struct common_type<mini_stl::chrono::duration<Rep1, Period1>, mini_stl::chrono::duration<Rep2, Period2>> {
+	typedef mini_stl::chrono::duration<typename std::common_type<Rep1, Rep2>::type, 
+            typename mini_stl::chrono::detail::ratio_gcd<Period1, Period2>::type> type;
+};
+
+}   // namespace std
+
+namespace mini_stl {
 
 namespace chrono {
 
@@ -109,7 +120,7 @@ public:
 	typedef Period period;
 
 	static_assert(!detail::is_duration<Rep>::value, "rep cannot be a duration");
-	static_assert(std::is_ratio<Period>::value,
+	static_assert(detail::is_ratio<Period>::value,
 		      "period must be a specialization of ratio");
 	static_assert(Period::num > 0, "period must be positive");
 
@@ -200,10 +211,10 @@ public:
 
 template <typename Rep1, typename Period1, typename Rep2, typename Period2>
 inline constexpr
-typename common_type<duration<Rep1, Period1>, duration<Rep2, Period2>>::type
+typename std::common_type<duration<Rep1, Period1>, duration<Rep2, Period2>>::type
 operator+(const duration<Rep1, Period1>& lhs, const duration<Rep2, Period2>& rhs)
 {
-	typedef typename common_type<duration<Rep1, Period1>, duration<Rep2, Period2>>::type CD;
+	typedef typename std::common_type<duration<Rep1, Period1>, duration<Rep2, Period2>>::type CD;
 	return CD(CD(lhs).count()+CD(rhs).count());
 }
 
@@ -212,23 +223,23 @@ operator+(const duration<Rep1, Period1>& lhs, const duration<Rep2, Period2>& rhs
  */
 template <typename Rep1, typename Period1, typename Rep2, typename Period2>
 inline constexpr
-typename common_type<duration<Rep1, Period1>, duration<Rep2, Period2>>::type
+typename std::common_type<duration<Rep1, Period1>, duration<Rep2, Period2>>::type
 operator-(const duration<Rep1, Period1>& lhs, const duration<Rep2, Period2>& rhs)
 {
-	typedef typename common_type<duration<Rep1, Period1>, duration<Rep2, Period2>>::type CD;
+	typedef typename std::common_type<duration<Rep1, Period1>, duration<Rep2, Period2>>::type CD;
 	return CD(CD(lhs).count()-CD(rhs).count());
 }
 
 template <typename Rep1, typename Period, typename Rep2>
 inline constexpr typename 
 std::enable_if<
-	std::is_convertible<Rep1, typename common_type<Rep1, Rep2>::type>::value &&
-	std::is_convertible<Rep1, typename common_type<Rep1, Rep2>::type>::value,
-	duration<typename common_type<Rep1, Rep2>::type, Period>
+	std::is_convertible<Rep1, typename std::common_type<Rep1, Rep2>::type>::value &&
+	std::is_convertible<Rep1, typename std::common_type<Rep1, Rep2>::type>::value,
+	duration<typename std::common_type<Rep1, Rep2>::type, Period>
 >::type
 operator*(const duration<Rep1, Period>& d, const Rep2& s)
 {
-	typedef typename common_type<Rep1, Rep2>::type CR;
+	typedef typename std::common_type<Rep1, Rep2>::type CR;
 	typedef duration<CR, Period> CD;
 	return CD(CD(d).count()*static_cast<CR>(s));
 }
@@ -236,9 +247,9 @@ operator*(const duration<Rep1, Period>& d, const Rep2& s)
 template <typename Rep1, typename Rep2, typename Period>
 inline constexpr typename
 std::enable_if<
-	std::is_convertible<Rep1, typename common_type<Rep1, Rep2>::type>::value &&
-	std::is_convertible<Rep1, typename common_type<Rep1, Rep2>::type>::value,
-	duration<typename common_type<Rep1, Rep2>::type, Period>
+	std::is_convertible<Rep1, typename std::common_type<Rep1, Rep2>::type>::value &&
+	std::is_convertible<Rep1, typename std::common_type<Rep1, Rep2>::type>::value,
+	duration<typename std::common_type<Rep1, Rep2>::type, Period>
 >::type
 operator*(const Rep1& s, const duration<Rep2, Period>& d)
 {
@@ -249,21 +260,21 @@ template <typename Rep1, typename Period, typename Rep2>
 inline constexpr typename
 std::enable_if<
 	!detail::is_duration<Rep2>::value,
-	duration<typename common_type<Rep1, Rep2>::type, Period>
+	duration<typename std::common_type<Rep1, Rep2>::type, Period>
 >::type
 operator/(const duration<Rep1, Period>& d, const Rep2& s)
 {
-	typedef typename common_type<Rep1, Rep2>::type CR;
+	typedef typename std::common_type<Rep1, Rep2>::type CR;
 	typedef duration<CR, Period> CD;
 	return CD(CD(d).count()/static_cast<CR>(s));
 }
 
 template <typename Rep1, typename Period1, typename Rep2, typename Period2>
 inline constexpr
-typename common_type<Rep1, Rep2>::type
+typename std::common_type<Rep1, Rep2>::type
 operator/(const duration<Rep1, Period1>& lhs, const duration<Rep2, Period2>& rhs)
 {
-	typedef typename common_type<duration<Rep1, Period1>, duration<Rep2, Period2>>::type CD;
+	typedef typename std::common_type<duration<Rep1, Period1>, duration<Rep2, Period2>>::type CD;
 	return CD(lhs).count() / CD(rhs).count();
 }
 
@@ -271,21 +282,21 @@ template <typename Rep1, typename Period, typename Rep2>
 inline constexpr typename
 std::enable_if<
 	!detail::is_duration<Rep2>::value, 
-	duration<typename common_type<Rep1, Rep2>::type, Period>
+	duration<typename std::common_type<Rep1, Rep2>::type, Period>
 >::type
 operator%(const duration<Rep1, Period>& d, const Rep2& s)
 {
-	typedef typename common_type<Rep1, Rep2>::type CR;
+	typedef typename std::common_type<Rep1, Rep2>::type CR;
 	typedef duration<CR, Period> CD;
 	return CD(CD(d).count() % static_cast<CR>(s));
 }
 
 template <typename Rep1, typename Period1, typename Rep2, typename Period2>
 inline constexpr
-typename common_type<duration<Rep1, Period1>, duration<Rep2, Period2>>::type
+typename std::common_type<duration<Rep1, Period1>, duration<Rep2, Period2>>::type
 operator%(const duration<Rep1, Period1>& lhs, const duration<Rep2, Period2>& rhs)
 {
-	typedef typename common_type<duration<Rep1, Period1>, duration<Rep2, Period2>>::type CD;
+	typedef typename std::common_type<duration<Rep1, Period1>, duration<Rep2, Period2>>::type CD;
 	return CD(CD(lhs).count()%CD(rhs).count());
 }
 
@@ -295,7 +306,7 @@ template <typename Duration1, typename Duration2>
 struct duration_equal {
 	constexpr bool operator()(const Duration1& lhs, const Duration2& rhs)
 	{
-		typedef typename common_type<Duration1, Duration2>::type CD;
+		typedef typename std::common_type<Duration1, Duration2>::type CD;
 		return CD(lhs).count() == CD(rhs).count();
 	}
 };
@@ -334,7 +345,7 @@ template <typename Duration1, typename Duration2>
 struct duration_less {
 	constexpr bool operator()(const Duration1& lhs, const Duration2& rhs)
 	{
-		typedef typename common_type<Duration1, Duration2>::type CD;
+		typedef typename std::common_type<Duration1, Duration2>::type CD;
 		return CD(lhs).count() < CD(rhs).count();
 	}
 };
@@ -425,7 +436,7 @@ struct duration_cast_impl<FromDuration, ToDuration, Period, true, false>
 {
 	constexpr ToDuration operator()(const FromDuration& fd) const
 	{
-		typedef typename common_type<
+		typedef typename std::common_type<
 			typename ToDuration::rep,
 			typename FromDuration::rep,
 			intmax_t>::type C;
@@ -446,7 +457,7 @@ struct duration_cast_impl<FromDuration, ToDuration, Period, false, true>
 {
 	constexpr ToDuration operator()(const FromDuration& fd) const
 	{
-		typedef typename common_type<
+		typedef typename std::common_type<
 			typename ToDuration::rep,
 			typename FromDuration::rep,
 			intmax_t>::type C;
@@ -468,7 +479,7 @@ struct duration_cast_impl<FromDuration, ToDuration, Period, false, false>
 {
 	constexpr ToDuration operator()(const FromDuration& fd) const
 	{
-		typedef typename common_type<
+		typedef typename std::common_type<
 			typename ToDuration::rep,
 			typename FromDuration::rep,
 			intmax_t>::type C;
@@ -491,7 +502,7 @@ struct duration_cast_impl<FromDuration, ToDuration, Period, false, false>
  */
 template <typename FromDuration, typename ToDuration>
 struct duration_cast {
-	typedef typename ratio_divide<typename FromDuration::period,
+	typedef typename std::ratio_divide<typename FromDuration::period,
 		typename ToDuration::period>::type Period;
 	typedef detail::duration_cast_impl<FromDuration, ToDuration,
 		Period, Period::num == 1, Period::den == 1> Impl;
@@ -524,16 +535,16 @@ duration_cast(const duration<Rep, Period>& fd)
  * microseconds unsigned integral type of at least 55 bits   ratio<1,1000000>
  * nanoseconds  unsigned integral type of at least 64 bits   ratio<1,1000000000>
  */
-typedef duration<int_least32_t, ratio<3600> > hours;
-typedef duration<int_least32_t, ratio<60> > minutes;
+typedef duration<int_least32_t, std::ratio<3600> > hours;
+typedef duration<int_least32_t, std::ratio<60> > minutes;
 typedef duration<int_least64_t> seconds;
-typedef duration<int_least64_t, milli> milliseconds;
-typedef duration<int_least64_t, micro> microseconds;
-typedef duration<int_least64_t, nano> nanoseconds;
+typedef duration<int_least64_t, std::milli> milliseconds;
+typedef duration<int_least64_t, std::micro> microseconds;
+typedef duration<int_least64_t, std::nano> nanoseconds;
 
 }	// namespace chrono
 
-}	// namespace Hx
+}	// namespace mini_stl
 
 #endif
 
