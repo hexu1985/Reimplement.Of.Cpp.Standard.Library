@@ -13,11 +13,7 @@ namespace mini_stl {
 
 namespace chrono {
 
-#if __cplusplus >= 201103L
-using std::common_type;
-#endif // __cplusplus >= 201103L
-
-template <typename Rep, typename Period = ratio<1> >
+template <typename Rep, typename Period = std::ratio<1> >
 class duration;
 
 namespace detail {
@@ -28,16 +24,36 @@ struct is_duration: std::false_type {};
 template <typename Rep, typename Period>
 struct is_duration<duration<Rep, Period> >: std::true_type {};
 
+template <intmax_t Pn>
+struct static_sign: std::integral_constant<intmax_t, (Pn < 0) ? -1 : 1> {};
+
+template <intmax_t Pn>
+struct static_abs: std::integral_constant<intmax_t, Pn * static_sign<Pn>::value> {};
+
+template <intmax_t Pn, intmax_t Qn>
+struct static_gcd: static_gcd<Qn, (Pn % Qn)> {};
+
+template <intmax_t Pn>
+struct static_gcd<Pn, 0>: std::integral_constant<intmax_t, static_abs<Pn>::value> {};
+
+template <intmax_t Qn>
+struct static_gcd<0, Qn>: std::integral_constant<intmax_t, static_abs<Qn>::value> {};
+
+template <intmax_t Pn, intmax_t Qn>
+struct static_lcm: 
+	std::integral_constant<intmax_t, Pn / static_gcd<Pn, Qn>::value * Qn> {};
+
+template <typename R1, typename R2>
+struct ratio_gcd: std::ratio<static_gcd<R1::num, R2::num>::value, static_lcm<R1::den, R2::den>::value>::type {};
+
 }	// namespace detail
 
 template <typename Rep>
 struct treat_as_floating_point: std::is_floating_point<Rep> {};
 
 template <typename Rep1, typename Period1, typename Rep2, typename Period2>
-struct common_type<mini_stl::chrono::duration<Rep1, Period1>, 
-	mini_stl::chrono::duration<Rep2, Period2>> {
-	typedef mini_stl::chrono::duration<typename common_type<Rep1, Rep2>::type,
-		typename std::ratio_gcd<Period1, Period2>::type> type;
+struct common_type<duration<Rep1, Period1>, duration<Rep2, Period2>> {
+	typedef duration<typename std::common_type<Rep1, Rep2>::type, typename detail::ratio_gcd<Period1, Period2>::type> type;
 };
 
 /**
@@ -62,10 +78,6 @@ struct duration_values {
 }	// namespace chrono
 
 }	// namespace mini_stl
-
-namespace std {
-
-}	// namespace std
 
 namespace Hx {
 
@@ -97,7 +109,7 @@ public:
 	typedef Period period;
 
 	static_assert(!detail::is_duration<Rep>::value, "rep cannot be a duration");
-	static_assert(is_ratio<Period>::value,
+	static_assert(std::is_ratio<Period>::value,
 		      "period must be a specialization of ratio");
 	static_assert(Period::num > 0, "period must be positive");
 
@@ -114,7 +126,7 @@ public:
 
 	template <typename Rep2, typename Period2, typename = typename
 		std::enable_if<treat_as_floating_point<Rep>::value
-			|| (ratio_divide<Period2, period>::den == 1
+			|| (std::ratio_divide<Period2, period>::den == 1
 			&& !treat_as_floating_point<Rep2>::value)>::type>
 	duration(const duration<Rep2, Period2>& dtn):
 		rep_(duration_cast<duration>(dtn).count()) {}
@@ -189,11 +201,9 @@ public:
 template <typename Rep1, typename Period1, typename Rep2, typename Period2>
 inline constexpr
 typename common_type<duration<Rep1, Period1>, duration<Rep2, Period2>>::type
-operator+(const duration<Rep1, Period1>& lhs,
-	 const duration<Rep2, Period2>& rhs)
+operator+(const duration<Rep1, Period1>& lhs, const duration<Rep2, Period2>& rhs)
 {
-	typedef typename common_type<duration<Rep1, Period1>, 
-		duration<Rep2, Period2>>::type CD;
+	typedef typename common_type<duration<Rep1, Period1>, duration<Rep2, Period2>>::type CD;
 	return CD(CD(lhs).count()+CD(rhs).count());
 }
 
@@ -203,11 +213,9 @@ operator+(const duration<Rep1, Period1>& lhs,
 template <typename Rep1, typename Period1, typename Rep2, typename Period2>
 inline constexpr
 typename common_type<duration<Rep1, Period1>, duration<Rep2, Period2>>::type
-operator-(const duration<Rep1, Period1>& lhs,
-	 const duration<Rep2, Period2>& rhs)
+operator-(const duration<Rep1, Period1>& lhs, const duration<Rep2, Period2>& rhs)
 {
-	typedef typename common_type<duration<Rep1, Period1>, 
-		duration<Rep2, Period2>>::type CD;
+	typedef typename common_type<duration<Rep1, Period1>, duration<Rep2, Period2>>::type CD;
 	return CD(CD(lhs).count()-CD(rhs).count());
 }
 
@@ -255,8 +263,7 @@ inline constexpr
 typename common_type<Rep1, Rep2>::type
 operator/(const duration<Rep1, Period1>& lhs, const duration<Rep2, Period2>& rhs)
 {
-	typedef typename common_type<duration<Rep1, Period1>, 
-		duration<Rep2, Period2>>::type CD;
+	typedef typename common_type<duration<Rep1, Period1>, duration<Rep2, Period2>>::type CD;
 	return CD(lhs).count() / CD(rhs).count();
 }
 
@@ -278,8 +285,7 @@ inline constexpr
 typename common_type<duration<Rep1, Period1>, duration<Rep2, Period2>>::type
 operator%(const duration<Rep1, Period1>& lhs, const duration<Rep2, Period2>& rhs)
 {
-	typedef typename common_type<duration<Rep1, Period1>, 
-		duration<Rep2, Period2>>::type CD;
+	typedef typename common_type<duration<Rep1, Period1>, duration<Rep2, Period2>>::type CD;
 	return CD(CD(lhs).count()%CD(rhs).count());
 }
 
