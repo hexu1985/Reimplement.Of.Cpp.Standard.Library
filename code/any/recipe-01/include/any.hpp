@@ -19,7 +19,7 @@ public: // structors
 
     template <typename ValueType>
     any(const ValueType& value)
-        : content(new holder<typename std::remove_cv<typename std::decay<const ValueType>::type>::type>(value))
+        : content(new holder<typename std::decay<ValueType>::type>(value))
     {
     }
 

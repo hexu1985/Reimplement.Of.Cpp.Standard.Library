@@ -17,9 +17,11 @@ public: // structors
     {
     }
 
-    template <typename ValueType>
-    any(const ValueType& value)
-        : content(new holder<typename std::remove_cv<typename std::decay<const ValueType>::type>::type>(value))
+    // Perfect forwarding of ValueType
+    template <typename ValueType,
+        typename = typename std::enable_if<!std::is_same<typename std::decay<ValueType>::type, any>::value>::type>
+    any(ValueType&& value)
+        : content(new holder<typename std::decay<ValueType>::type>(std::forward<ValueType>(value)))
     {
     }
 
@@ -35,15 +37,6 @@ public: // structors
         other.content = 0;
     }
 
-    // Perfect forwarding of ValueType
-    template <typename ValueType,
-        typename = typename std::enable_if<!std::is_same<any&, ValueType>::value>::type,
-        typename = typename std::enable_if<!std::is_const<ValueType>::value>::type>
-    any(ValueType&& value)
-        : content(new holder<typename std::decay<ValueType>::type>(static_cast<ValueType&&>(value)))
-    {
-    }
-
     ~any() noexcept
     {
         delete content;
@@ -56,14 +49,14 @@ public: // modifiers
         return *this;
     }
 
-    any& operator= (const any& rhs)
+    any& operator=(const any& rhs)
     {
         any(rhs).swap(*this);
         return *this;
     }
 
     // move assignment
-    any& operator= (any&& rhs) noexcept
+    any& operator=(any&& rhs) noexcept
     {
         rhs.swap(*this);
         any().swap(rhs);
@@ -72,7 +65,7 @@ public: // modifiers
 
     // Perfect forwading of ValueType
     template <typename ValueType>
-    any& operator= (ValueType&& rhs)
+    any& operator=(ValueType&& rhs)
     {
         any(static_cast<ValueType&&>(rhs)).swap(*this);
         return *this;
@@ -140,7 +133,7 @@ private: // types
         ValueType held;
 
     private: // intentionally left unimplemented
-        holder& operator= (const holder&) = delete;
+        holder& operator=(const holder&) = delete;
     };
 
 private: // representation
