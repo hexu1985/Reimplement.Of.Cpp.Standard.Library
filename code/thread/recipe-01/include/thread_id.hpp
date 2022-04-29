@@ -10,6 +10,7 @@
 
 #include <pthread.h>
 #include <iosfwd>
+#include <functional>
 
 namespace mini_stl {
 
