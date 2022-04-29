@@ -4,11 +4,11 @@
 #include <vector>
 #include "thread.hpp"
 
-using namespace std::chrono_literals;
+using namespace std::chrono;
 
 void foo()
 {
-    std::this_thread::sleep_for(10ms);
+    std::this_thread::sleep_for(milliseconds(10));
 }
  
 int main()
