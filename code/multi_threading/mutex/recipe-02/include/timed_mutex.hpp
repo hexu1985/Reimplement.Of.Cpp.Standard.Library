@@ -28,6 +28,7 @@ public:
      */
     timed_mutex();
 
+    /** Destroys the mutex. */
     ~timed_mutex();
 
     timed_mutex(const timed_mutex&) = delete;
