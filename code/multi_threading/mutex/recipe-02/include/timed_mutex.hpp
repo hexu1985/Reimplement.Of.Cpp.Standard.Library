@@ -65,7 +65,14 @@ public:
     bool try_lock_for(const std::chrono::duration<Rep, Period> &rel_time)
     {
         using namespace std::chrono;
-        return try_lock_until(system_clock::now()+rel_time);
+        auto abs_time = system_clock::now()+rel_time;
+        // convert abs_time to timespec type
+        seconds sec = duration_cast<seconds>(abs_time.time_since_epoch());
+        nanoseconds nsec = duration_cast<nanoseconds>((abs_time-sec).time_since_epoch());
+        struct timespec ts;
+        ts.tv_sec = sec.count();
+        ts.tv_nsec = nsec.count();
+        return timed_lock(&mtx_, &ts);
     }
 
     /**
@@ -76,14 +83,7 @@ public:
     template <typename Clock, typename Duration>
     bool try_lock_until(const std::chrono::time_point<Clock, Duration> &abs_time)
     {
-        using namespace std::chrono;
-        // convert abs_time to timespec type
-        seconds sec = duration_cast<seconds>(abs_time.time_since_epoch());
-        nanoseconds nsec = duration_cast<nanoseconds>((abs_time-sec).time_since_epoch());
-        struct timespec ts;
-        ts.tv_sec = sec.count();
-        ts.tv_nsec = nsec.count();
-        return timed_lock(&mtx_, &ts);
+        return try_lock_for(abs_time-Clock::now());
     }
 
     /** 
