@@ -7,12 +7,15 @@ namespace mini_stl {
 template <std::size_t...> struct index_sequence {};
 
 template <std::size_t N, std::size_t... Is>
-struct make_index_sequence: make_index_sequence<N - 1, N - 1, Is...> {};
+struct make_index_sequence_impl: make_index_sequence_impl<N - 1, N - 1, Is...> {};
 
 template <std::size_t... Is>
-struct make_index_sequence<0u, Is...> : index_sequence<Is...> { 
+struct make_index_sequence_impl<0u, Is...> : index_sequence<Is...> { 
     using type = index_sequence<Is...>; 
 };
+
+template <std::size_t N>
+using make_index_sequence = typename make_index_sequence_impl<N>::type;
 
 template <int I>
 struct placeholder_t {
@@ -111,7 +114,7 @@ public:
     template <typename... CArgs>
     ResultType operator()(CArgs&&... args)
     {
-        return do_call(typename make_index_sequence<std::tuple_size<ArgType>::value>::type(),
+        return do_call(make_index_sequence<std::tuple_size<ArgType>::value>{},
                 std::forward_as_tuple(std::forward<CArgs>(args)...));
     }
 
