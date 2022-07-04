@@ -7,15 +7,15 @@ namespace mini_stl {
 template <std::size_t...> struct index_sequence {};
 
 template <std::size_t N, std::size_t... Is>
-struct make_index_sequence_impl: make_index_sequence_impl<N - 1, N - 1, Is...> {};
+struct make_index_sequence_helper: make_index_sequence_helper<N - 1, N - 1, Is...> {};
 
 template <std::size_t... Is>
-struct make_index_sequence_impl<0u, Is...> : index_sequence<Is...> { 
+struct make_index_sequence_helper<0u, Is...> : index_sequence<Is...> { 
     using type = index_sequence<Is...>; 
 };
 
 template <std::size_t N>
-using make_index_sequence = typename make_index_sequence_impl<N>::type;
+using make_index_sequence = typename make_index_sequence_helper<N>::type;
 
 template <int I>
 struct placeholder_t {
