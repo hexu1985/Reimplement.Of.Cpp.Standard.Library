@@ -4,7 +4,7 @@
 
 namespace mini_stl {
 
-template< class T >
+template <typename T>
 struct is_floating_point
      : std::integral_constant<
          bool,
