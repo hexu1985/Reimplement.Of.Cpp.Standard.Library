@@ -1,7 +1,7 @@
 // adjacent_find example
 #include <iostream>             // std::cout
 #include <vector>               // std::vector
-#include "adjacent_find.hpp"    // mini_stl::adjacent_find
+#include "adjacent_find.hpp"    // Hx::adjacent_find
 
 bool myfunction (int i, int j) {
   return (i==j);
@@ -13,13 +13,13 @@ int main () {
   std::vector<int>::iterator it;
 
   // using default comparison:
-  it = mini_stl::adjacent_find (myvector.begin(), myvector.end());
+  it = Hx::adjacent_find (myvector.begin(), myvector.end());
 
   if (it!=myvector.end())
     std::cout << "the first pair of repeated elements are: " << *it << '\n';
 
   //using predicate comparison:
-  it = mini_stl::adjacent_find (++it, myvector.end(), myfunction);
+  it = Hx::adjacent_find (++it, myvector.end(), myfunction);
 
   if (it!=myvector.end())
     std::cout << "the second pair of repeated elements are: " << *it << '\n';

@@ -7,7 +7,7 @@ int main ()
 {
   int myint;
   std::string mystring;
-  mini_stl::forward_list<int> mylist;
+  Hx::forward_list<int> mylist;
 
   std::cout << "Enter size: ";
   std::getline ( std::cin, mystring );

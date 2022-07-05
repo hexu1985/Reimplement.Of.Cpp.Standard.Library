@@ -24,7 +24,7 @@ struct President
  
 int main()
 {
-    mini_stl::vector<President> elections;
+    Hx::vector<President> elections;
     std::cout << "emplace_back:\n";
 #if __cplusplus > 201703L
     auto& ref = elections.emplace_back("Nelson Mandela", "South Africa", 1994);
@@ -35,7 +35,7 @@ int main()
     assert(ref.year != 1984 && "uses a reference to the created object (C++17)");
 #endif
  
-    mini_stl::vector<President> reElections;
+    Hx::vector<President> reElections;
     std::cout << "\npush_back:\n";
     reElections.push_back(President("Franklin Delano Roosevelt", "the USA", 1936));
  

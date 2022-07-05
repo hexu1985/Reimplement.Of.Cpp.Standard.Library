@@ -4,7 +4,7 @@
 #include <mutex>
 #include "timed_mutex.hpp"
  
-mini_stl::timed_mutex test_mutex;
+Hx::timed_mutex test_mutex;
  
 void f()
 {
@@ -15,7 +15,7 @@ void f()
  
 int main()
 {
-    std::lock_guard<mini_stl::timed_mutex> l(test_mutex);
+    std::lock_guard<Hx::timed_mutex> l(test_mutex);
     std::thread t(f);
     t.join();
 }

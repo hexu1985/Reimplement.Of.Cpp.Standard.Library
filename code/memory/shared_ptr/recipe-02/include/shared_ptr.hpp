@@ -14,7 +14,7 @@
 #include "sp_counted_impl.hpp"
 #include "bad_weak_ptr.hpp"
 
-namespace mini_stl {
+namespace Hx {
 
 template <typename T>
 class shared_ptr;
@@ -694,6 +694,6 @@ Deleter* get_deleter(const shared_ptr<T>& p)
     return static_cast<Deleter*>(p.get_deleter());
 }
 
-}   // namespace mini_stl
+}   // namespace Hx
 
 #endif

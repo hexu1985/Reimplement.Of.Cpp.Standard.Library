@@ -12,7 +12,7 @@ struct ModCmp {
  
 int main()
 {
-    mini_stl::set<int, ModCmp> cont{1, 2, 3, 4, 5};
+    Hx::set<int, ModCmp> cont{1, 2, 3, 4, 5};
  
     // Same behaviour as key_comp()
     auto comp_func = cont.value_comp();

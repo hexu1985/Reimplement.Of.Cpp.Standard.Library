@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <functional>
 
-namespace mini_stl {
+namespace Hx {
 
 #if 0
 template <typename T>
@@ -236,15 +236,15 @@ inline bool operator!= (std::nullptr_t, const unique_ptr<T, D>& rhs) noexcept
     return (bool) rhs;
 }
 
-}   // namespace mini_stl
+}   // namespace Hx
 
 namespace std {
 
 template <typename T, typename Deleter>
-struct hash<mini_stl::unique_ptr<T, Deleter>> {
-    size_t operator() (const mini_stl::unique_ptr<T, Deleter>& p)
+struct hash<Hx::unique_ptr<T, Deleter>> {
+    size_t operator() (const Hx::unique_ptr<T, Deleter>& p)
     {
-        return std::hash<typename mini_stl::unique_ptr<T, Deleter>::pointer>()(p.get());
+        return std::hash<typename Hx::unique_ptr<T, Deleter>::pointer>()(p.get());
     }
 };
 

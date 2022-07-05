@@ -3,9 +3,9 @@
  
 int main()
 {
-    mini_stl::vector<int> alice{1, 2, 3};
-    mini_stl::vector<int> bob{7, 8, 9, 10};
-    mini_stl::vector<int> eve{1, 2, 3};
+    Hx::vector<int> alice{1, 2, 3};
+    Hx::vector<int> bob{7, 8, 9, 10};
+    Hx::vector<int> eve{1, 2, 3};
  
     std::cout << std::boolalpha;
  

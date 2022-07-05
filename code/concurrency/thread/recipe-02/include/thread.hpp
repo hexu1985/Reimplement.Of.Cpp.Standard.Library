@@ -12,7 +12,7 @@
 #include <memory>
 #include <functional>
 
-namespace mini_stl {
+namespace Hx {
 
 /**
  * @brief 类 thread 表示单个执行线程
@@ -205,12 +205,12 @@ private:
 };
 
 inline 
-void swap(mini_stl::thread& a, mini_stl::thread& b) noexcept
+void swap(Hx::thread& a, Hx::thread& b) noexcept
 {
     a.swap(b);
 }
 
-}    // namespace mini_stl
+}    // namespace Hx
 
 #endif // HX_THREAD_H
 

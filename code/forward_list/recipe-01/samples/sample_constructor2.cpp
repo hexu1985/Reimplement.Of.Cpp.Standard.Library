@@ -6,12 +6,12 @@ int main ()
 {
   // constructors used in the same order as described above:
 
-  mini_stl::forward_list<int> first;                      // default: empty
-  mini_stl::forward_list<int> second (3,77);              // fill: 3 seventy-sevens
-  mini_stl::forward_list<int> third (second.begin(), second.end()); // range initialization
-  mini_stl::forward_list<int> fourth (third);            // copy constructor
-  mini_stl::forward_list<int> fifth (std::move(fourth));  // move ctor. (fourth wasted)
-  mini_stl::forward_list<int> sixth = {3, 52, 25, 90};    // initializer_list constructor
+  Hx::forward_list<int> first;                      // default: empty
+  Hx::forward_list<int> second (3,77);              // fill: 3 seventy-sevens
+  Hx::forward_list<int> third (second.begin(), second.end()); // range initialization
+  Hx::forward_list<int> fourth (third);            // copy constructor
+  Hx::forward_list<int> fifth (std::move(fourth));  // move ctor. (fourth wasted)
+  Hx::forward_list<int> sixth = {3, 52, 25, 90};    // initializer_list constructor
 
   std::cout << "first:" ; for (int& x: first)  std::cout << " " << x; std::cout << '\n';
   std::cout << "second:"; for (int& x: second) std::cout << " " << x; std::cout << '\n';

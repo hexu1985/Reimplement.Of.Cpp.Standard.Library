@@ -3,7 +3,7 @@
 
 #include <algorithm>
 
-namespace mini_stl {
+namespace Hx {
 
 template< class InputIt, class UnaryPredicate >
 constexpr bool none_of(InputIt first, InputIt last, UnaryPredicate p)
@@ -11,6 +11,6 @@ constexpr bool none_of(InputIt first, InputIt last, UnaryPredicate p)
     return std::find_if(first, last, p) == last;
 }
 
-}   // namespace mini_stl
+}   // namespace Hx
 
 #endif

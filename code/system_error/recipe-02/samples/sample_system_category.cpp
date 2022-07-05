@@ -5,12 +5,12 @@
  
 int main()
 {
-    mini_stl::error_condition econd = mini_stl::system_category().default_error_condition(EDOM);
+    Hx::error_condition econd = Hx::system_category().default_error_condition(EDOM);
     std::cout << "Category: " << econd.category().name() << '\n'
               << "Value: " << econd.value() << '\n'
               << "Message: " << econd.message() << '\n';
  
-    econd = mini_stl::system_category().default_error_condition(10001);
+    econd = Hx::system_category().default_error_condition(10001);
     std::cout << "Category: " << econd.category().name() << '\n'
               << "Value: " << econd.value() << '\n'
               << "Message: " << econd.message() << '\n';

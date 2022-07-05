@@ -1,6 +1,6 @@
 #pragma once
 
-namespace mini_stl {
+namespace Hx {
 
 template <typename T> struct remove_cv                   { typedef T type; };
 template <typename T> struct remove_cv<const T>          { typedef T type; };
@@ -22,4 +22,4 @@ using remove_const_t = typename remove_const<T>::type;
 template <typename T>
 using remove_volatile_t = typename remove_volatile<T>::type;
 
-}   // namespace mini_stl
+}   // namespace Hx

@@ -5,7 +5,7 @@
 
 int main ()
 {
-  mini_stl::set<std::string> myset;
+  Hx::set<std::string> myset;
 
   myset.emplace("foo");
   myset.emplace("bar");

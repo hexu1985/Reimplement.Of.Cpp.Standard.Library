@@ -6,8 +6,8 @@
 int main ()
 {
   std::array<int,3> myarray = { 11, 22, 33 };
-  mini_stl::forward_list<int> mylist;
-  mini_stl::forward_list<int>::iterator it;
+  Hx::forward_list<int> mylist;
+  Hx::forward_list<int>::iterator it;
 
   it = mylist.insert_after ( mylist.before_begin(), 10 );          // 10
                                                                    //  ^  <- it

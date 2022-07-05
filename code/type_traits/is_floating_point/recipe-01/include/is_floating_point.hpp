@@ -2,7 +2,7 @@
 
 #include <type_traits>
 
-namespace mini_stl {
+namespace Hx {
 
 template <typename T>
 struct is_floating_point
@@ -13,4 +13,4 @@ struct is_floating_point
          std::is_same<long double, typename std::remove_cv<T>::type>::value
      > {};
 
-}   // namespace mini_stl
+}   // namespace Hx

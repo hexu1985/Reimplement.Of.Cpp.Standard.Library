@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include "shared_ptr.hpp"
 
-using mini_stl::shared_ptr;
+using Hx::shared_ptr;
 
 #include "shared_ptr_unique.hpp"
 

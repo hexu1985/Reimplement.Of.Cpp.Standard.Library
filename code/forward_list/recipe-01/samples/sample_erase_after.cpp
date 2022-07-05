@@ -4,7 +4,7 @@
 
 int main ()
 {
-  mini_stl::forward_list<int> mylist = {10, 20, 30, 40, 50};
+  Hx::forward_list<int> mylist = {10, 20, 30, 40, 50};
 
                                             // 10 20 30 40 50
   auto it = mylist.begin();                 // ^

@@ -4,7 +4,7 @@
 
 int main ()
 {
-    using mini_stl::chrono::steady_clock;
+    using Hx::chrono::steady_clock;
 
     steady_clock::time_point t1 = steady_clock::now();
 

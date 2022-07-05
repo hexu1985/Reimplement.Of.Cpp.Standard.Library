@@ -7,7 +7,7 @@
 
 #include "duration.hpp"
 
-namespace mini_stl {
+namespace Hx {
 
 namespace chrono {
 
@@ -16,20 +16,20 @@ class time_point;
 
 }    // namespace chrono
 
-}    // namespace mini_stl
+}    // namespace Hx
 
 namespace std {
 
 template <typename Clock, typename Duration1, typename Duration2>
-struct common_type<mini_stl::chrono::time_point<Clock, Duration1>,
-    mini_stl::chrono::time_point<Clock, Duration2>> {
-    typedef mini_stl::chrono::time_point<Clock,
+struct common_type<Hx::chrono::time_point<Clock, Duration1>,
+    Hx::chrono::time_point<Clock, Duration2>> {
+    typedef Hx::chrono::time_point<Clock,
         typename common_type<Duration1, Duration2>::type> type;
 };
 
 }    // namespace std
 
-namespace mini_stl {
+namespace Hx {
 
 namespace chrono {
 
@@ -201,6 +201,6 @@ std::enable_if<
 
 }    // namespace chrono
 
-}    // namespace mini_stl
+}    // namespace Hx
 
 #endif

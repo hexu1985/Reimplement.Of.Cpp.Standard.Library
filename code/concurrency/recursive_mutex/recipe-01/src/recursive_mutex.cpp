@@ -2,7 +2,7 @@
 #include <cassert>
 #include <system_error>
 
-namespace mini_stl {
+namespace Hx {
 
 recursive_mutex::recursive_mutex()
 {
@@ -59,4 +59,4 @@ void recursive_mutex::unlock()
     }
 }
 
-}   // namespace mini_stl
+}   // namespace Hx

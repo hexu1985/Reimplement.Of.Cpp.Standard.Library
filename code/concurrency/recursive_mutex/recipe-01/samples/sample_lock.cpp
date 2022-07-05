@@ -4,16 +4,16 @@
 #include "recursive_mutex.hpp"
  
 class X {
-    mini_stl::recursive_mutex m;
+    Hx::recursive_mutex m;
     std::string shared;
   public:
     void fun1() {
-      std::lock_guard<mini_stl::recursive_mutex> lk(m);
+      std::lock_guard<Hx::recursive_mutex> lk(m);
       shared = "fun1";
       std::cout << "in fun1, shared variable is now " << shared << '\n';
     }
     void fun2() {
-      std::lock_guard<mini_stl::recursive_mutex> lk(m);
+      std::lock_guard<Hx::recursive_mutex> lk(m);
       shared = "fun2";
       std::cout << "in fun2, shared variable is now " << shared << '\n';
       fun1(); // recursive lock becomes useful here

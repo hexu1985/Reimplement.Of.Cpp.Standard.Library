@@ -13,11 +13,11 @@ void foo()
  
 int main()
 {
-    std::vector<mini_stl::thread> v;
+    std::vector<Hx::thread> v;
     for(int n = 0; n < 4; ++n)
         v.emplace_back(foo);
  
-    std::hash<mini_stl::thread::id> hasher;
+    std::hash<Hx::thread::id> hasher;
     for(auto& t : v) {
         std::cout << "thread " << t.get_id() << " hashes to " << hasher(t.get_id()) << '\n';
         t.join();

@@ -3,7 +3,7 @@
  
 int main()
 {
-    mini_stl::vector<int> v;
+    Hx::vector<int> v;
     std::cout << "Default-constructed capacity is " << v.capacity() << '\n';
     v.resize(100);
     std::cout << "Capacity of a 100-element vector is " << v.capacity() << '\n';

@@ -2,7 +2,7 @@
 #include <tuple>
 #include <type_traits>
 
-namespace mini_stl {
+namespace Hx {
 
 template <std::size_t...> struct index_sequence {};
 
@@ -135,4 +135,4 @@ inline bind_t<F, P...> bind(F&& f, P&&... par)
     return bind_t<F, P...>(std::forward<F>(f), std::forward<P>(par)...);
 }
 
-}   // namespace mini_stl
+}   // namespace Hx

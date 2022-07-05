@@ -14,7 +14,7 @@
 #endif // __cplusplus
 
 #ifdef __cplusplus
-namespace mini_stl {
+namespace Hx {
 namespace binary_search {
 #endif // __cplusplus
 
@@ -244,7 +244,7 @@ void tree_delete(tree_t* tree, tree_node_t* z)
 
 #ifdef __cplusplus
 } // namespace binary_search
-} // namespace mini_stl
+} // namespace Hx
 #endif // __cplusplus
 
 #endif // MINI_STL_LIST_SET_INC

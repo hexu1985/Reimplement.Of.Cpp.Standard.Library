@@ -18,10 +18,10 @@ void bar()
 int main()
 {
     std::cout << "starting first helper...\n";
-    mini_stl::thread helper1(foo);
+    Hx::thread helper1(foo);
  
     std::cout << "starting second helper...\n";
-    mini_stl::thread helper2(bar);
+    Hx::thread helper2(bar);
  
     std::cout << "waiting for helpers to finish..." << std::endl;
     helper1.join();

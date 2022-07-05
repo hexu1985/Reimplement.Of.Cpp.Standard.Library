@@ -12,7 +12,7 @@
 namespace std {
 
 template< class T, class Alloc, class U >
-typename mini_stl::vector<T,Alloc>::size_type erase(mini_stl::vector<T,Alloc>& c, const U& value)
+typename Hx::vector<T,Alloc>::size_type erase(Hx::vector<T,Alloc>& c, const U& value)
 {
     auto it = std::remove(c.begin(), c.end(), value);
     auto r = std::distance(it, c.end());
@@ -21,7 +21,7 @@ typename mini_stl::vector<T,Alloc>::size_type erase(mini_stl::vector<T,Alloc>& c
 }
 
 template< class T, class Alloc, class Pred >
-typename mini_stl::vector<T,Alloc>::size_type erase_if(mini_stl::vector<T,Alloc>& c, Pred pred)
+typename Hx::vector<T,Alloc>::size_type erase_if(Hx::vector<T,Alloc>& c, Pred pred)
 {
     auto it = std::remove_if(c.begin(), c.end(), pred);
     auto r = std::distance(it, c.end());
@@ -33,9 +33,9 @@ typename mini_stl::vector<T,Alloc>::size_type erase_if(mini_stl::vector<T,Alloc>
 #endif
  
 #if __cplusplus >= 201703L
-void print_container(std::string_view comment, const mini_stl::vector<char>& c)
+void print_container(std::string_view comment, const Hx::vector<char>& c)
 #else
-void print_container(const std::string& comment, const mini_stl::vector<char>& c)
+void print_container(const std::string& comment, const Hx::vector<char>& c)
 #endif
 {
     std::cout << comment;
@@ -47,7 +47,7 @@ void print_container(const std::string& comment, const mini_stl::vector<char>& c
  
 int main()
 {
-    mini_stl::vector<char> cnt(10);
+    Hx::vector<char> cnt(10);
     std::iota(cnt.begin(), cnt.end(), '0');
     print_container("Init:\n", cnt);
  

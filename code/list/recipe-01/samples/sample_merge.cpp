@@ -1,7 +1,7 @@
 #include <iostream>
 #include "list.hpp"
  
-std::ostream& operator<<(std::ostream& ostr, const mini_stl::list<int>& list)
+std::ostream& operator<<(std::ostream& ostr, const Hx::list<int>& list)
 {
     for (auto &i : list) {
         ostr << " " << i;
@@ -11,8 +11,8 @@ std::ostream& operator<<(std::ostream& ostr, const mini_stl::list<int>& list)
  
 int main()
 {
-    mini_stl::list<int> list1 = { 5,9,0,1,3 };
-    mini_stl::list<int> list2 = { 8,7,2,6,4 };
+    Hx::list<int> list1 = { 5,9,0,1,3 };
+    Hx::list<int> list2 = { 8,7,2,6,4 };
  
     list1.sort();
     list2.sort();

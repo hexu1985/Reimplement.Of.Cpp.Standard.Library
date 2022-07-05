@@ -9,8 +9,8 @@ struct Foo {
  
 int main()
 {
-    mini_stl::unique_ptr<Foo> up1(new Foo(1));
-    mini_stl::unique_ptr<Foo> up2(new Foo(2));
+    Hx::unique_ptr<Foo> up1(new Foo(1));
+    Hx::unique_ptr<Foo> up2(new Foo(2));
  
     up1.swap(up2);
  

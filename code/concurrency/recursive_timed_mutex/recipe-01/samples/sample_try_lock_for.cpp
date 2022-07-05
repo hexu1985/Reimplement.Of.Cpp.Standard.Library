@@ -9,7 +9,7 @@
 using namespace std::chrono;
  
 std::mutex cout_mutex; // control access to std::cout
-mini_stl::recursive_timed_mutex mutex;
+Hx::recursive_timed_mutex mutex;
  
 void job(int id)
 {

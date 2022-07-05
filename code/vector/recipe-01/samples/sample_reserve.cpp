@@ -33,14 +33,14 @@ int main()
     int sz = 100;
     std::cout << "using reserve: \n";
     {
-        mini_stl::vector<int, NAlloc<int>> v1;
+        Hx::vector<int, NAlloc<int>> v1;
         v1.reserve(sz);
         for(int n = 0; n < sz; ++n)
             v1.push_back(n);
     }
     std::cout << "not using reserve: \n";
     {
-        mini_stl::vector<int, NAlloc<int>> v1;
+        Hx::vector<int, NAlloc<int>> v1;
         for(int n = 0; n < sz; ++n)
             v1.push_back(n);
     }

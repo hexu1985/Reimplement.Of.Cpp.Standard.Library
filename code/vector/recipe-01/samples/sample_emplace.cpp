@@ -21,7 +21,7 @@ struct A {
  
 int main()
 {
-    mini_stl::vector<A> container;
+    Hx::vector<A> container;
     // reserve enough place so vector does not have to resize
     container.reserve(10);
     std::cout << "construct 2 times A:\n";

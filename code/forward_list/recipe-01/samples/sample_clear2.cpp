@@ -4,7 +4,7 @@
 
 int main ()
 {
-  mini_stl::forward_list<int> mylist = { 10, 20, 30 };
+  Hx::forward_list<int> mylist = { 10, 20, 30 };
 
   std::cout << "mylist contains:";
   for (int& x: mylist) std::cout << ' ' << x;

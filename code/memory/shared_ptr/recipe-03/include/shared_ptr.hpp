@@ -14,7 +14,7 @@
 #include "sp_counted_impl.hpp"
 #include "bad_weak_ptr.hpp"
 
-namespace mini_stl {
+namespace Hx {
 
 template <typename T>
 class shared_ptr;
@@ -846,6 +846,6 @@ shared_ptr<T> const_pointer_cast(const shared_ptr<Y>& r)
     return shared_ptr<T>(r, p);
 }
 
-}   // namespace mini_stl
+}   // namespace Hx
 
 #endif

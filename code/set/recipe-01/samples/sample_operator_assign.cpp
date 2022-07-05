@@ -1,9 +1,9 @@
 #include "set.hpp"
 #include <iostream>
  
-void display_sizes(const mini_stl::set<int> &nums1,
-                   const mini_stl::set<int> &nums2,
-                   const mini_stl::set<int> &nums3)
+void display_sizes(const Hx::set<int> &nums1,
+                   const Hx::set<int> &nums2,
+                   const Hx::set<int> &nums3)
 {
     std::cout << "nums1: " << nums1.size() 
               << " nums2: " << nums2.size()
@@ -12,9 +12,9 @@ void display_sizes(const mini_stl::set<int> &nums1,
  
 int main()
 {
-    mini_stl::set<int> nums1 {3, 1, 4, 6, 5, 9};
-    mini_stl::set<int> nums2; 
-    mini_stl::set<int> nums3;
+    Hx::set<int> nums1 {3, 1, 4, 6, 5, 9};
+    Hx::set<int> nums2; 
+    Hx::set<int> nums3;
  
     std::cout << "Initially:\n";
     display_sizes(nums1, nums2, nums3);

@@ -10,7 +10,7 @@
 #include <cstring>
 #include "error_code.hpp"
 
-namespace mini_stl {
+namespace Hx {
 
 namespace {
 
@@ -265,6 +265,6 @@ const error_category& system_category() throw()
     return system_category_;
 }
 
-}   // namespace mini_stl
+}   // namespace Hx
 
 

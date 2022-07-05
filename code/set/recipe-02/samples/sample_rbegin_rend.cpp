@@ -5,9 +5,9 @@
 int main ()
 {
   int myints[] = {21,64,17,78,49};
-  mini_stl::set<int> myset (myints,myints+5);
+  Hx::set<int> myset (myints,myints+5);
 
-  mini_stl::set<int>::reverse_iterator rit;
+  Hx::set<int>::reverse_iterator rit;
 
   std::cout << "myset contains:";
   for (rit=myset.rbegin(); rit != myset.rend(); ++rit)

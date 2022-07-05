@@ -1,5 +1,5 @@
 // forward example
-#include "forward.hpp"  // mini_stl::forward
+#include "forward.hpp"  // Hx::forward
 #include <iostream>     // std::cout
 
 // function with lvalue and rvalue reference overloads:
@@ -9,7 +9,7 @@ void overloaded (int&& x) {std::cout << "[rvalue]";}
 // function template taking rvalue reference to deduced type:
 template <class T> void fn (T&& x) {
     overloaded (x);                         // always an lvalue
-    overloaded (mini_stl::forward<T>(x));   // rvalue if argument is rvalue
+    overloaded (Hx::forward<T>(x));   // rvalue if argument is rvalue
 }
 
 int main () {

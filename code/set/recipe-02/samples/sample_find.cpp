@@ -4,8 +4,8 @@
 
 int main ()
 {
-  mini_stl::set<int> myset;
-  mini_stl::set<int>::iterator it;
+  Hx::set<int> myset;
+  Hx::set<int>::iterator it;
 
   // set some initial values:
   for (int i=1; i<=5; i++) myset.insert(i*10);    // set: 10 20 30 40 50

@@ -6,7 +6,7 @@
 
 int main ()
 {
-    using namespace mini_stl::chrono;
+    using namespace Hx::chrono;
 
     steady_clock::time_point clock_begin = steady_clock::now();
 

@@ -13,7 +13,7 @@
 #include <cstddef>
 #include "sp_counted_impl.hpp"
 
-namespace mini_stl {
+namespace Hx {
 
 /**
  * @brief 拥有共享对象所有权语义的智能指针
@@ -635,6 +635,6 @@ Deleter* get_deleter(const shared_ptr<T>& p)
     return static_cast<Deleter*>(p.get_deleter());
 }
 
-}   // namespace mini_stl
+}   // namespace Hx
 
 #endif

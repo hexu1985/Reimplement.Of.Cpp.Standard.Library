@@ -3,7 +3,7 @@
  
 int main()
 {
-    mini_stl::list<int> numbers;
+    Hx::list<int> numbers;
     std::cout << std::boolalpha;
     std::cout << "Initially, numbers.empty(): " << numbers.empty() << '\n';
  

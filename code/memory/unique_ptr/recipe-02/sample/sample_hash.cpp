@@ -10,9 +10,9 @@ struct Foo {
 int main()
 {
     Foo* foo = new Foo();
-    mini_stl::unique_ptr<Foo> up(foo);
+    Hx::unique_ptr<Foo> up(foo);
  
-    std::cout << "hash(up):  " << std::hash<mini_stl::unique_ptr<Foo>>()(up) << '\n';
+    std::cout << "hash(up):  " << std::hash<Hx::unique_ptr<Foo>>()(up) << '\n';
     std::cout << "hash(foo): " << std::hash<Foo*>()(foo) << '\n';
 }
 

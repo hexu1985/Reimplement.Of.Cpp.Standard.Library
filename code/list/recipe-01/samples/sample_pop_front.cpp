@@ -4,7 +4,7 @@
 
 int main ()
 {
-  mini_stl::list<int> mylist;
+  Hx::list<int> mylist;
   mylist.push_back (100);
   mylist.push_back (200);
   mylist.push_back (300);

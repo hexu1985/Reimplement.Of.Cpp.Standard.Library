@@ -5,7 +5,7 @@ class Foo {};
  
 int main()
 {
-    auto p = mini_stl::make_unique<Foo>();
+    auto p = Hx::make_unique<Foo>();
     std::cout << p << '\n';
     std::cout << p.get() << '\n';
 }

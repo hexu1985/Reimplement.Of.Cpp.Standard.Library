@@ -2,9 +2,9 @@
 #include <pthread.h>
 #include <iostream>       // std::cout
 #include <thread>         // std::thread
-#include "mutex.hpp"      // mini_stl::mutex
+#include "mutex.hpp"      // Hx::mutex
 
-mini_stl::mutex mtx;           // mutex for critical section
+Hx::mutex mtx;           // mutex for critical section
 
 void print_thread_id (int id) {
     // critical section (exclusive access to std::cout signaled by locking mtx):
@@ -16,7 +16,7 @@ void print_thread_id (int id) {
 
 int main ()
 {
-    static_assert(std::is_same<mini_stl::mutex::native_handle_type, pthread_mutex_t*>::value);
+    static_assert(std::is_same<Hx::mutex::native_handle_type, pthread_mutex_t*>::value);
     std::thread threads[10];
     // spawn 10 threads:
     for (int i=0; i<10; ++i)

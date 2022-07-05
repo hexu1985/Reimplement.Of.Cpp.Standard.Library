@@ -4,7 +4,7 @@
 
 int main ()
 {
-  mini_stl::forward_list<int> mylist = { 21, 32, 12 };
+  Hx::forward_list<int> mylist = { 21, 32, 12 };
 
   std::cout << "myarray contains:";
   for ( auto it = mylist.cbegin(); it != mylist.cend(); ++it )

@@ -4,7 +4,7 @@
 int main()
 {
     int sz = 200;
-    mini_stl::vector<int> v1;
+    Hx::vector<int> v1;
  
     auto cap = v1.capacity();
     std::cout << "initial capacity=" << cap << '\n';

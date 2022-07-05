@@ -10,7 +10,7 @@ template<class Os, class Co> Os& operator<<(Os& os, const Co& co) {
  
 int main()
 {
-    mini_stl::set<int> a1{3, 1, 3, 2}, a2{5, 4, 5};
+    Hx::set<int> a1{3, 1, 3, 2}, a2{5, 4, 5};
  
     auto it1 = std::next(a1.begin());
     auto it2 = std::next(a2.begin());
@@ -31,7 +31,7 @@ int main()
         Cmp(int i) : id{i} { }
     };
  
-    mini_stl::set<int, Cmp> s1{ {2, 2, 1, 1}, Cmp{6} }, s2{ {4, 4, 3, 3}, Cmp{9} };
+    Hx::set<int, Cmp> s1{ {2, 2, 1, 1}, Cmp{6} }, s2{ {4, 4, 3, 3}, Cmp{9} };
  
     std::cout << s1 << s2 << s1.key_comp().id << ' ' << s2.key_comp().id << '\n';
     s1.swap(s2);

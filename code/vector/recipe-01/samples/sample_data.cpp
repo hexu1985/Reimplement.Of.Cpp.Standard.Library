@@ -25,7 +25,7 @@ void span_func(std::span<const int> data) // since C++20
  
 int main()
 {
-    mini_stl::vector<int> container { 1, 2, 3, 4 };
+    Hx::vector<int> container { 1, 2, 3, 4 };
  
     // Prefer container.data() over &container[0]
     pointer_func(container.data(), container.size());

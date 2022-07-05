@@ -5,7 +5,7 @@
 
 int main ()
 {
-  mini_stl::forward_list<int> mylist = {22, 13, 5, 40, 90, 62, 31};
+  Hx::forward_list<int> mylist = {22, 13, 5, 40, 90, 62, 31};
 
   mylist.sort();
 

@@ -5,7 +5,7 @@
 int main()
 {
     // Create a list containing integers
-    mini_stl::list<int> l = { 7, 5, 16, 8 };
+    Hx::list<int> l = { 7, 5, 16, 8 };
  
     // Add an integer to the front of the list
     l.push_front(25);

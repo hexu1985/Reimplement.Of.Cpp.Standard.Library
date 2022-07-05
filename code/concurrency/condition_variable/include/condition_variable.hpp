@@ -12,7 +12,7 @@
 #include <type_traits>
 #include <system_error>
 
-namespace mini_stl {
+namespace Hx {
 
 /**
  * The scoped enumeration cv_status describes whether a timed wait 
@@ -207,7 +207,7 @@ private:
     }
 };
 
-}    // namespace mini_stl
+}    // namespace Hx
 
 #endif
 

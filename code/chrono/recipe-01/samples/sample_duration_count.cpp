@@ -1,12 +1,12 @@
 // duration::count
 #include <iostream>     // std::cout
-#include "chrono.hpp"   // mini_stl::chrono::seconds, mini_stl::chrono::milliseconds
-// mini_stl::chrono::duration_cast
+#include "chrono.hpp"   // Hx::chrono::seconds, Hx::chrono::milliseconds
+// Hx::chrono::duration_cast
 
 int main ()
 {
-    using namespace mini_stl::chrono;
-    // mini_stl::chrono::milliseconds is an instatiation of mini_stl::chrono::duration:
+    using namespace Hx::chrono;
+    // Hx::chrono::milliseconds is an instatiation of Hx::chrono::duration:
     milliseconds foo (1000); // 1 second
     foo*=60;
 

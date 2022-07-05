@@ -1,6 +1,6 @@
 #pragma once
 
-namespace mini_stl {
+namespace Hx {
 
 template <typename T, T v>
 struct integral_constant {
@@ -19,4 +19,4 @@ using true_type = integral_constant<bool,true>;
 //typedef integral_constant<bool,false> false_type;
 using false_type = integral_constant<bool,false>;
 
-}   // namespace mini_stl
+}   // namespace Hx

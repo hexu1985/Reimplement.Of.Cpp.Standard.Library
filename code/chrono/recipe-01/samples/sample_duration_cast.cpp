@@ -1,16 +1,16 @@
 // duration_cast
 #include <iostream>     // std::cout
-#include "chrono.hpp"   // mini_stl::chrono::seconds, mini_stl::chrono::milliseconds
-// mini_stl::chrono::duration_cast
+#include "chrono.hpp"   // Hx::chrono::seconds, Hx::chrono::milliseconds
+// Hx::chrono::duration_cast
 
 int main ()
 {
-    mini_stl::chrono::seconds s (1);             // 1 second
-    mini_stl::chrono::milliseconds ms = mini_stl::chrono::duration_cast<mini_stl::chrono::milliseconds> (s);
+    Hx::chrono::seconds s (1);             // 1 second
+    Hx::chrono::milliseconds ms = Hx::chrono::duration_cast<Hx::chrono::milliseconds> (s);
 
-    ms += mini_stl::chrono::milliseconds(2500);  // 2500 millisecond
+    ms += Hx::chrono::milliseconds(2500);  // 2500 millisecond
 
-    s = mini_stl::chrono::duration_cast<mini_stl::chrono::seconds> (ms);   // truncated
+    s = Hx::chrono::duration_cast<Hx::chrono::seconds> (ms);   // truncated
 
     std::cout << "ms: " << ms.count() << std::endl;
     std::cout << "s: " << s.count() << std::endl;

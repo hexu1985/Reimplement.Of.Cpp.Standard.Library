@@ -2,8 +2,8 @@
 #include <iostream>
 #include "shared_ptr.hpp"
 
-using mini_stl::shared_ptr;
-using mini_stl::make_shared;
+using Hx::shared_ptr;
+using Hx::make_shared;
 
 int main () {
 	shared_ptr<int> a,b,c,d;

@@ -5,12 +5,12 @@
 int main ()
 {
   int myints[]= {17,89,7,14};
-  mini_stl::forward_list<int> mylist (myints,myints+4);
+  Hx::forward_list<int> mylist (myints,myints+4);
 
   mylist.remove(89);
 
   std::cout << "mylist contains:";
-  for (mini_stl::forward_list<int>::iterator it=mylist.begin(); it!=mylist.end(); ++it)
+  for (Hx::forward_list<int>::iterator it=mylist.begin(); it!=mylist.end(); ++it)
     std::cout << ' ' << *it;
   std::cout << '\n';
 

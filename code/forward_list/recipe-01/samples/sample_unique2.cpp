@@ -18,7 +18,7 @@ public:
 int main ()
 {
 
-  mini_stl::forward_list<double> mylist = { 15.2, 73.0, 3.14, 15.85, 69.5,
+  Hx::forward_list<double> mylist = { 15.2, 73.0, 3.14, 15.85, 69.5,
                                        73.0, 3.99, 15.2, 69.2,  18.5 };
 
   mylist.sort();                       //   3.14,  3.99, 15.2, 15.2, 15.85

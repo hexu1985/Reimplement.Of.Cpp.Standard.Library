@@ -4,10 +4,10 @@
  
 int main()
 {
-    mini_stl::thread::id id;
+    Hx::thread::id id;
     std::cout << "default thread id: " << id << '\n';
 
-    mini_stl::thread thread;
+    Hx::thread thread;
     id = thread.get_id();
     std::cout << "norun thread id: " << id << '\n';
 

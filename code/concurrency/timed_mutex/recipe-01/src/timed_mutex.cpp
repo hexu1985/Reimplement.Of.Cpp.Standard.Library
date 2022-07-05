@@ -2,7 +2,7 @@
 #include <cassert>
 #include <system_error>
 
-namespace mini_stl {
+namespace Hx {
 
 timed_mutex::timed_mutex()
 {
@@ -70,4 +70,4 @@ bool timed_mutex::timed_lock(pthread_mutex_t* mutex, const struct timespec* abst
     }
 }
 
-}   // namespace mini_stl
+}   // namespace Hx

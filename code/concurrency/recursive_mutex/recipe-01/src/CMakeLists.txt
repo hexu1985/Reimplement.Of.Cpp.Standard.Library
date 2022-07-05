@@ -1,6 +1,6 @@
 file(GLOB MINI_STL_THREAD_LIB_SRC_LIST *.cpp)
 
-add_library(mini_stl_recursive_mutex SHARED ${MINI_STL_THREAD_LIB_SRC_LIST})
-add_library(mini_stl_recursive_mutex-static STATIC ${MINI_STL_THREAD_LIB_SRC_LIST})
+add_library(Hx_recursive_mutex SHARED ${MINI_STL_THREAD_LIB_SRC_LIST})
+add_library(Hx_recursive_mutex-static STATIC ${MINI_STL_THREAD_LIB_SRC_LIST})
 
 

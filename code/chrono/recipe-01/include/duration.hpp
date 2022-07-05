@@ -9,7 +9,7 @@
 #include <type_traits>
 #include <ratio>
 
-namespace mini_stl {
+namespace Hx {
 
 namespace chrono {
 
@@ -78,19 +78,19 @@ struct duration_values {
 
 }    // namespace chrono
 
-}    // namespace mini_stl
+}    // namespace Hx
 
 namespace std {
 
 template <typename Rep1, typename Period1, typename Rep2, typename Period2>
-struct common_type<mini_stl::chrono::duration<Rep1, Period1>, mini_stl::chrono::duration<Rep2, Period2>> {
-    typedef mini_stl::chrono::duration<typename std::common_type<Rep1, Rep2>::type, 
-            typename mini_stl::chrono::detail::ratio_gcd<Period1, Period2>::type> type;
+struct common_type<Hx::chrono::duration<Rep1, Period1>, Hx::chrono::duration<Rep2, Period2>> {
+    typedef Hx::chrono::duration<typename std::common_type<Rep1, Rep2>::type, 
+            typename Hx::chrono::detail::ratio_gcd<Period1, Period2>::type> type;
 };
 
 }   // namespace std
 
-namespace mini_stl {
+namespace Hx {
 
 namespace chrono {
 
@@ -544,7 +544,7 @@ typedef duration<int_least64_t, std::nano> nanoseconds;
 
 }    // namespace chrono
 
-}    // namespace mini_stl
+}    // namespace Hx
 
 #endif
 

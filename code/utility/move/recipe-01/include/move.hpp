@@ -10,7 +10,7 @@
 
 #include <type_traits>
 
-namespace mini_stl {
+namespace Hx {
 
 template<typename T>
 typename std::remove_reference<T>::type&&
@@ -21,6 +21,6 @@ move(T&& param)
     return static_cast<ReturnType>(param);
 }
 
-}   // namespace mini_stl
+}   // namespace Hx
 
 #endif

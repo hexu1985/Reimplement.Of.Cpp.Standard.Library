@@ -4,7 +4,7 @@
 
 int main ()
 {
-  mini_stl::forward_list< std::pair<int,char> > mylist;
+  Hx::forward_list< std::pair<int,char> > mylist;
 
   mylist.emplace_front(10,'a');
   mylist.emplace_front(20,'b');

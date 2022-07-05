@@ -4,7 +4,7 @@
 
 int main ()
 {
-  mini_stl::forward_list<int> mylist;
+  Hx::forward_list<int> mylist;
   int sum (0);
 
   for (int i=1;i<=10;++i) mylist.push_front(i);

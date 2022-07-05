@@ -12,7 +12,7 @@
 #include <type_traits>
 #include <system_error>
 
-namespace mini_stl {
+namespace Hx {
 
 /**
  * The scoped enumeration cv_status describes whether a timed wait 
@@ -167,7 +167,7 @@ private:
     static void wait(pthread_cond_t* cond, pthread_mutex_t* mutex);
 };
 
-}    // namespace mini_stl
+}    // namespace Hx
 
 #endif
 

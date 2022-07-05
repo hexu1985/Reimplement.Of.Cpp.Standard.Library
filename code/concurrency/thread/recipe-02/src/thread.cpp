@@ -4,7 +4,7 @@
 
 static unsigned WINAPI ThreadFunc(void *arg)
 {
-    auto routine = reinterpret_cast<mini_stl::thread::routine_base*>(arg);
+    auto routine = reinterpret_cast<Hx::thread::routine_base*>(arg);
     try 
     {
         routine->run();
@@ -18,7 +18,7 @@ static unsigned WINAPI ThreadFunc(void *arg)
     return 0;
 }
 
-namespace mini_stl {
+namespace Hx {
 
 unsigned thread::hardware_concurrency()
 {
@@ -63,6 +63,6 @@ void thread::create_thread(routine_base *rtn)
     id_ = thread_id(hThread, threadID);
 }
 
-}   // namespace mini_stl
+}   // namespace Hx
 
 

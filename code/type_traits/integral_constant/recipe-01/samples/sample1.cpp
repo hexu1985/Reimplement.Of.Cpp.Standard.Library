@@ -3,8 +3,8 @@
  
 int main() 
 {
-    typedef mini_stl::integral_constant<int, 2> two_t;
-    typedef mini_stl::integral_constant<int, 4> four_t;
+    typedef Hx::integral_constant<int, 2> two_t;
+    typedef Hx::integral_constant<int, 4> four_t;
  
 //  static_assert(std::is_same<two_t, four_t>::value,
 //                "two_t and four_t are not equal!"); 
@@ -16,8 +16,8 @@ int main()
  
     enum class my_e { e1, e2 };
  
-    typedef mini_stl::integral_constant<my_e, my_e::e1> my_e_e1;
-    typedef mini_stl::integral_constant<my_e, my_e::e2> my_e_e2;
+    typedef Hx::integral_constant<my_e, my_e::e1> my_e_e1;
+    typedef Hx::integral_constant<my_e, my_e::e2> my_e_e2;
  
     static_assert(my_e_e1() == my_e::e1);
  

@@ -22,7 +22,7 @@ public:
 
 int main() {
     std::cout << "Example of using any.\n\n";
-    std::vector<mini_stl::any> store_anything;
+    std::vector<Hx::any> store_anything;
     store_anything.push_back(A());
     store_anything.push_back(B());
     store_anything.push_back(C());
@@ -32,7 +32,7 @@ int main() {
     store_anything.push_back(3);
     store_anything.push_back(std::make_pair(true, 7.92));
 
-    void print_any(mini_stl::any& a);
+    void print_any(Hx::any& a);
 
     // 稍后定义；打印a 中的值
     std::for_each(
@@ -41,21 +41,21 @@ int main() {
             print_any);
 }
 
-void print_any(mini_stl::any& a) {
-    if (A* pA=mini_stl::any_cast<A>(&a)) {
+void print_any(Hx::any& a) {
+    if (A* pA=Hx::any_cast<A>(&a)) {
         pA->some_function();
     }
-    else if (B* pB=mini_stl::any_cast<B>(&a)) {
+    else if (B* pB=Hx::any_cast<B>(&a)) {
         pB->some_function();
     }
-    else if (C* pC=mini_stl::any_cast<C>(&a)) {
+    else if (C* pC=Hx::any_cast<C>(&a)) {
         pC->some_function();
     }
     else {
         try {
-            std::cout << mini_stl::any_cast<std::string>(a) << '\n';
+            std::cout << Hx::any_cast<std::string>(a) << '\n';
         }
-        catch(mini_stl::bad_any_cast&) {
+        catch(Hx::bad_any_cast&) {
             std::cout << "Oops!\n";
         }
     }

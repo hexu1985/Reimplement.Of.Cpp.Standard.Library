@@ -22,41 +22,41 @@ struct D { // deleter
 int main()
 {
     std::cout << "Example constructor(1)...\n";
-    mini_stl::unique_ptr<Foo> up1;  // up1 is empty
-    mini_stl::unique_ptr<Foo> up1b(nullptr);  // up1b is empty
+    Hx::unique_ptr<Foo> up1;  // up1 is empty
+    Hx::unique_ptr<Foo> up1b(nullptr);  // up1b is empty
  
     std::cout << "Example constructor(2)...\n";
     {
-        mini_stl::unique_ptr<Foo> up2(new Foo); //up2 now owns a Foo
+        Hx::unique_ptr<Foo> up2(new Foo); //up2 now owns a Foo
     } // Foo deleted
  
     std::cout << "Example constructor(3)...\n";
     D d;
     {  // deleter type is not a reference
-       mini_stl::unique_ptr<Foo, D> up3(new Foo, d); // deleter copied
+       Hx::unique_ptr<Foo, D> up3(new Foo, d); // deleter copied
     }
     {  // deleter type is a reference 
-       mini_stl::unique_ptr<Foo, D&> up3b(new Foo, d); // up3b holds a reference to d
+       Hx::unique_ptr<Foo, D&> up3b(new Foo, d); // up3b holds a reference to d
     }
  
     std::cout << "Example constructor(4)...\n";
     {  // deleter is not a reference 
-       mini_stl::unique_ptr<Foo, D> up4(new Foo, D()); // deleter moved
+       Hx::unique_ptr<Foo, D> up4(new Foo, D()); // deleter moved
     }
  
     std::cout << "Example constructor(5)...\n";
     {
-       mini_stl::unique_ptr<Foo> up5a(new Foo);
-       mini_stl::unique_ptr<Foo> up5b(std::move(up5a)); // ownership transfer
+       Hx::unique_ptr<Foo> up5a(new Foo);
+       Hx::unique_ptr<Foo> up5b(std::move(up5a)); // ownership transfer
     }
  
     std::cout << "Example constructor(6)...\n";
     {
-        mini_stl::unique_ptr<Foo, D> up6a(new Foo, d); // D is copied
-        mini_stl::unique_ptr<Foo, D> up6b(std::move(up6a)); // D is moved
+        Hx::unique_ptr<Foo, D> up6a(new Foo, d); // D is copied
+        Hx::unique_ptr<Foo, D> up6b(std::move(up6a)); // D is moved
  
-        mini_stl::unique_ptr<Foo, D&> up6c(new Foo, d); // D is a reference
-        mini_stl::unique_ptr<Foo, D> up6d(std::move(up6c)); // D is copied
+        Hx::unique_ptr<Foo, D&> up6c(new Foo, d); // D is a reference
+        Hx::unique_ptr<Foo, D> up6d(std::move(up6c)); // D is copied
     }
  
 #if 0
@@ -64,7 +64,7 @@ int main()
     std::cout << "Example constructor(7)...\n";
     {
         std::auto_ptr<Foo> up7a(new Foo);
-        mini_stl::unique_ptr<Foo> up7b(std::move(up7a)); // ownership transfer
+        Hx::unique_ptr<Foo> up7b(std::move(up7a)); // ownership transfer
     }
 #endif
 #endif
@@ -72,7 +72,7 @@ int main()
 #if 0
     std::cout << "Example array constructor...\n";
     {
-        mini_stl::unique_ptr<Foo[]> up(new Foo[3]);
+        Hx::unique_ptr<Foo[]> up(new Foo[3]);
     } // three Foo objects deleted
 #endif
 }

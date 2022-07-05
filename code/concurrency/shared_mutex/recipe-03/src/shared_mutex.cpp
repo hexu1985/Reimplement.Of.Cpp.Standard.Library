@@ -1,7 +1,7 @@
 #include "shared_mutex.hpp"
 #include <cassert>
 
-namespace mini_stl {
+namespace Hx {
 
 shared_mutex::shared_mutex():
     r_active(0), w_active(0), r_wait(0), w_wait(0)
@@ -84,5 +84,5 @@ void shared_mutex::unlock_shared()
     }
 }
 
-}   // mini_stl
+}   // Hx
 

@@ -6,10 +6,10 @@
 
 struct expnumber {
   double value;
-  mini_stl::error_code error;
+  Hx::error_code error;
   expnumber (double base, double exponent) {
     value = std::pow(base,exponent);
-    if (errno) error.assign (errno,mini_stl::generic_category());
+    if (errno) error.assign (errno,Hx::generic_category());
   }
 };
 

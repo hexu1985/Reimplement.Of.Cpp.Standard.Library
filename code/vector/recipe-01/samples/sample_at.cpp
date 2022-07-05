@@ -3,7 +3,7 @@
  
 int main()
 {
-    mini_stl::vector<int> data = { 1, 2, 4, 5, 5, 6 };
+    Hx::vector<int> data = { 1, 2, 4, 5, 5, 6 };
  
     // Set element 1
     data.at(1) = 88;

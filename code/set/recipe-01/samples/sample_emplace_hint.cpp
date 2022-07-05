@@ -7,7 +7,7 @@
 const int nof_operations = 100500;
  
 int set_emplace() {
-  mini_stl::set<int> set;
+  Hx::set<int> set;
   for(int i = 0; i < nof_operations; ++i) {
     set.emplace(i);
   }
@@ -15,7 +15,7 @@ int set_emplace() {
 }
  
 int set_emplace_hint() {
-  mini_stl::set<int> set;
+  Hx::set<int> set;
   auto it = set.begin();
   for(int i = 0; i < nof_operations; ++i) {
     set.emplace_hint(it, i);
@@ -25,7 +25,7 @@ int set_emplace_hint() {
 }
  
 int set_emplace_hint_wrong() {
-  mini_stl::set<int> set;
+  Hx::set<int> set;
   auto it = set.begin();
   for(int i = nof_operations; i > 0; --i) {
     set.emplace_hint(it, i);
@@ -35,7 +35,7 @@ int set_emplace_hint_wrong() {
 }
  
 int set_emplace_hint_corrected() {
-  mini_stl::set<int> set;
+  Hx::set<int> set;
   auto it = set.begin();
   for(int i = nof_operations; i > 0; --i) {
     set.emplace_hint(it, i);
@@ -45,7 +45,7 @@ int set_emplace_hint_corrected() {
 }
  
 int set_emplace_hint_closest() {
-  mini_stl::set<int> set;
+  Hx::set<int> set;
   auto it = set.begin();
   for(int i = 0; i < nof_operations; ++i) {
     it = set.emplace_hint(it, i);

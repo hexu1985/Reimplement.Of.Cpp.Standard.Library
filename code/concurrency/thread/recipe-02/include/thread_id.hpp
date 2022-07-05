@@ -15,7 +15,7 @@
 #include <utility>
 #include <functional>
 
-namespace mini_stl {
+namespace Hx {
 
 /**
  * @brief 表示线程的 id
@@ -129,16 +129,16 @@ std::basic_ostream<charT, traits>& operator<< (
     return os;
 }
 
-}    // namespace mini_stl
+}    // namespace Hx
 
 namespace std {
 
 /**
  * @brief std::hash 对 thread_id 类的模板特化允许用户获得线程标识符的哈希。
  */
-template <> struct hash<mini_stl::thread_id>
+template <> struct hash<Hx::thread_id>
 {
-    size_t operator() (const mini_stl::thread_id& id) const noexcept
+    size_t operator() (const Hx::thread_id& id) const noexcept
     {
         return std::hash<unsigned>()(id.id);
     }

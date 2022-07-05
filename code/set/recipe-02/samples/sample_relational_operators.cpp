@@ -3,9 +3,9 @@
  
 int main()
 {
-    mini_stl::set<int> alice{1, 2, 3};
-    mini_stl::set<int> bob{7, 8, 9, 10};
-    mini_stl::set<int> eve{1, 2, 3};
+    Hx::set<int> alice{1, 2, 3};
+    Hx::set<int> bob{7, 8, 9, 10};
+    Hx::set<int> eve{1, 2, 3};
  
     std::cout << std::boolalpha;
  

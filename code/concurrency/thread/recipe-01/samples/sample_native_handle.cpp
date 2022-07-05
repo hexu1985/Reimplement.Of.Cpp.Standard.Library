@@ -21,7 +21,7 @@ void f(int num)
  
 int main()
 {
-    mini_stl::thread t1(f, 1), t2(f, 2);
+    Hx::thread t1(f, 1), t2(f, 2);
  
     sched_param sch;
     int policy; 

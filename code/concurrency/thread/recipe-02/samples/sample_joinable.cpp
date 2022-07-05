@@ -10,11 +10,11 @@ void foo()
  
 int main()
 {
-    mini_stl::thread t;
+    Hx::thread t;
     std::cout << "before starting, joinable: " << std::boolalpha << t.joinable()
               << '\n';
  
-    t = mini_stl::thread(foo);
+    t = Hx::thread(foo);
     std::cout << "after starting, joinable: " << t.joinable() 
               << '\n';
  

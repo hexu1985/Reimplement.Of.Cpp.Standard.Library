@@ -1,10 +1,10 @@
 // mutex::try_lock example
 #include <iostream>       // std::cout
 #include <thread>         // std::thread
-#include "mutex.hpp"      // mini_stl::mutex
+#include "mutex.hpp"      // Hx::mutex
 
 volatile int counter (0); // non-atomic counter
-mini_stl::mutex mtx;           // locks access to counter
+Hx::mutex mtx;           // locks access to counter
 
 void attempt_10k_increases () {
     for (int i=0; i<10000; ++i) {

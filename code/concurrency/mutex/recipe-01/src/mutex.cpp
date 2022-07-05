@@ -2,7 +2,7 @@
 #include <cassert>
 #include <system_error>
 
-namespace mini_stl {
+namespace Hx {
 
 mutex::mutex()
 {
@@ -54,4 +54,4 @@ void mutex::unlock()
     }
 }
 
-}   // namespace mini_stl
+}   // namespace Hx

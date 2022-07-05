@@ -7,14 +7,14 @@
 class any_out {
 private:
     struct streamer {
-        virtual void print(std::ostream & o,mini_stl::any& a)=0;
+        virtual void print(std::ostream & o,Hx::any& a)=0;
         virtual streamer* clone()=0;
         virtual ~streamer() {}
     };
 
     template <typename T> struct streamer_imp : public streamer {
-        virtual void print(std::ostream& o,mini_stl::any& a) {
-            o << *mini_stl::any_cast<T>(&a);
+        virtual void print(std::ostream& o,Hx::any& a) {
+            o << *Hx::any_cast<T>(&a);
         }
 
         virtual streamer* clone() {
@@ -23,7 +23,7 @@ private:
     };
 
     streamer* streamer_;
-    mini_stl::any o_;
+    Hx::any o_;
 
 public:
     any_out() : streamer_(0) {}

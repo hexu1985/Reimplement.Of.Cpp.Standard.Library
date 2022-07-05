@@ -3,9 +3,9 @@
 #include <thread>             // std::thread
 #include <chrono>             // std::chrono::seconds
 #include <mutex>              // std::mutex, std::unique_lock
-#include "condition_variable.hpp" // mini_stl::condition_variable, std::cv_status
+#include "condition_variable.hpp" // Hx::condition_variable, std::cv_status
 
-mini_stl::condition_variable cv;
+Hx::condition_variable cv;
 
 int value;
 
@@ -21,7 +21,7 @@ int main ()
 
     std::mutex mtx;
     std::unique_lock<std::mutex> lck(mtx);
-    while (cv.wait_for(lck,std::chrono::seconds(1))==mini_stl::cv_status::timeout) {
+    while (cv.wait_for(lck,std::chrono::seconds(1))==Hx::cv_status::timeout) {
         std::cout << '.' << std::endl;
     }
     std::cout << "You entered: " << value << '\n';

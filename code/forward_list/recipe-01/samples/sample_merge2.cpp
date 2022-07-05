@@ -5,9 +5,9 @@
 
 int main ()
 {
-  mini_stl::forward_list<double> first = {4.2, 2.9, 3.1};
-  mini_stl::forward_list<double> second = {1.4, 7.7, 3.1};
-  mini_stl::forward_list<double> third = {6.2, 3.7, 7.1};
+  Hx::forward_list<double> first = {4.2, 2.9, 3.1};
+  Hx::forward_list<double> second = {1.4, 7.7, 3.1};
+  Hx::forward_list<double> third = {6.2, 3.7, 7.1};
 
   first.sort();
   second.sort();

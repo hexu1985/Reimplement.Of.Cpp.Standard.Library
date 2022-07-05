@@ -8,7 +8,7 @@
 #include <pthread.h>
 #include <chrono>
 
-namespace mini_stl {
+namespace Hx {
 
 /**
  * Timed mutex class
@@ -96,7 +96,7 @@ private:
     static bool timed_lock(pthread_mutex_t* mutex, const struct timespec* abstime);
 };
 
-}    // namespace mini_stl
+}    // namespace Hx
 
 #endif
 

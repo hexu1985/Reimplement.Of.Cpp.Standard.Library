@@ -5,7 +5,7 @@
 
 int main ()
 {
-    using namespace mini_stl::chrono;
+    using namespace Hx::chrono;
 
     typedef duration<int,std::ratio<60*60*24>> days_type;
 

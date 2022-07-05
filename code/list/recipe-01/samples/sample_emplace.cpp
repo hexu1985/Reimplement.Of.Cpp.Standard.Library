@@ -21,7 +21,7 @@ struct A {
  
 int main()
 {
-    mini_stl::list<A> container;
+    Hx::list<A> container;
  
     std::cout << "construct 2 times A:\n";
     A two { "two" };

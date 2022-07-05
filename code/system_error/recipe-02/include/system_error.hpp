@@ -9,7 +9,7 @@
 #include <stdexcept>
 #include "error_code.hpp"
 
-namespace mini_stl {
+namespace Hx {
 
 /**
  * System error exception
@@ -70,7 +70,7 @@ public:
     const char* what() const throw();
 };
 
-}    // namespace mini_stl
+}    // namespace Hx
 
 #endif // MINI_STL_SYSTEM_ERROR_INC
 

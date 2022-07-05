@@ -3,7 +3,7 @@
  
 int main()
 {
-  mini_stl::list<int> x = {1, 2, 2, 3, 3, 2, 1, 1, 2};
+  Hx::list<int> x = {1, 2, 2, 3, 3, 2, 1, 1, 2};
  
   std::cout << "contents before:";
   for (auto val : x)

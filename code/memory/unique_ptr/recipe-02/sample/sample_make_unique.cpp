@@ -16,11 +16,11 @@ struct Vec3
 int main()
 {
     // Use the default constructor.
-    mini_stl::unique_ptr<Vec3> v1 = mini_stl::make_unique<Vec3>();
+    Hx::unique_ptr<Vec3> v1 = Hx::make_unique<Vec3>();
     // Use the constructor that matches these arguments
-    mini_stl::unique_ptr<Vec3> v2 = mini_stl::make_unique<Vec3>(0,1,2);
+    Hx::unique_ptr<Vec3> v2 = Hx::make_unique<Vec3>(0,1,2);
     // Create a unique_ptr to an array of 5 elements
-    mini_stl::unique_ptr<Vec3[]> v3 = mini_stl::make_unique<Vec3[]>(5);
+    Hx::unique_ptr<Vec3[]> v3 = Hx::make_unique<Vec3[]>(5);
  
     std::cout << "make_unique<Vec3>():      " << *v1 << '\n'
               << "make_unique<Vec3>(0,1,2): " << *v2 << '\n'

@@ -2,7 +2,7 @@
 #include <iostream>
 #include "shared_ptr.hpp"
 
-using mini_stl::shared_ptr;
+using Hx::shared_ptr;
 
 int main () {
     int* p = new int (10);

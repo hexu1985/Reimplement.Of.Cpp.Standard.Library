@@ -18,7 +18,7 @@ int main()
     // which means no strings will be copied; instead, the contents
     // of str will be moved into the vector.  This is less
     // expensive, but also means str might now be empty.
-    v.push_back(mini_stl::move(str));
+    v.push_back(Hx::move(str));
     std::cout << "After move, str is " << std::quoted(str) << '\n';
  
     std::cout << "The contents of the vector are { " << std::quoted(v[0])

@@ -14,7 +14,7 @@ public:
 
 int main ()
 {
-  mini_stl::forward_list<int> mylist = {7, 80, 7, 15, 85, 52, 6};
+  Hx::forward_list<int> mylist = {7, 80, 7, 15, 85, 52, 6};
 
   mylist.remove_if (single_digit);      // 80 15 85 52
 

@@ -3,9 +3,9 @@
 #include "shared_ptr.hpp"
 #include "weak_ptr.hpp"
 
-using mini_stl::shared_ptr;
-using mini_stl::weak_ptr;
-using mini_stl::make_shared;
+using Hx::shared_ptr;
+using Hx::weak_ptr;
+using Hx::make_shared;
 
 int main () {
     shared_ptr<int> sp1,sp2;

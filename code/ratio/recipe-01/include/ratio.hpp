@@ -7,7 +7,7 @@
 
 #include <cstdint>
 
-namespace mini_stl {
+namespace Hx {
 
 namespace ratio_detail {
 
@@ -368,7 +368,7 @@ template <typename R1, typename R2>
 struct ratio_gcd: ratio<ratio_detail::static_gcd<R1::num, R2::num>::value, 
 	ratio_detail::static_lcm<R1::den, R2::den>::value>::type {};
 
-}	// namespace mini_stl
+}	// namespace Hx
 
 #endif
 

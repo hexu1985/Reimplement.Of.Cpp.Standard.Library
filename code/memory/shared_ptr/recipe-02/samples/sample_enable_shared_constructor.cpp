@@ -3,9 +3,9 @@
 #include "weak_ptr.hpp"
 #include "enable_shared_from_this.hpp"
 
-using mini_stl::shared_ptr;
-using mini_stl::make_shared;
-using mini_stl::enable_shared_from_this;
+using Hx::shared_ptr;
+using Hx::make_shared;
+using Hx::enable_shared_from_this;
  
 struct Foo : public enable_shared_from_this<Foo> {
     Foo() {}  // 隐式调用 enable_shared_from_this 构造函数

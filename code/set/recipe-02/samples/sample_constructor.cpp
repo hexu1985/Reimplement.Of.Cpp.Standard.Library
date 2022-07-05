@@ -13,7 +13,7 @@ struct PointCmp {
 int main()
 {
   // (1) Default constructor
-  mini_stl::set<std::string> a;
+  Hx::set<std::string> a;
   a.insert("cat");
   a.insert("dog");
   a.insert("horse");
@@ -21,18 +21,18 @@ int main()
   std::cout << '\n';
  
   // (2) Iterator constructor
-  mini_stl::set<std::string> b(a.find("dog"), a.end());
+  Hx::set<std::string> b(a.find("dog"), a.end());
   for(auto& str: b) std::cout << str << ' ';
   std::cout << '\n';
  
   // (3) Copy constructor
-  mini_stl::set<std::string> c(a);
+  Hx::set<std::string> c(a);
   c.insert("another horse");
   for(auto& str: c) std::cout << str << ' ';
   std::cout << '\n';
  
   // (4) Move constructor
-  mini_stl::set<std::string> d(std::move(a));
+  Hx::set<std::string> d(std::move(a));
   for(auto& str: d) std::cout << str << ' ';
   std::cout << '\n';
   std::cout << "moved-from set is ";
@@ -40,12 +40,12 @@ int main()
   std::cout << '\n';
  
   // (5) Initializer list constructor
-  mini_stl::set<std::string> e {"one", "two", "three", "five", "eight"};
+  Hx::set<std::string> e {"one", "two", "three", "five", "eight"};
   for(auto& str: e) std::cout << str << ' ';
   std::cout << '\n';
  
   // custom comparison
-  mini_stl::set<Point, PointCmp> z = {{2, 5}, {3, 4}, {1, 1}};
+  Hx::set<Point, PointCmp> z = {{2, 5}, {3, 4}, {1, 1}};
   z.insert({1, -1}); // this fails because the magnitude of 1,-1 equals 1,1
   for(auto& p: z) std::cout << '(' << p.x << ',' << p.y << ") ";
   std::cout << '\n';

@@ -4,7 +4,7 @@
 
 int main ()
 {
-  mini_stl::set<int> myset;
+  Hx::set<int> myset;
 
   // set some initial values:
   for (int i=1; i<5; ++i) myset.insert(i*3);    // set: 3 6 9 12

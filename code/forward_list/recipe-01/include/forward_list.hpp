@@ -16,7 +16,7 @@
 #include <algorithm>
 #include <initializer_list>
 
-namespace mini_stl {
+namespace Hx {
 
 /**
  * A helper node class for forward_list.
@@ -1163,7 +1163,7 @@ void swap(forward_list<T, Alloc>& x, forward_list<T, Alloc>& y)
     return x.swap(y);
 }
 
-} // namespace mini_stl
+} // namespace Hx
 
 #endif // HX_FORWARD_LIST_H
 

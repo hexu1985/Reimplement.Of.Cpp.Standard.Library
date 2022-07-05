@@ -2,7 +2,7 @@
 #include <iostream>
 int main()
 {
-    mini_stl::vector<int> c = {1, 2, 3};
+    Hx::vector<int> c = {1, 2, 3};
     std::cout << "The vector holds: ";
     for(auto& el: c) std::cout << el << ' ';
     std::cout << '\n';

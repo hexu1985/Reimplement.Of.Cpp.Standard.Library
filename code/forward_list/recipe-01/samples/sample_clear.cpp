@@ -4,8 +4,8 @@
 
 int main ()
 {
-  mini_stl::forward_list<int> mylist;
-  mini_stl::forward_list<int>::iterator it;
+  Hx::forward_list<int> mylist;
+  Hx::forward_list<int>::iterator it;
 
   mylist.push_front (300);
   mylist.push_front (200);

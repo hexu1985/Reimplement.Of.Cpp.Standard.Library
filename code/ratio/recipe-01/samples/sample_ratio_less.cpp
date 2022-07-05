@@ -4,11 +4,11 @@
 
 int main ()
 {
-    typedef mini_stl::ratio<1,3> one_third;
-    typedef mini_stl::ratio<1,2> one_half;
+    typedef Hx::ratio<1,3> one_third;
+    typedef Hx::ratio<1,2> one_half;
 
     std::cout << "1/3 < 1/2 ? " << std::boolalpha;
-    std::cout << mini_stl::ratio_less<one_third,one_half>::value << std::endl;
+    std::cout << Hx::ratio_less<one_third,one_half>::value << std::endl;
 
     return 0;
 }

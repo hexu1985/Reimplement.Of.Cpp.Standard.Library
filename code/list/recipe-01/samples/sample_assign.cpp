@@ -4,7 +4,7 @@
  
 int main()
 {
-    mini_stl::list<char> characters;
+    Hx::list<char> characters;
  
     auto print_list = [&](){
         for (char c : characters)

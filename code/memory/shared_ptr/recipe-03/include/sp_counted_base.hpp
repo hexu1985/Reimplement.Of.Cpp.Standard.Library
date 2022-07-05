@@ -10,7 +10,7 @@
 
 #include <atomic>
 
-namespace mini_stl {
+namespace Hx {
 
 /**
  * @brief shared_ptr的引用计数基类
@@ -100,6 +100,6 @@ public:
 
 struct sp_counted_base_tag {};
 
-}   // namespace mini_stl
+}   // namespace Hx
 
 #endif

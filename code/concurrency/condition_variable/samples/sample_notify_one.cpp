@@ -2,10 +2,10 @@
 #include <iostream>           // std::cout
 #include <thread>             // std::thread
 #include <mutex>              // std::mutex, std::unique_lock
-#include "condition_variable.hpp" // mini_stl::condition_variable
+#include "condition_variable.hpp" // Hx::condition_variable
 
 std::mutex mtx;
-mini_stl::condition_variable produce,consume;
+Hx::condition_variable produce,consume;
 
 int cargo = 0;     // shared value by producers and consumers
 

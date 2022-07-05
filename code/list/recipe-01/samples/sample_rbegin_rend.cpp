@@ -6,9 +6,9 @@
  
 int main()
 {
-    mini_stl::list<int> nums {1, 2, 4, 8, 16};
-    mini_stl::list<std::string> fruits {"orange", "apple", "raspberry"};
-    mini_stl::list<char> empty;
+    Hx::list<int> nums {1, 2, 4, 8, 16};
+    Hx::list<std::string> fruits {"orange", "apple", "raspberry"};
+    Hx::list<char> empty;
  
     // Print list.
     std::for_each(nums.rbegin(), nums.rend(), [](const int n) { std::cout << n << ' '; });

@@ -4,7 +4,7 @@
 
 int main ()
 {
-  mini_stl::forward_list<int> mylist = {10, 20, 30, 40, 30, 20, 10};
+  Hx::forward_list<int> mylist = {10, 20, 30, 40, 30, 20, 10};
 
   mylist.remove(20);
 

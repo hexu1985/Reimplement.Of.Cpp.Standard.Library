@@ -2,7 +2,7 @@
 #include <iostream>
 #include "shared_ptr.hpp"
 
-using mini_stl::shared_ptr;
+using Hx::shared_ptr;
 
 int main () {
     shared_ptr<int> foo;

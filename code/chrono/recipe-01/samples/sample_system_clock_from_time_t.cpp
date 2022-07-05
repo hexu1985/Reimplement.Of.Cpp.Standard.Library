@@ -6,7 +6,7 @@
 
 int main ()
 {
-    using namespace mini_stl::chrono;
+    using namespace Hx::chrono;
 
     // create tm with 1/1/2000:
     std::tm timeinfo = std::tm();

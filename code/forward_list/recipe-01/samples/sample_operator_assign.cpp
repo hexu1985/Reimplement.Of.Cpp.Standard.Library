@@ -14,13 +14,13 @@ Container by_two (const Container& x)
 
 int main ()
 {
-  mini_stl::forward_list<int> first (4);      // 4 ints
-  mini_stl::forward_list<int> second (3,5);   // 3 ints with value 5
+  Hx::forward_list<int> first (4);      // 4 ints
+  Hx::forward_list<int> second (3,5);   // 3 ints with value 5
 
   first = second;                        // copy assignment
   second = by_two(first);                // move assignment
 
-  typedef typename mini_stl::forward_list<int>::iterator iterator;
+  typedef typename Hx::forward_list<int>::iterator iterator;
   std::cout << "first: ";
   for (iterator it = first.begin(); it != first.end(); ++it)
     std::cout << ' ' << *it;

@@ -3,6 +3,6 @@
  
 int main()
 {
-    mini_stl::list<char> s;
+    Hx::list<char> s;
     std::cout << "Maximum size of a 'list' is " << s.max_size() << "\n";
 }

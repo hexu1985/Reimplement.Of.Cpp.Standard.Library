@@ -2,7 +2,7 @@
 #include <cassert>
 #include <system_error>
 
-namespace mini_stl {
+namespace Hx {
 
 recursive_timed_mutex::recursive_timed_mutex()
 {
@@ -75,4 +75,4 @@ bool recursive_timed_mutex::timed_lock(pthread_mutex_t* mutex, const struct time
     }
 }
 
-}   // namespace mini_stl
+}   // namespace Hx

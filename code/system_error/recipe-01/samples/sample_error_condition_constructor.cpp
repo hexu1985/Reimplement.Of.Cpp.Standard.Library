@@ -4,14 +4,14 @@
 
 int main() {
   std::cout << "The default error condition: ";
-  std::cout << mini_stl::error_condition().message() << '\n';
+  std::cout << Hx::error_condition().message() << '\n';
 
   std::cout << "A condition constructed from errc: ";
-  std::cout << mini_stl::error_condition(mini_stl::errc::permission_denied).message() << '\n';
+  std::cout << Hx::error_condition(Hx::errc::permission_denied).message() << '\n';
 
   std::cout << "Some generic error conditions, by value:\n";
   for (int i=0; i<10; ++i) {
-    mini_stl::error_condition c (i,mini_stl::generic_category());
+    Hx::error_condition c (i,Hx::generic_category());
     std::cout << "\t#" << i << ": " << c.message() << '\n';
   }
   return 0;

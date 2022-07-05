@@ -2,9 +2,9 @@
 #include <iostream>
  
 void display_sizes(char const* comment,
-                   const mini_stl::vector<int>& nums1,
-                   const mini_stl::vector<int>& nums2,
-                   const mini_stl::vector<int>& nums3)
+                   const Hx::vector<int>& nums1,
+                   const Hx::vector<int>& nums2,
+                   const Hx::vector<int>& nums3)
 {
     std::cout << comment
               << " nums1: " << nums1.size() << ','
@@ -12,7 +12,7 @@ void display_sizes(char const* comment,
               << " nums3: " << nums3.size() << '\n';
 }
  
-void display(char const* comment, const mini_stl::vector<int>& v)
+void display(char const* comment, const Hx::vector<int>& v)
 {
     std::cout << comment << "{ ";
     for (int e : v) {
@@ -23,9 +23,9 @@ void display(char const* comment, const mini_stl::vector<int>& v)
  
 int main()
 {
-    mini_stl::vector<int> nums1 {3, 1, 4, 6, 5, 9};
-    mini_stl::vector<int> nums2;
-    mini_stl::vector<int> nums3;
+    Hx::vector<int> nums1 {3, 1, 4, 6, 5, 9};
+    Hx::vector<int> nums2;
+    Hx::vector<int> nums3;
  
     display_sizes("Initially:\n", nums1, nums2, nums3);
  

@@ -13,7 +13,7 @@ void independentThread()
 void threadCaller() 
 {
     std::cout << "Starting thread caller.\n";
-    mini_stl::thread t(independentThread);
+    Hx::thread t(independentThread);
     t.detach();
     std::this_thread::sleep_for(std::chrono::seconds(1));
     std::cout << "Exiting thread caller.\n";

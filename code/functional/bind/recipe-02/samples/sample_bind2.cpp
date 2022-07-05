@@ -3,7 +3,7 @@
 #include "status.h"
 #include "bind.hpp"
 
-using namespace mini_stl::placeholders;
+using namespace Hx::placeholders;
 
 int main() {
   std::vector<status> statuses;
@@ -26,7 +26,7 @@ int main() {
 
   //============================================
   std::cout << std::string(40, '=') << std::endl;
-  std::for_each(  statuses.begin(),  statuses.end(),  mini_stl::bind(&status::report,_1));
+  std::for_each(  statuses.begin(),  statuses.end(),  Hx::bind(&status::report,_1));
 
   return 0;
 }

@@ -10,24 +10,24 @@ public:
 
     // 多个线程/读者能同时读计数器的值。
     unsigned int get() const {
-        std::shared_lock<mini_stl::shared_mutex> lock(mutex_);
+        std::shared_lock<Hx::shared_mutex> lock(mutex_);
         return value_;
     }
 
     // 只有一个线程/写者能增加/写线程的值。
     void increment() {
-        std::unique_lock<mini_stl::shared_mutex> lock(mutex_);
+        std::unique_lock<Hx::shared_mutex> lock(mutex_);
         value_++;
     }
 
     // 只有一个线程/写者能重置/写线程的值。
     void reset() {
-        std::unique_lock<mini_stl::shared_mutex> lock(mutex_);
+        std::unique_lock<Hx::shared_mutex> lock(mutex_);
         value_ = 0;
     }
 
 private:
-    mutable mini_stl::shared_mutex mutex_;
+    mutable Hx::shared_mutex mutex_;
     unsigned int value_ = 0;
 };
 

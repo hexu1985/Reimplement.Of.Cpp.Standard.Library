@@ -4,9 +4,9 @@
  
 int main()
 {
-    using namespace mini_stl::chrono_literals;
+    using namespace Hx::chrono_literals;
     auto d1 = 250ns;
-    mini_stl::chrono::nanoseconds d2 = 1us;
+    Hx::chrono::nanoseconds d2 = 1us;
     std::cout << "250ns = " << d1.count() << " nanoseconds\n"
               << "1us = " << d2.count() << " nanoseconds\n";
 }

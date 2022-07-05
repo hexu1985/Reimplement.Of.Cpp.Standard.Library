@@ -4,7 +4,7 @@
 
 #include "system_error.hpp"
 
-namespace mini_stl {
+namespace Hx {
 
 const char* system_error::what() const throw()
 {
@@ -24,5 +24,5 @@ const char* system_error::what() const throw()
     return what_.c_str();
 }
 
-}    // namespace mini_stl
+}    // namespace Hx
 

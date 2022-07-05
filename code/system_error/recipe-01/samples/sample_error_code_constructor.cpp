@@ -8,9 +8,9 @@ int main()
 {
   errno=0;
   std::sqrt(-1.0);        // errno set to EDOM
-  mini_stl::error_code ec (errno,mini_stl::generic_category());
+  Hx::error_code ec (errno,Hx::generic_category());
 
-  mini_stl::error_condition ok;
+  Hx::error_condition ok;
   if (ec != ok) std::cout << "Error: " << ec.message() << '\n';
 
   return 0;

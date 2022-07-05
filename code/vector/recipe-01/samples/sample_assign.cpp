@@ -4,7 +4,7 @@
  
 int main()
 {
-    mini_stl::vector<char> characters;
+    Hx::vector<char> characters;
  
     auto print_vector = [&](){
         for (char c : characters)

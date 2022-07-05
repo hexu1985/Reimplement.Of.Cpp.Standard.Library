@@ -1,7 +1,7 @@
 #include "vector.hpp"
 #include <iostream>
  
-void print_vec(const mini_stl::vector<int>& vec)
+void print_vec(const Hx::vector<int>& vec)
 {
     for (auto x: vec) {
          std::cout << ' ' << x;
@@ -11,7 +11,7 @@ void print_vec(const mini_stl::vector<int>& vec)
  
 int main ()
 {
-    mini_stl::vector<int> vec(3,100);
+    Hx::vector<int> vec(3,100);
     print_vec(vec);
  
     auto it = vec.begin();
@@ -24,7 +24,7 @@ int main ()
     // "it" no longer valid, get a new one:
     it = vec.begin();
  
-    mini_stl::vector<int> vec2(2,400);
+    Hx::vector<int> vec2(2,400);
     vec.insert(it+2, vec2.begin(), vec2.end());
     print_vec(vec);
  

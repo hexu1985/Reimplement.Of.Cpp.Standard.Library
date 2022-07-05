@@ -13,7 +13,7 @@
 #include <mutex>
 #include <condition_variable>
 
-namespace mini_stl {
+namespace Hx {
 
 /**
  * @brief shared_mutex 类是一个同步原语，可用于保护共享数据不被多个线程同时访问。
@@ -105,6 +105,6 @@ public:
 	void unlock_shared(); 
 };
 
-}	// namespace mini_stl
+}	// namespace Hx
 
 #endif

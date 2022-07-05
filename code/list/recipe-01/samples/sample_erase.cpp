@@ -2,7 +2,7 @@
 #include <iostream>
 #include <iterator>
  
-void print_container(const mini_stl::list<int>& c) 
+void print_container(const Hx::list<int>& c) 
 {
     for (auto &i : c) {
         std::cout << i << " ";
@@ -12,14 +12,14 @@ void print_container(const mini_stl::list<int>& c)
  
 int main( )
 {
-    mini_stl::list<int> c{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    Hx::list<int> c{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     print_container(c);
  
     c.erase(c.begin());
     print_container(c);
  
-    mini_stl::list<int>::iterator range_begin = c.begin();
-    mini_stl::list<int>::iterator range_end = c.begin();
+    Hx::list<int>::iterator range_begin = c.begin();
+    Hx::list<int>::iterator range_end = c.begin();
     std::advance(range_begin,2);
     std::advance(range_end,5);
  

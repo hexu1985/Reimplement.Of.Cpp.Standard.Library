@@ -14,7 +14,7 @@
 #endif // __cplusplus
 
 #ifdef __cplusplus
-namespace mini_stl {
+namespace Hx {
 namespace single_linked {
 #endif // __cplusplus
 
@@ -188,7 +188,7 @@ void list_reverse_after(list_node_t* x)
 
 #ifdef __cplusplus
 } // namespace single_linked
-} // namespace mini_stl
+} // namespace Hx
 #endif // __cplusplus
 
 #endif // MINI_STL_FORWARD_LIST_IMPL_H

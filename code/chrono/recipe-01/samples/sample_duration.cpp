@@ -5,9 +5,9 @@
 
 int main ()
 {
-    typedef mini_stl::chrono::duration<int> seconds_type;
-    typedef mini_stl::chrono::duration<int,std::milli> milliseconds_type;
-    typedef mini_stl::chrono::duration<int,std::ratio<60*60>> hours_type;
+    typedef Hx::chrono::duration<int> seconds_type;
+    typedef Hx::chrono::duration<int,std::milli> milliseconds_type;
+    typedef Hx::chrono::duration<int,std::ratio<60*60>> hours_type;
 
     hours_type h_oneday (24);                  // 24h
     seconds_type s_oneday (60*60*24);          // 86400s
@@ -15,7 +15,7 @@ int main ()
 
     seconds_type s_onehour (60*60);            // 3600s
     //hours_type h_onehour (s_onehour);          // NOT VALID (type truncates), use:
-    hours_type h_onehour (mini_stl::chrono::duration_cast<hours_type>(s_onehour));
+    hours_type h_onehour (Hx::chrono::duration_cast<hours_type>(s_onehour));
     milliseconds_type ms_onehour (s_onehour);  // 3600000ms (ok, no type truncation)
 
     std::cout << ms_onehour.count() << "ms in 1h" << std::endl;

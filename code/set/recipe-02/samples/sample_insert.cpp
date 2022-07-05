@@ -4,7 +4,7 @@
  
 int main()
 {
-  mini_stl::set<int> set;
+  Hx::set<int> set;
  
   auto result_1 = set.insert(3);
   assert(result_1.first != set.end()); // it's a valid iterator

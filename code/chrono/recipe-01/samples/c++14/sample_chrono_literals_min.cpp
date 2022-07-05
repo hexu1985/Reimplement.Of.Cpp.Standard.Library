@@ -4,7 +4,7 @@
  
 int main()
 {
-    using namespace mini_stl::chrono_literals;
+    using namespace Hx::chrono_literals;
     auto lesson = 45min;
     auto halfmin = 0.5min;
     std::cout << "one lesson is " << lesson.count() << " minutes\n"

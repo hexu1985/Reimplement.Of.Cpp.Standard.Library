@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 #include "shared_ptr.hpp"
 
-using mini_stl::shared_ptr;
-using mini_stl::make_shared;
-using mini_stl::static_pointer_cast;
+using Hx::shared_ptr;
+using Hx::make_shared;
+using Hx::static_pointer_cast;
 
 #include "shared_ptr_static_pointer_cast.hpp"
 

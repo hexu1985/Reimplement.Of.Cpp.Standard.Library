@@ -2,8 +2,8 @@
 #include "shared_ptr.hpp"
 #include "weak_ptr.hpp"
 
-using mini_stl::weak_ptr;
-using mini_stl::make_shared;
+using Hx::weak_ptr;
+using Hx::make_shared;
 
 struct Foo {};
 

@@ -4,7 +4,7 @@
 
 int main ()
 {
-  mini_stl::forward_list<int> mylist;
+  Hx::forward_list<int> mylist;
 
   // set some initial content:
   for (int i=9; i>=1; --i) mylist.push_front(i);
@@ -14,7 +14,7 @@ int main ()
   mylist.resize(12);
 
   std::cout << "mylist contains:";
-  for (mini_stl::forward_list<int>::iterator it=mylist.begin(); it!=mylist.end(); ++it)
+  for (Hx::forward_list<int>::iterator it=mylist.begin(); it!=mylist.end(); ++it)
     std::cout << ' ' << *it;
 
   std::cout << '\n';

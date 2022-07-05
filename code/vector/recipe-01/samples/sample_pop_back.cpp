@@ -13,7 +13,7 @@ void print(T const & xs)
  
 int main()
 {
-    mini_stl::vector<int> numbers;
+    Hx::vector<int> numbers;
  
     print(numbers); 
  

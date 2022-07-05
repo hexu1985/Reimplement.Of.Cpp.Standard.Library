@@ -30,7 +30,7 @@ class Dew
 const int nof_operations = 120;
  
 int set_emplace() {
-    mini_stl::set<Dew> set;
+    Hx::set<Dew> set;
     for(int i = 0; i < nof_operations; ++i)
         for(int j = 0; j < nof_operations; ++j)
             for(int k = 0; k < nof_operations; ++k)
@@ -40,7 +40,7 @@ int set_emplace() {
 }
  
 int set_insert() {
-    mini_stl::set<Dew> set;
+    Hx::set<Dew> set;
     for(int i = 0; i < nof_operations; ++i)
         for(int j = 0; j < nof_operations; ++j)
             for(int k = 0; k < nof_operations; ++k)

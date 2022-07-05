@@ -15,7 +15,7 @@
 #include <initializer_list>
 #include <type_traits>
 
-namespace mini_stl {
+namespace Hx {
 
 /* vector class */
 template <typename T, typename Alloc = std::allocator<T>>
@@ -1022,7 +1022,7 @@ void swap(vector<T, Alloc>& x, vector<T, Alloc>& y)
     return x.swap(y);
 }
 
-}    // namespace mini_stl
+}    // namespace Hx
 
 #endif // MINI_STL_VECTOR_INC
 

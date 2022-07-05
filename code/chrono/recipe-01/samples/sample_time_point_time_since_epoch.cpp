@@ -4,7 +4,7 @@
 
 int main ()
 {
-    using namespace mini_stl::chrono;
+    using namespace Hx::chrono;
 
     system_clock::time_point tp = system_clock::now();
     system_clock::duration dtn = tp.time_since_epoch();

@@ -6,8 +6,8 @@
 int main ()
 {
 
-    mini_stl::chrono::duration<int> foo;
-    mini_stl::chrono::duration<int> bar (10);
+    Hx::chrono::duration<int> foo;
+    Hx::chrono::duration<int> bar (10);
 
     // counts: foo bar
     //         --- ---

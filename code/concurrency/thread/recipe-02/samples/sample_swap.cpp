@@ -17,8 +17,8 @@ int main()
 {
     using std::swap;
  
-    mini_stl::thread t1(foo);
-    mini_stl::thread t2(bar);
+    Hx::thread t1(foo);
+    Hx::thread t2(bar);
  
     std::cout << "thread 1 id: " << t1.get_id() << '\n'
               << "thread 2 id: " << t2.get_id() << '\n';

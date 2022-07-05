@@ -2,9 +2,9 @@
 #include <iostream>
 #include "shared_ptr.hpp"
 
-using mini_stl::shared_ptr;
-using mini_stl::make_shared;
-using mini_stl::const_pointer_cast;
+using Hx::shared_ptr;
+using Hx::make_shared;
+using Hx::const_pointer_cast;
 
 int main () {
     shared_ptr<int> foo;

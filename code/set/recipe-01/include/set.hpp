@@ -11,7 +11,7 @@
 #include <limits>
 #include <initializer_list>
 
-namespace mini_stl {
+namespace Hx {
 
 /**
  * A helper node class for set.
@@ -817,6 +817,6 @@ bool operator>= (const set<T, Compare, Alloc> &lhs, const set<T, Compare, Alloc>
     return !(lhs < rhs);
 }
 
-} // namespace mini_stl
+} // namespace Hx
 
 #endif // MINI_STL_SET_INC

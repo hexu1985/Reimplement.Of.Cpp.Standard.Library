@@ -8,7 +8,7 @@
 #include <pthread.h>
 #include <chrono>
 
-namespace mini_stl {
+namespace Hx {
 
 /**
  * The recursive_timed_mutex class is a synchronization primitive 
@@ -101,7 +101,7 @@ private:
     static bool timed_lock(pthread_mutex_t* mutex, const struct timespec* abstime);
 };
 
-}	// namespace mini_stl
+}	// namespace Hx
 
 #endif
 

@@ -1,9 +1,9 @@
 // mutex example
 #include <iostream>       // std::cout
 #include <thread>         // std::thread
-#include "mutex.hpp"      // mini_stl::mutex
+#include "mutex.hpp"      // Hx::mutex
 
-mini_stl::mutex mtx;           // mutex for critical section
+Hx::mutex mtx;           // mutex for critical section
 
 void print_block (int n, char c) {
     // critical section (exclusive access to std::cout signaled by locking mtx):

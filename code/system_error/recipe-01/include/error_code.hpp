@@ -8,7 +8,7 @@
 #include <string>
 #include "cerrno.hpp"
 
-namespace mini_stl {
+namespace Hx {
 
 template<typename T>
 struct is_error_code_enum: public std::false_type {};
@@ -554,13 +554,13 @@ inline error_condition make_error_condition(errc e) noexcept
     return error_condition(static_cast<int>(e), generic_category());
 }
 
-}    // namespace mini_stl
+}    // namespace Hx
 
 namespace std {
 
-template <> struct hash<mini_stl::error_code>
+template <> struct hash<Hx::error_code>
 {
-    size_t operator ()(const mini_stl::error_code& ec) const noexcept
+    size_t operator ()(const Hx::error_code& ec) const noexcept
     {
         return static_cast<size_t>(ec.value())
             + reinterpret_cast<size_t>(&ec.category());

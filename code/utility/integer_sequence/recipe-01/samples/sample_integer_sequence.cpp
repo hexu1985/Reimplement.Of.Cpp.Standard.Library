@@ -5,7 +5,7 @@
  
 // debugging aid
 template<typename T, T... ints>
-void print_sequence(mini_stl::integer_sequence<T, ints...> int_seq)
+void print_sequence(Hx::integer_sequence<T, ints...> int_seq)
 {
     std::cout << "The sequence of size " << int_seq.size() << ": ";
     ((std::cout << ints << ' '), ...);
@@ -14,12 +14,12 @@ void print_sequence(mini_stl::integer_sequence<T, ints...> int_seq)
  
 // convert array into a tuple
 template<typename Array, std::size_t... I>
-auto a2t_impl(const Array& a, mini_stl::index_sequence<I...>)
+auto a2t_impl(const Array& a, Hx::index_sequence<I...>)
 {
     return std::make_tuple(a[I]...);
 }
  
-template<typename T, std::size_t N, typename Indices = mini_stl::make_index_sequence<N>>
+template<typename T, std::size_t N, typename Indices = Hx::make_index_sequence<N>>
 auto a2t(const std::array<T, N>& a)
 {
     return a2t_impl(a, Indices{});
@@ -29,7 +29,7 @@ auto a2t(const std::array<T, N>& a)
 template<class Ch, class Tr, class Tuple, std::size_t... Is>
 void print_tuple_impl(std::basic_ostream<Ch,Tr>& os,
                       const Tuple& t,
-                      mini_stl::index_sequence<Is...>)
+                      Hx::index_sequence<Is...>)
 {
     ((os << (Is == 0? "" : ", ") << std::get<Is>(t)), ...);
 }
@@ -39,16 +39,16 @@ auto& operator<<(std::basic_ostream<Ch, Tr>& os,
                  const std::tuple<Args...>& t)
 {
     os << "(";
-    print_tuple_impl(os, t, mini_stl::index_sequence_for<Args...>{});
+    print_tuple_impl(os, t, Hx::index_sequence_for<Args...>{});
     return os << ")";
 }
  
 int main()
 {
-    print_sequence(mini_stl::integer_sequence<unsigned, 9, 2, 5, 1, 9, 1, 6>{});
-    print_sequence(mini_stl::make_integer_sequence<int, 20>{});
-    print_sequence(mini_stl::make_index_sequence<10>{});
-    print_sequence(mini_stl::index_sequence_for<float, std::iostream, char>{});
+    print_sequence(Hx::integer_sequence<unsigned, 9, 2, 5, 1, 9, 1, 6>{});
+    print_sequence(Hx::make_integer_sequence<int, 20>{});
+    print_sequence(Hx::make_index_sequence<10>{});
+    print_sequence(Hx::index_sequence_for<float, std::iostream, char>{});
  
     std::array<int, 4> array = {1, 2, 3, 4};
  

@@ -6,15 +6,15 @@
 #include <algorithm>
 #include "any.hpp"
 
-bool is_int(const mini_stl::any& a) {
+bool is_int(const Hx::any& a) {
     return typeid(int)==a.type();
 }
 
-bool is_string(const mini_stl::any& a) {
+bool is_string(const Hx::any& a) {
     return typeid(std::string)==a.type();
 }
 
-template <typename T> bool contains (const mini_stl::any& a) {
+template <typename T> bool contains (const Hx::any& a) {
     return typeid(T)==a.type();
 }
 
@@ -24,7 +24,7 @@ class any_counter {
 public:
     any_counter() : count_(0) {}
 
-    int operator()(const mini_stl::any& a) {
+    int operator()(const Hx::any& a) {
         return a.has_value() ? ++count_ : count_;
     }
 
@@ -37,8 +37,8 @@ template <typename OutIt,typename Type> class extractor {
 public:
     extractor(OutIt it) : it_(it) {}
 
-    void operator()(mini_stl::any& a) {
-        Type* t(mini_stl::any_cast<Type>(&a));
+    void operator()(Hx::any& a) {
+        Type* t(Hx::any_cast<Type>(&a));
         if (t) {
             *it_++ = *t;
         }
@@ -54,12 +54,12 @@ int main() {
     std::cout << "Example of using predicates and the "
         "function object any_counter\n";
 
-    std::vector<mini_stl::any> vec;
-    vec.push_back(mini_stl::any());
+    std::vector<Hx::any> vec;
+    vec.push_back(Hx::any());
     for(int i=0;i<10;++i) {
         vec.push_back(i);
     }
-    vec.push_back(mini_stl::any());
+    vec.push_back(Hx::any());
 
     // 计算含有值的any 实例的数量
     int i=std::for_each(

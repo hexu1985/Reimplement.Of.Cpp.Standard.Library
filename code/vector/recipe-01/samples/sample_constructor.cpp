@@ -3,7 +3,7 @@
 #include <iostream>
  
 template<typename T>
-std::ostream& operator<<(std::ostream& s, const mini_stl::vector<T>& v) 
+std::ostream& operator<<(std::ostream& s, const Hx::vector<T>& v) 
 {
     s.put('[');
     char comma[3] = {'\0', ' ', '\0'};
@@ -17,18 +17,18 @@ std::ostream& operator<<(std::ostream& s, const mini_stl::vector<T>& v)
 int main() 
 {
     // c++11 initializer list syntax:
-    mini_stl::vector<std::string> words1 {"the", "frogurt", "is", "also", "cursed"};
+    Hx::vector<std::string> words1 {"the", "frogurt", "is", "also", "cursed"};
     std::cout << "words1: " << words1 << '\n';
  
     // words2 == words1
-    mini_stl::vector<std::string> words2(words1.begin(), words1.end());
+    Hx::vector<std::string> words2(words1.begin(), words1.end());
     std::cout << "words2: " << words2 << '\n';
  
     // words3 == words1
-    mini_stl::vector<std::string> words3(words1);
+    Hx::vector<std::string> words3(words1);
     std::cout << "words3: " << words3 << '\n';
  
     // words4 is {"Mo", "Mo", "Mo", "Mo", "Mo"}
-    mini_stl::vector<std::string> words4(5, "Mo");
+    Hx::vector<std::string> words4(5, "Mo");
     std::cout << "words4: " << words4 << '\n';
 }

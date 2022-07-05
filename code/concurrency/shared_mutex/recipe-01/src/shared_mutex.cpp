@@ -1,7 +1,7 @@
 #include "shared_mutex.hpp"
 #include <cassert>
 
-namespace mini_stl {
+namespace Hx {
 
 shared_mutex::shared_mutex():
     rw_nwaitreaders(0),
@@ -84,5 +84,5 @@ void shared_mutex::unlock_shared()
     unlock();
 }
 
-}   // mini_stl
+}   // Hx
 

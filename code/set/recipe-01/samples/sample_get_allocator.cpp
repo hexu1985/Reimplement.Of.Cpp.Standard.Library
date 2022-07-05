@@ -4,7 +4,7 @@
 
 int main ()
 {
-  mini_stl::set<int> myset;
+  Hx::set<int> myset;
   int * p;
   unsigned int i;
 

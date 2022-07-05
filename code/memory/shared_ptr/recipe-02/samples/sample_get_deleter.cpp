@@ -2,8 +2,8 @@
 #include <iostream>
 #include "shared_ptr.hpp"
 
-using mini_stl::shared_ptr;
-using mini_stl::get_deleter;
+using Hx::shared_ptr;
+using Hx::get_deleter;
 
 struct D {    // a verbose array deleter:
   void operator()(int* p) {

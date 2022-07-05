@@ -1,7 +1,7 @@
 #ifndef MINI_STL_ANY_OF_INC
 #define MINI_STL_ANY_OF_INC
 
-namespace mini_stl {
+namespace Hx {
 
 template <typename InputIterator, typename UnaryPredicate>
 bool any_of(InputIterator first, InputIterator last, UnaryPredicate pred)
@@ -13,6 +13,6 @@ bool any_of(InputIterator first, InputIterator last, UnaryPredicate pred)
     return false;
 }
 
-}   // namespace mini_stl
+}   // namespace Hx
 
 #endif

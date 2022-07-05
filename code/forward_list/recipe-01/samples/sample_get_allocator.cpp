@@ -4,7 +4,7 @@
 
 int main ()
 {
-  mini_stl::forward_list<int> mylist;
+  Hx::forward_list<int> mylist;
   int * p;
 
   // allocate an array of 5 elements using mylist's allocator:

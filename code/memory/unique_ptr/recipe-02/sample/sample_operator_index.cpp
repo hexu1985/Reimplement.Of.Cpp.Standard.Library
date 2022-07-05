@@ -4,7 +4,7 @@
 int main() 
 {
     const int size = 10; 
-    mini_stl::unique_ptr<int[]> fact(new int[size]);
+    Hx::unique_ptr<int[]> fact(new int[size]);
  
     for (int i = 0; i < size; ++i) {
         fact[i] = (i == 0) ? 1 : i * fact[i-1];

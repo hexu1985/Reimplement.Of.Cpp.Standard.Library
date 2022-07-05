@@ -4,8 +4,8 @@
 
 int main ()
 {
-  mini_stl::forward_list<int> first;
-  mini_stl::forward_list<int> second;
+  Hx::forward_list<int> first;
+  Hx::forward_list<int> second;
 
   first.assign (4,15);                           // 15 15 15 15
 

@@ -11,7 +11,7 @@
 
 #include <type_traits>
 
-namespace mini_stl {
+namespace Hx {
 
 template<typename T>
 T&& forward(typename std::remove_reference<T>::type& param)
@@ -27,6 +27,6 @@ T&& forward(typename std::remove_reference<T>::type&& param) noexcept
     return static_cast<T&&>(param);
 }
 
-}   // namespace mini_stl
+}   // namespace Hx
 
 #endif

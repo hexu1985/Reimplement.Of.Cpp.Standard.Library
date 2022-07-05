@@ -20,7 +20,7 @@ struct D
  
 int main()
 {
-    mini_stl::unique_ptr<Foo, D> up(new Foo(), D());
+    Hx::unique_ptr<Foo, D> up(new Foo(), D());
     D& del = up.get_deleter();
     del.bar();
 }

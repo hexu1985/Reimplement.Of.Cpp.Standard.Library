@@ -10,7 +10,7 @@
 
 #include "sp_counted_base.hpp"
 
-namespace mini_stl {
+namespace Hx {
 
 /**
  * @brief shared_ptr的引用计数子类: 内嵌共享对象, 为make_shared提供支持
@@ -135,6 +135,6 @@ public:
     void* get_deleter() override { return &del_; }
 };
 
-}   // namespace mini_stl
+}   // namespace Hx
 
 #endif

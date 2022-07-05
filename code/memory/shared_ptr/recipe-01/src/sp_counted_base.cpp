@@ -1,6 +1,6 @@
 #include "sp_counted_base.hpp"
 
-namespace mini_stl {
+namespace Hx {
 
 sp_counted_base::sp_counted_base(): use_count_(1) 
 {
@@ -33,4 +33,4 @@ long sp_counted_base::use_count() const
     return use_count_;
 }
 
-}   // namespace mini_stl
+}   // namespace Hx

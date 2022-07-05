@@ -6,7 +6,7 @@
 #include <type_traits>
 #include <system_error>
 
-namespace mini_stl {
+namespace Hx {
 
 condition_variable::condition_variable()
 {
@@ -68,4 +68,4 @@ cv_status condition_variable::timed_wait(pthread_cond_t* cond, pthread_mutex_t* 
     }
 }
 
-}   // namespace mini_stl
+}   // namespace Hx

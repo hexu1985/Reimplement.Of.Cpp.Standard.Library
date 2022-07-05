@@ -237,7 +237,7 @@ void shared_mutex::unlock()
 #include <shared_mutex>
 #include "shared_mutex.hpp"
 
-mini_stl::shared_mutex rwlock;
+Hx::shared_mutex rwlock;
 
 void thread1();
 void thread2();

@@ -24,13 +24,13 @@ struct President
  
 int main()
 {
-    mini_stl::list<President> elections;
+    Hx::list<President> elections;
     std::cout << "emplace_back:\n";
     elections.emplace_back("Nelson Mandela", "South Africa", 1994);
     auto& ref = elections.back();
     assert(ref.year != 1984 && "uses a reference to the created object (C++17)");
  
-    mini_stl::list<President> reElections;
+    Hx::list<President> reElections;
     std::cout << "\npush_back:\n";
     reElections.push_back(President("Franklin Delano Roosevelt", "the USA", 1936));
  

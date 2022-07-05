@@ -6,9 +6,9 @@
  
 int main()
 {
-    mini_stl::vector<int> nums {1, 2, 4, 8, 16};
-    mini_stl::vector<std::string> fruits {"orange", "apple", "raspberry"};
-    mini_stl::vector<char> empty;
+    Hx::vector<int> nums {1, 2, 4, 8, 16};
+    Hx::vector<std::string> fruits {"orange", "apple", "raspberry"};
+    Hx::vector<char> empty;
  
     // Print vector.
     std::for_each(nums.begin(), nums.end(), [](const int n) { std::cout << n << ' '; });

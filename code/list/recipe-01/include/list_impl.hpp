@@ -12,7 +12,7 @@
 #endif // __cplusplus
 
 #ifdef __cplusplus
-namespace mini_stl {
+namespace Hx {
 namespace double_linked {
 #endif // __cplusplus
 
@@ -307,7 +307,7 @@ size_t list_size(const list_t* list)
 
 #ifdef __cplusplus
 } // namespace double_linked
-} // namespace mini_stl
+} // namespace Hx
 #endif // __cplusplus
 
 #endif // MINI_STL_LIST_IMPL_INC

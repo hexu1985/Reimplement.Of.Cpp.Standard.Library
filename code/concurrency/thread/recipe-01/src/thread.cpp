@@ -7,7 +7,7 @@ namespace {
 
 void *pthread_function(void *arg)
 {
-    auto routine = reinterpret_cast<mini_stl::thread::routine_base*>(arg);
+    auto routine = reinterpret_cast<Hx::thread::routine_base*>(arg);
     try 
     {
         routine->run();
@@ -23,7 +23,7 @@ void *pthread_function(void *arg)
 
 }   // namespace
 
-namespace mini_stl {
+namespace Hx {
 
 unsigned thread::hardware_concurrency()
 {
@@ -70,6 +70,6 @@ void thread::create_thread(routine_base* rtn)
 	id_ = tid;
 }
 
-}   // namespace mini_stl
+}   // namespace Hx
 
 

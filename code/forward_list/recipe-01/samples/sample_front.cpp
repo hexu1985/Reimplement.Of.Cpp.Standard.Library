@@ -4,7 +4,7 @@
 
 int main ()
 {
-  mini_stl::forward_list<int> mylist = {2, 16, 77};
+  Hx::forward_list<int> mylist = {2, 16, 77};
 
   mylist.front() = 11;
 

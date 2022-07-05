@@ -2,10 +2,10 @@
 #include <iostream>           // std::cout
 #include <thread>             // std::thread
 #include <mutex>              // std::mutex, std::unique_lock
-#include "condition_variable.hpp" // mini_stl::condition_variable
+#include "condition_variable.hpp" // Hx::condition_variable
 
 std::mutex mtx;
-mini_stl::condition_variable cv;
+Hx::condition_variable cv;
 bool ready = false;
 
 void print_id (int id) {

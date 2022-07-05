@@ -2,10 +2,10 @@
 #include <iostream>           // std::cout
 #include <thread>             // std::thread, std::this_thread::yield
 #include <mutex>              // std::mutex, std::unique_lock
-#include "condition_variable.hpp" // mini_stl::condition_variable
+#include "condition_variable.hpp" // Hx::condition_variable
 
 std::mutex mtx;
-mini_stl::condition_variable cv;
+Hx::condition_variable cv;
 
 int cargo = 0;
 bool shipment_available() {return cargo!=0;}

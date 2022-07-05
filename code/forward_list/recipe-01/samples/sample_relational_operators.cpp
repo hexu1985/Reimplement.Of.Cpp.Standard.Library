@@ -4,9 +4,9 @@
 
 int main ()
 {
-  mini_stl::forward_list<int> a = {10, 20, 30};
-  mini_stl::forward_list<int> b = {10, 20, 30};
-  mini_stl::forward_list<int> c = {30, 20, 10};
+  Hx::forward_list<int> a = {10, 20, 30};
+  Hx::forward_list<int> b = {10, 20, 30};
+  Hx::forward_list<int> c = {30, 20, 10};
 
   if (a==b) std::cout << "a and b are equal\n";
   if (b!=c) std::cout << "b and c are not equal\n";

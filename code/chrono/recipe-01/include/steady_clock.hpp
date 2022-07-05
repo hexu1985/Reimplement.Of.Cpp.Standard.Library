@@ -9,7 +9,7 @@
 #include "duration.hpp"
 #include "time_point.hpp"
 
-namespace mini_stl {
+namespace Hx {
 
 namespace chrono {
 
@@ -38,7 +38,7 @@ public:
     
 }    // namespace chrono
 
-}    // namespace mini_stl
+}    // namespace Hx
 
 #endif
 

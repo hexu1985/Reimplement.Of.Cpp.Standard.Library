@@ -5,10 +5,10 @@
 #include "weak_ptr.hpp"
 #include "enable_shared_from_this.hpp"
 
-using mini_stl::shared_ptr;
-using mini_stl::weak_ptr;
-using mini_stl::make_shared;
-using mini_stl::enable_shared_from_this;
+using Hx::shared_ptr;
+using Hx::weak_ptr;
+using Hx::make_shared;
+using Hx::enable_shared_from_this;
 
 #include "enable_shared_from_this_constructor2.hpp"
 

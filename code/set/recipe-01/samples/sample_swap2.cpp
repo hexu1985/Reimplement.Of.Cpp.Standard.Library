@@ -4,8 +4,8 @@
  
 int main()
 {
-    mini_stl::set<int> alice{1, 2, 3};
-    mini_stl::set<int> bob{7, 8, 9, 10};
+    Hx::set<int> alice{1, 2, 3};
+    Hx::set<int> bob{7, 8, 9, 10};
  
     auto print = [](const int& n) { std::cout << ' ' << n; };
  

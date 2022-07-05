@@ -4,7 +4,7 @@
  
 int main()
 {
-    using namespace mini_stl::chrono_literals;
+    using namespace Hx::chrono_literals;
     auto day = 24h;
     auto halfhour = 0.5h;
     std::cout << "one day is " << day.count() << " hours\n"

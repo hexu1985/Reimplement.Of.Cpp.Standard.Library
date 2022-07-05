@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <type_traits>
 
-namespace mini_stl {
+namespace Hx {
 
 template <typename T, T... Ints> struct integer_sequence {
     static constexpr std::size_t size() noexcept { return sizeof...(Ints); }
@@ -39,5 +39,5 @@ using make_index_sequence = make_integer_sequence<std::size_t, N>;
 template<class... T>
 using index_sequence_for = make_index_sequence<sizeof...(T)>;
 
-}   // namespace mini_stl
+}   // namespace Hx
 

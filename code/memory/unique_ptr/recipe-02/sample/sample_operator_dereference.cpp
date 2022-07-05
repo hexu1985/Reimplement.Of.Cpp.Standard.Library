@@ -12,7 +12,7 @@ void f(const Foo& foo)
  
 int main() 
 {
-    mini_stl::unique_ptr<Foo> ptr(new Foo);
+    Hx::unique_ptr<Foo> ptr(new Foo);
  
     ptr->bar();
     f(*ptr);

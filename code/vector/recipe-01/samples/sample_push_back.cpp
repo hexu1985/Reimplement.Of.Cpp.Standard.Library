@@ -4,7 +4,7 @@
  
 int main()
 {
-    mini_stl::vector<std::string> letters;
+    Hx::vector<std::string> letters;
  
     letters.push_back("abc");
     std::string s = "def";

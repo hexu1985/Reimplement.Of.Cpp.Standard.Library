@@ -4,7 +4,7 @@
 
 int main ()
 {
-  mini_stl::forward_list<int> mylist = {10, 20, 30, 40};
+  Hx::forward_list<int> mylist = {10, 20, 30, 40};
 
   std::cout << "Popping out the elements in mylist:";
   while (!mylist.empty())

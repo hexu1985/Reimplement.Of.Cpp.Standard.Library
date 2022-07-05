@@ -19,8 +19,8 @@ bool compare_nocase (const std::string& first, const std::string& second)
 
 int main ()
 {
-  mini_stl::forward_list<std::string> mylist;
-  mini_stl::forward_list<std::string>::iterator it;
+  Hx::forward_list<std::string> mylist;
+  Hx::forward_list<std::string>::iterator it;
   mylist.push_front ("one");
   mylist.push_front ("two");
   mylist.push_front ("Three");

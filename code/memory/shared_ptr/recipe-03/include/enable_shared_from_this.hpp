@@ -10,7 +10,7 @@
 
 #include <assert.h>
 
-namespace mini_stl {
+namespace Hx {
 
 template <typename T>
 class shared_ptr;
@@ -98,6 +98,6 @@ public:
     }
 };
 
-}   // namespace mini_stl
+}   // namespace Hx
 
 #endif

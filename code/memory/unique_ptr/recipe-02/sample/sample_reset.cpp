@@ -16,7 +16,7 @@ struct D { // deleter
 int main()
 {
     std::cout << "Creating new Foo...\n";
-    mini_stl::unique_ptr<Foo, D> up(new Foo(), D());  // up owns the Foo pointer (deleter D)
+    Hx::unique_ptr<Foo, D> up(new Foo(), D());  // up owns the Foo pointer (deleter D)
  
     std::cout << "Replace owned Foo with a new Foo...\n";
     up.reset(new Foo());  // calls deleter for the old one

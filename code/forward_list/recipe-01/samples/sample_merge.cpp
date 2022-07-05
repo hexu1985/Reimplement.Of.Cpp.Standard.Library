@@ -8,7 +8,7 @@ bool mycomparison (double first, double second)
 
 int main ()
 {
-  mini_stl::forward_list<double> first, second;
+  Hx::forward_list<double> first, second;
 
   first.push_front (3.1);
   first.push_front (2.2);
@@ -30,7 +30,7 @@ int main ()
   first.merge(second,mycomparison);
 
   std::cout << "first contains:";
-  for (mini_stl::forward_list<double>::iterator it=first.begin(); it!=first.end(); ++it)
+  for (Hx::forward_list<double>::iterator it=first.begin(); it!=first.end(); ++it)
     std::cout << ' ' << *it;
   std::cout << '\n';
 

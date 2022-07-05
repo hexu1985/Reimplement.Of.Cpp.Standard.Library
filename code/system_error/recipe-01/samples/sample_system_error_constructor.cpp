@@ -5,9 +5,9 @@ int main()
 {
     try
     {
-        throw mini_stl::system_error(EDOM, mini_stl::system_category());
+        throw Hx::system_error(EDOM, Hx::system_category());
     }
-    catch (const mini_stl::system_error& error)
+    catch (const Hx::system_error& error)
     {
         std::cout << "Error: " << error.code()
                   << " - " << error.code().message() << '\n';

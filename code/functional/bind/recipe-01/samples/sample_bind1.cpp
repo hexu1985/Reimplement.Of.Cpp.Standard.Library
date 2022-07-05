@@ -1,7 +1,7 @@
 #include <iostream>
 #include "bind.hpp"
 
-using namespace mini_stl::placeholders;
+using namespace Hx::placeholders;
 
 void nine_arguments(
   int i1,int i2,int i3,int i4,
@@ -12,7 +12,7 @@ void nine_arguments(
 
 int main() {
   int i1=1,i2=2,i3=3,i4=4,i5=5,i6=6,i7=7,i8=8,i9=9;
-  (mini_stl::bind(&nine_arguments,_9,_2,_1,_6,_3,_8,_4,_5,_7))
+  (Hx::bind(&nine_arguments,_9,_2,_1,_6,_3,_8,_4,_5,_7))
     (i1,i2,i3,i4,i5,i6,i7,i8,i9);
 }
 

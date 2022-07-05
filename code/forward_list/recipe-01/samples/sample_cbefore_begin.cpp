@@ -4,7 +4,7 @@
 
 int main ()
 {
-  mini_stl::forward_list<int> mylist = {77, 2, 16};
+  Hx::forward_list<int> mylist = {77, 2, 16};
 
   mylist.insert_after ( mylist.cbefore_begin(), 19 );
 

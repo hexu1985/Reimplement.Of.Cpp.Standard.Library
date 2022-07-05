@@ -4,7 +4,7 @@
 #include "is_same.hpp"
 #include "remove_cv.hpp"
 
-namespace mini_stl {
+namespace Hx {
 
 template <typename T>
 struct is_floating_point
@@ -15,4 +15,4 @@ struct is_floating_point
          is_same<long double, typename remove_cv<T>::type>::value
      > {};
 
-}   // namespace mini_stl
+}   // namespace Hx

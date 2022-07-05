@@ -34,7 +34,7 @@ int main()
 
     // search first two elements with equal value
     std::vector<int>::iterator pos;
-    pos = mini_stl::adjacent_find (coll.begin(), coll.end());
+    pos = Hx::adjacent_find (coll.begin(), coll.end());
 
     if (pos != coll.end()) {
         std::cout << "first two elements with equal value have position "
@@ -43,7 +43,7 @@ int main()
     }
 
     // search first two elements for which the second has double the value of the first
-    pos = mini_stl::adjacent_find (coll.begin(), coll.end(),   // range
+    pos = Hx::adjacent_find (coll.begin(), coll.end(),   // range
             doubled);                   // criterion
 
     if (pos != coll.end()) {

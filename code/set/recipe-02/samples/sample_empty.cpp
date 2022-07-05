@@ -3,7 +3,7 @@
  
 int main()
 {
-    mini_stl::set<int> numbers;
+    Hx::set<int> numbers;
     std::cout << std::boolalpha;
     std::cout << "Initially, numbers.empty(): " << numbers.empty() << '\n';
  

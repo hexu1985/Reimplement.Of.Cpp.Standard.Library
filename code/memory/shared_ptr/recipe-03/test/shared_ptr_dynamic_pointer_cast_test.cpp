@@ -2,9 +2,9 @@
 #include <gtest/gtest.h>
 #include "shared_ptr.hpp"
 
-using mini_stl::shared_ptr;
-using mini_stl::make_shared;
-using mini_stl::dynamic_pointer_cast;
+using Hx::shared_ptr;
+using Hx::make_shared;
+using Hx::dynamic_pointer_cast;
 
 #include "shared_ptr_dynamic_pointer_cast.hpp"
 

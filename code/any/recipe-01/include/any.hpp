@@ -8,7 +8,7 @@
 #include <typeinfo>
 #include <type_traits>
 
-namespace mini_stl {
+namespace Hx {
 
 /* any class */
 class any {
@@ -196,6 +196,6 @@ inline const ValueType* unsafe_any_cast(const any* operand) noexcept
     return unsafe_any_cast<ValueType>(const_cast<any*>(operand));
 }
 
-}   // namespace mini_stl
+}   // namespace Hx
 
 #endif // MINI_STL_ANY_INC

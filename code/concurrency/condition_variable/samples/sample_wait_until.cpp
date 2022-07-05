@@ -5,7 +5,7 @@
 #include <chrono>
 using namespace std::chrono_literals;
  
-mini_stl::condition_variable cv;
+Hx::condition_variable cv;
 std::mutex cv_m;
 std::atomic<int> i{0};
  

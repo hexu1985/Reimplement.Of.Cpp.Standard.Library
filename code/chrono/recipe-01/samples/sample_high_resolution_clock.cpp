@@ -6,7 +6,7 @@
 
 int main ()
 {
-    using namespace mini_stl::chrono;
+    using namespace Hx::chrono;
 
     high_resolution_clock::time_point t1 = high_resolution_clock::now();
 

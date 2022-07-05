@@ -16,7 +16,7 @@
 #include <algorithm>
 #include <initializer_list>
 
-namespace mini_stl {
+namespace Hx {
 
 /**
  * A helper node class for list.
@@ -1285,7 +1285,7 @@ void swap(list<T, Alloc>& x, list<T, Alloc>& y)
     return x.swap(y);
 }
 
-} // namespace mini_stl
+} // namespace Hx
 
 #endif // MINI_STL_LIST_INC
 

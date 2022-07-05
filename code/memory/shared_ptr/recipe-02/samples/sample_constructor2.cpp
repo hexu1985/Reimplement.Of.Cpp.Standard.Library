@@ -1,7 +1,7 @@
 #include <iostream>
 #include "shared_ptr.hpp"
 
-using mini_stl::shared_ptr;
+using Hx::shared_ptr;
 
 struct Foo {
     Foo() { std::cout << "Foo...\n"; }

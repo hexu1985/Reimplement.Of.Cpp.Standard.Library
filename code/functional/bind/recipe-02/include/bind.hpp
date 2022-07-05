@@ -4,7 +4,7 @@
 #include <tuple>
 #include <type_traits>
 
-namespace mini_stl {
+namespace Hx {
 
 template <int I>
 struct placeholder_t {
@@ -124,4 +124,4 @@ inline bind_t<F, P...> bind(F&& f, P&&... par)
     return bind_t<F, P...>(std::forward<F>(f), std::forward<P>(par)...);
 }
 
-}   // namespace mini_stl
+}   // namespace Hx

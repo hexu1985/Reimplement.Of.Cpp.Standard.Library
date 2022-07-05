@@ -7,15 +7,15 @@
 class property {
 private:
     std::string name_;
-    mini_stl::any value_;
+    Hx::any value_;
 
 public:
-    property(const std::string& name, const mini_stl::any& value)
+    property(const std::string& name, const Hx::any& value)
         : name_(name),value_(value) {}
 
     std::string name() const { return name_; }
 
-    mini_stl::any &value() { return value_; }
+    Hx::any &value() { return value_; }
 
     friend bool operator <(const property& lhs, const property& rhs) {
         return lhs.name_<rhs.name_;
@@ -48,9 +48,9 @@ int main() {
     std::cout << "\n";
 
     std::cout <<
-        mini_stl::any_cast<std::string>(properties[0].value()) << "\n";
+        Hx::any_cast<std::string>(properties[0].value()) << "\n";
     std::cout <<
-        mini_stl::any_cast<int>(properties[1].value()) << "\n";
+        Hx::any_cast<int>(properties[1].value()) << "\n";
     std::cout <<
-        mini_stl::any_cast<double>(properties[2].value()) << "\n";
+        Hx::any_cast<double>(properties[2].value()) << "\n";
 }

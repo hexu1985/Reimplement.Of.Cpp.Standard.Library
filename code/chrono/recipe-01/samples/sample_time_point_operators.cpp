@@ -5,7 +5,7 @@
 int main ()
 {
     
-    using namespace mini_stl::chrono;
+    using namespace Hx::chrono;
 
     system_clock::time_point tp,tp2;                // epoch value
     system_clock::duration dtn (duration<int>(1));  // 1 second

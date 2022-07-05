@@ -3,8 +3,8 @@
  
 int main()
 {
-    mini_stl::unique_ptr<int> p1(new int(42));
-    mini_stl::unique_ptr<int> p2(new int(42));
+    Hx::unique_ptr<int> p1(new int(42));
+    Hx::unique_ptr<int> p2(new int(42));
  
     std::cout << std::boolalpha
         << "(p1 == p1)       : " << (p1 == p1) << '\n'

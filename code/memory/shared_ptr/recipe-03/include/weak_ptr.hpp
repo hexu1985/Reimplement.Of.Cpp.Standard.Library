@@ -10,7 +10,7 @@
 
 #include "sp_counted_base.hpp"
 
-namespace mini_stl {
+namespace Hx {
 
 template <typename T>
 class shared_ptr;
@@ -302,6 +302,6 @@ void swap(weak_ptr<T>& lhs, weak_ptr<T>& rhs)
     lhs.swap(rhs);
 }
 
-}   // namespace mini_stl
+}   // namespace Hx
 
 #endif

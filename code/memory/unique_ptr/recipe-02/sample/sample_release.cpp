@@ -10,7 +10,7 @@ struct Foo {
 int main()
 {
     std::cout << "Creating new Foo...\n";
-    mini_stl::unique_ptr<Foo> up(new Foo());
+    Hx::unique_ptr<Foo> up(new Foo());
  
     std::cout << "About to release Foo...\n";
     Foo* fp = up.release();

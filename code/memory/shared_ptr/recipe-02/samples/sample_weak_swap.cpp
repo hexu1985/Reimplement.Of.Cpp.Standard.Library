@@ -3,8 +3,8 @@
 #include "shared_ptr.hpp"
 #include "weak_ptr.hpp"
 
-using mini_stl::shared_ptr;
-using mini_stl::weak_ptr;
+using Hx::shared_ptr;
+using Hx::weak_ptr;
 
 int main () 
 {

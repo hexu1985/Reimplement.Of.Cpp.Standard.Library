@@ -9,7 +9,7 @@ template<class Os, class Co> Os& operator<<(Os& os, const Co& co) {
  
 int main()
 {
-    mini_stl::vector<int> a1{1, 2, 3}, a2{4, 5};
+    Hx::vector<int> a1{1, 2, 3}, a2{4, 5};
  
     auto it1 = std::next(a1.begin());
     auto it2 = std::next(a2.begin());

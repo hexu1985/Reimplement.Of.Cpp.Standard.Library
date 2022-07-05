@@ -12,22 +12,22 @@
 
 //检测一个any是否能转换成某种类型，RTTI
 template<typename T>
-bool can_cast_to(const mini_stl::any& a){
+bool can_cast_to(const Hx::any& a){
     return a.type() == typeid(T);
 }
 
 //获取any内部对象的引用，可以用来修改对象的值
 template<typename T>
-T& get_ref(mini_stl::any& a){
+T& get_ref(Hx::any& a){
     assert(can_cast_to<T>(a) && "any类型转换错误！！！");
-    return mini_stl::any_cast<T&>(a);
+    return Hx::any_cast<T&>(a);
 }
 
 //获取原对象的指针
 template<typename T>
-T* get_ptr(mini_stl::any& a){
+T* get_ptr(Hx::any& a){
     assert(can_cast_to<T>(a) && "any类型转换错误！！！");
-    return mini_stl::any_cast<T>(&a);
+    return Hx::any_cast<T>(&a);
 }
 
 
@@ -37,16 +37,16 @@ int main(int argc, char const *argv[])
 
 /* 1.基本用法 */
     puts("1.基本用法");
-    mini_stl::any a(1);
+    Hx::any a(1);
     //获取原对象   
-    PRINT(mini_stl::any_cast<int>(a));
+    PRINT(Hx::any_cast<int>(a));
     
     //修改原对象的值,改为左值引用即可
-    mini_stl::any_cast<int&>(a) = 100;
-    PRINT(mini_stl::any_cast<int>(a));
+    Hx::any_cast<int&>(a) = 100;
+    PRINT(Hx::any_cast<int>(a));
 
     //获取原对象的指针
-    int* ss = mini_stl::any_cast<int>(&a);
+    int* ss = Hx::any_cast<int>(&a);
     PRINT(*ss);
 
     //获取原对象的类型信息
@@ -61,21 +61,21 @@ int main(int argc, char const *argv[])
     puts("二，智能指针");
     //下面这样做会造成内存泄露
     int* p = new int(2);
-    mini_stl::any ptr_any(p);
-    int* tmp = mini_stl::any_cast<int*>(ptr_any);
+    Hx::any ptr_any(p);
+    int* tmp = Hx::any_cast<int*>(ptr_any);
     PRINT(*tmp);
 
     //应当使用智能指针，而且只能使用shared_ptr,因为scoped_ptr不能被复制
     //这样在any析构时，会调用shared_ptr的析构函数，释放其持有的资源
-    mini_stl::any shared_any(std::shared_ptr<int>(new int(3) ) );
-    auto p_shared = mini_stl::any_cast<std::shared_ptr<int> >(shared_any);
+    Hx::any shared_any(std::shared_ptr<int>(new int(3) ) );
+    auto p_shared = Hx::any_cast<std::shared_ptr<int> >(shared_any);
     PRINT(*p_shared);
     puts("");
 /**************************************************************************/
 //三，辅助函数：
     puts("三，辅助函数");
     std::string str("hello");
-    mini_stl::any xxx(str);
+    Hx::any xxx(str);
 
     //检测一个any是否能转换成某种类型，RTTI
     PRINT(can_cast_to<int>(xxx) );
@@ -90,16 +90,16 @@ int main(int argc, char const *argv[])
 /**************************************************************************/
 //四，用于容器:
     puts("四，用于容器");
-    std::vector<mini_stl::any> vec {
+    std::vector<Hx::any> vec {
         1,
         std::string("你好！"),
         1.414,    
         std::shared_ptr<std::string>(new std::string("end") )    
     };
-    PRINT(mini_stl::any_cast<int>(vec[0]) );
-    PRINT(mini_stl::any_cast<std::string&>(vec[1]) );
-    PRINT(mini_stl::any_cast<double>(vec[2]) );
-    PRINT(*mini_stl::any_cast<std::shared_ptr<std::string>>(vec[3]) );
+    PRINT(Hx::any_cast<int>(vec[0]) );
+    PRINT(Hx::any_cast<std::string&>(vec[1]) );
+    PRINT(Hx::any_cast<double>(vec[2]) );
+    PRINT(*Hx::any_cast<std::shared_ptr<std::string>>(vec[3]) );
 
     return 0;
 }

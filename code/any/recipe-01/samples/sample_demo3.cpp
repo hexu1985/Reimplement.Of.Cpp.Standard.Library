@@ -5,9 +5,9 @@
 int main() {
     std::cout << "Example of using any member functions\n\n";
 
-    mini_stl::any a1(100);
-    mini_stl::any a2(std::string("200"));
-    mini_stl::any a3;
+    Hx::any a1(100);
+    Hx::any a2(std::string("200"));
+    Hx::any a3;
 
     std::cout << "a3 is ";
     if (a3.has_value()) {
@@ -17,14 +17,14 @@ int main() {
 
     a1.swap(a2);
     try {
-        std::string s=mini_stl::any_cast<std::string>(a1);
+        std::string s=Hx::any_cast<std::string>(a1);
         std::cout << "a1 contains a string: " << s << "\n";
     }
-    catch(mini_stl::bad_any_cast& e) {
+    catch(Hx::bad_any_cast& e) {
         std::cout << "I guess a1 doesn't contain a string!\n";
     }
 
-    if (int* p=mini_stl::any_cast<int>(&a2)) {
+    if (int* p=Hx::any_cast<int>(&a2)) {
         std::cout << "a2 seems to have swapped contents with a1: "
             << *p << "\n";
     }

@@ -4,8 +4,8 @@
 
 int main ()
 {
-  mini_stl::forward_list<int> first = { 1, 2, 3 };
-  mini_stl::forward_list<int> second = { 10, 20, 30 };
+  Hx::forward_list<int> first = { 1, 2, 3 };
+  Hx::forward_list<int> second = { 10, 20, 30 };
 
   auto it = first.begin();  // points to the 1
 

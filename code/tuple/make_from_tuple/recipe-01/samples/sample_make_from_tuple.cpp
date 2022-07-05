@@ -11,5 +11,5 @@ struct Foo {
 int main()
 {
    auto tuple = std::make_tuple(42, 3.14f, 0);
-   mini_stl::make_from_tuple<Foo>(std::move(tuple));
+   Hx::make_from_tuple<Foo>(std::move(tuple));
 }

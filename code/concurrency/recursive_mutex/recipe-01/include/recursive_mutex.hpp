@@ -7,7 +7,7 @@
 
 #include <pthread.h>
 
-namespace mini_stl {
+namespace Hx {
 
 /**
  * The recursive_mutex class is a synchronization primitive 
@@ -62,7 +62,7 @@ public:
 	native_handle_type native_handle() { return &mtx_; }
 };
 
-}	// namespace mini_stl
+}	// namespace Hx
 
 #endif
 

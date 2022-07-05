@@ -55,12 +55,12 @@ int main()
     int n = 0;
     foo f;
     baz b;
-    mini_stl::thread t1; // t1 不是线程
-    mini_stl::thread t2(f1, n + 1); // 按值传递
-    mini_stl::thread t3(f2, std::ref(n)); // 按引用传递
-    mini_stl::thread t4(std::move(t3)); // t4 现在运行 f2() 。 t3 不再是线程
-    mini_stl::thread t5(&foo::bar, &f); // t5 在对象 f 上运行 foo::bar()
-    mini_stl::thread t6(std::ref(b)); // t6 在对象 b 上运行 baz::operator()
+    Hx::thread t1; // t1 不是线程
+    Hx::thread t2(f1, n + 1); // 按值传递
+    Hx::thread t3(f2, std::ref(n)); // 按引用传递
+    Hx::thread t4(std::move(t3)); // t4 现在运行 f2() 。 t3 不再是线程
+    Hx::thread t5(&foo::bar, &f); // t5 在对象 f 上运行 foo::bar()
+    Hx::thread t6(std::ref(b)); // t6 在对象 b 上运行 baz::operator()
     t2.join();
     t4.join();
     t5.join();

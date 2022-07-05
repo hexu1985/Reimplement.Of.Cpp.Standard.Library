@@ -14,7 +14,7 @@
 #endif // __cplusplus
 
 #ifdef __cplusplus
-namespace mini_stl {
+namespace Hx {
 namespace red_black {
 #endif // __cplusplus
 
@@ -543,7 +543,7 @@ void tree_delete(tree_t* tree, tree_node_t* z)
 
 #ifdef __cplusplus
 } // namespace red_black
-} // namespace mini_stl
+} // namespace Hx
 #endif // __cplusplus
 
 #endif // MINI_STL_SET_IMPL_INC

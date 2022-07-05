@@ -1,9 +1,9 @@
 // mutex::lock/unlock
 #include <iostream>       // std::cout
 #include <thread>         // std::thread
-#include "mutex.hpp"      // mini_stl::mutex
+#include "mutex.hpp"      // Hx::mutex
 
-mini_stl::mutex mtx;           // mutex for critical section
+Hx::mutex mtx;           // mutex for critical section
 
 void print_thread_id (int id) {
     // critical section (exclusive access to std::cout signaled by locking mtx):

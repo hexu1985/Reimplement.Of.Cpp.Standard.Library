@@ -3,7 +3,7 @@
  
 int main()
 {
-    mini_stl::recursive_mutex test;
+    Hx::recursive_mutex test;
     if (test.try_lock()) {
         std::cout << "lock acquired\n";
         test.unlock();

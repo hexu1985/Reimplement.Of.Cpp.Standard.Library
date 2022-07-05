@@ -20,7 +20,7 @@ struct D : B
 };
  
 // a function consuming a unique_ptr can take it by value or by rvalue reference
-mini_stl::unique_ptr<D> pass_through(mini_stl::unique_ptr<D> p)
+Hx::unique_ptr<D> pass_through(Hx::unique_ptr<D> p)
 {
     p->bar();
     return p;
@@ -33,7 +33,7 @@ void close_file(std::FILE* fp) { std::fclose(fp); }
 struct List {
   struct Node {
     int data;
-    mini_stl::unique_ptr<Node> next;
+    Hx::unique_ptr<Node> next;
     Node(int data) : data{data}, next{nullptr} {}
   };
   List() : head{nullptr} {};
@@ -41,19 +41,19 @@ struct List {
   ~List() { while(head) head = std::move(head->next); }
   // copy/move and other APIs skipped for simplicity
   void push(int data) {
-    auto temp = mini_stl::make_unique<Node>(data);
+    auto temp = Hx::make_unique<Node>(data);
     if(head) temp->next = std::move(head);
     head = std::move(temp);
   }
 private:
-  mini_stl::unique_ptr<Node> head;
+  Hx::unique_ptr<Node> head;
 };
  
 int main()
 {
   std::cout << "unique ownership semantics demo\n";
   {
-      auto p = mini_stl::make_unique<D>(); // p is a unique_ptr that owns a D
+      auto p = Hx::make_unique<D>(); // p is a unique_ptr that owns a D
       auto q = pass_through(std::move(p)); 
       assert(!p); // now p owns nothing and holds a null pointer
       q->bar();   // and q owns the D object
@@ -61,12 +61,12 @@ int main()
  
   std::cout << "Runtime polymorphism demo\n";
   {
-    mini_stl::unique_ptr<B> p = mini_stl::make_unique<D>(); // p is a unique_ptr that owns a D
+    Hx::unique_ptr<B> p = Hx::make_unique<D>(); // p is a unique_ptr that owns a D
                                                   // as a pointer to base
     p->bar(); // virtual dispatch
  
-    std::vector<mini_stl::unique_ptr<B>> v;  // unique_ptr can be stored in a container
-    v.push_back(mini_stl::make_unique<D>());
+    std::vector<Hx::unique_ptr<B>> v;  // unique_ptr can be stored in a container
+    v.push_back(Hx::make_unique<D>());
     v.push_back(std::move(p));
     v.emplace_back(new D);
     for(auto& p: v) p->bar(); // virtual dispatch
@@ -75,7 +75,7 @@ int main()
   std::cout << "Custom deleter demo\n";
   std::ofstream("demo.txt") << 'x'; // prepare the file to read
   {
-      mini_stl::unique_ptr<std::FILE, decltype(&close_file)> fp(std::fopen("demo.txt", "r"),
+      Hx::unique_ptr<std::FILE, decltype(&close_file)> fp(std::fopen("demo.txt", "r"),
                                                            &close_file);
       if(fp) // fopen could have failed; in which case fp holds a null pointer
         std::cout << (char)std::fgetc(fp.get()) << '\n';
@@ -84,7 +84,7 @@ int main()
  
   std::cout << "Custom lambda-expression deleter demo\n";
   {
-    mini_stl::unique_ptr<D, std::function<void(D*)>> p(new D, [](D* ptr)
+    Hx::unique_ptr<D, std::function<void(D*)>> p(new D, [](D* ptr)
         {
             std::cout << "destroying from a custom deleter...\n";
             delete ptr;
@@ -95,7 +95,7 @@ int main()
 #if 0
   std::cout << "Array form of unique_ptr demo\n";
   {
-      mini_stl::unique_ptr<D[]> p{new D[3]};
+      Hx::unique_ptr<D[]> p{new D[3]};
   } // calls ~D 3 times
 #endif
  

@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include "shared_ptr.hpp"
 
-using mini_stl::shared_ptr;
+using Hx::shared_ptr;
 using std::cout;
 
 void *operator new(size_t sz)

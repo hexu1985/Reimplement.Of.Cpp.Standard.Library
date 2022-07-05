@@ -10,7 +10,7 @@
 
 #include <type_traits>
 
-namespace mini_stl {
+namespace Hx {
 
 template<typename T> // C++14; still in
 decltype(auto) move(T&& param)
@@ -19,6 +19,6 @@ decltype(auto) move(T&& param)
     return static_cast<ReturnType>(param);
 }
 
-}   // namespace mini_stl
+}   // namespace Hx
 
 #endif
