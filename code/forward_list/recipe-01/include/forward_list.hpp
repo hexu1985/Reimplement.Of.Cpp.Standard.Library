@@ -26,8 +26,8 @@ namespace mini_stl {
 template <typename T>
 struct forward_list_node: public single_linked::list_node_t {
     // raw storage buffer for type T
-    typename 
-    std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type storage;
+    // typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type storage;     // deprecated in C++23
+    struct alignas(alignof(T)) { char data[sizeof(T)]; } storage;
 
     T* valptr() noexcept
     {

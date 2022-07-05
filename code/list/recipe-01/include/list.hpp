@@ -26,7 +26,8 @@ namespace mini_stl {
 template <typename T>
 struct list_node: public double_linked::list_node_t {
     // raw storage buffer for type T
-    typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type storage;
+    // typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type storage;  // deprecated in C++23
+    struct alignas(alignof(T)) { char data[sizeof(T)]; } storage;
 
     T* valptr() noexcept
     {
