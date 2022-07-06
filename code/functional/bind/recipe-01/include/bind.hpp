@@ -100,10 +100,9 @@ R>::type invoke(F&& f, P&&... par)
 
 template <typename Fun, typename... Args>
 struct bind_t {
+    typedef typename result_traits<Fun>::type ResultType;
     typedef typename std::decay<Fun>::type FunType;
     typedef std::tuple<typename std::decay<Args>::type...> ArgType;
-
-    typedef typename result_traits<FunType>::type     ResultType;
 
 public:
     template <class F, class... BArgs>
