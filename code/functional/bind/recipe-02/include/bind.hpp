@@ -3,6 +3,7 @@
 #include <utility>
 #include <tuple>
 #include <type_traits>
+#include <functional>
 
 namespace Hx {
 
@@ -48,45 +49,6 @@ inline auto select(placeholder_t<I>&, Tuple& tp) -> decltype(std::get<I - 1>(tp)
     return std::get<I - 1>(tp);
 }
 
-// The invoker for call a callable
-template <typename T>
-struct is_pointer_noref
-    : std::is_pointer<typename std::remove_reference<T>::type>
-{};
-
-template <typename T>
-struct is_memfunc_noref
-    : std::is_member_function_pointer<typename std::remove_reference<T>::type>
-{};
-
-template <typename R, typename F, typename... P>
-inline typename std::enable_if<is_pointer_noref<F>::value,
-R>::type invoke(F&& f, P&&... par)
-{
-    return (*std::forward<F>(f))(std::forward<P>(par)...);
-}
-
-template <typename R, typename F, typename P1, typename... P>
-inline typename std::enable_if<is_memfunc_noref<F>::value && is_pointer_noref<P1>::value,
-R>::type invoke(F&& f, P1&& this_ptr, P&&... par)
-{
-    return (std::forward<P1>(this_ptr)->*std::forward<F>(f))(std::forward<P>(par)...);
-}
-
-template <typename R, typename F, typename P1, typename... P>
-inline typename std::enable_if<is_memfunc_noref<F>::value && !is_pointer_noref<P1>::value,
-R>::type invoke(F&& f, P1&& this_obj, P&&... par)
-{
-    return (std::forward<P1>(this_obj).*std::forward<F>(f))(std::forward<P>(par)...);
-}
-
-template <typename R, typename F, typename... P>
-inline typename std::enable_if<!is_pointer_noref<F>::value && !is_memfunc_noref<F>::value,
-R>::type invoke(F&& f, P&&... par)
-{
-    return std::forward<F>(f)(std::forward<P>(par)...);
-}
-
 template <typename Fun, typename... Args>
 struct bind_t {
     typedef typename std::decay<Fun>::type FunType;
@@ -96,7 +58,7 @@ struct bind_t {
 
 public:
     template <class F, class... BArgs>
-    bind_t(F&& f,  BArgs&&... args) : func_(std::forward<F>(f)), args_(std::forward<BArgs>(args)...)
+    bind_t(F&& f, BArgs&&... args) : func_(std::forward<F>(f)), args_(std::forward<BArgs>(args)...)
     {
     }
 
@@ -110,7 +72,7 @@ public:
     template <typename ArgTuple, std::size_t... Indexes>
     ResultType do_call(std::index_sequence<Indexes...>&& in, ArgTuple&& argtp)
     {
-        return invoke<ResultType>(func_, select(std::get<Indexes>(args_), argtp)...);
+        return std::invoke(func_, select(std::get<Indexes>(args_), argtp)...);
     }
 
 private:
