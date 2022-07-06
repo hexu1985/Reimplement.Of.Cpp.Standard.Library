@@ -21,15 +21,7 @@ placeholder_t<6> _6; placeholder_t<7> _7;placeholder_t<8> _8; placeholder_t<9> _
 template<typename F>
 struct result_traits;
 
-// result type traits
-template <typename F>
-struct result_traits : result_traits<decltype(&F::operator())> {};
-
-template <typename T>
-struct result_traits<T*> : result_traits<T> {};
-
 /* check function */
-
 template <typename R, typename... P>
 struct result_traits<R(*)(P...)> { typedef R type; };
 
@@ -53,8 +45,7 @@ template <typename Fun, typename... Args>
 struct bind_t {
     typedef typename std::decay<Fun>::type FunType;
     typedef std::tuple<typename std::decay<Args>::type...> ArgType;
-
-    typedef typename result_traits<FunType>::type     ResultType;
+    typedef typename result_traits<FunType>::type ResultType;
 
 public:
     template <class F, class... BArgs>
@@ -70,7 +61,7 @@ public:
     }
 
     template <typename ArgTuple, std::size_t... Indexes>
-    ResultType do_call(std::index_sequence<Indexes...>&& in, ArgTuple&& argtp)
+    ResultType do_call(std::index_sequence<Indexes...>&&, ArgTuple&& argtp)
     {
         return std::invoke(func_, select(std::get<Indexes>(args_), argtp)...);
     }

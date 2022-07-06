@@ -4,7 +4,7 @@
 
 namespace Hx {
 
-template <std::size_t...> struct index_sequence {};
+template <std::size_t... Is> struct index_sequence {};
 
 template <std::size_t N, std::size_t... Is>
 struct make_index_sequence_helper: make_index_sequence_helper<N - 1, N - 1, Is...> {};
@@ -31,15 +31,7 @@ placeholder_t<6> _6; placeholder_t<7> _7;placeholder_t<8> _8; placeholder_t<9> _
 template<typename F>
 struct result_traits;
 
-// result type traits
-template <typename F>
-struct result_traits : result_traits<decltype(&F::operator())> {};
-
-template <typename T>
-struct result_traits<T*> : result_traits<T> {};
-
 /* check function */
-
 template <typename R, typename... P>
 struct result_traits<R(*)(P...)> { typedef R type; };
 
@@ -100,13 +92,13 @@ R>::type invoke(F&& f, P&&... par)
 
 template <typename Fun, typename... Args>
 struct bind_t {
-    typedef typename result_traits<Fun>::type ResultType;
     typedef typename std::decay<Fun>::type FunType;
     typedef std::tuple<typename std::decay<Args>::type...> ArgType;
+    typedef typename result_traits<FunType>::type ResultType;
 
 public:
     template <class F, class... BArgs>
-    bind_t(F&& f,  BArgs&&... args) : func_(std::forward<F>(f)), args_(std::forward<BArgs>(args)...)
+    bind_t(F&& f, BArgs&&... args) : func_(std::forward<F>(f)), args_(std::forward<BArgs>(args)...)
     {
     }
 
@@ -118,7 +110,7 @@ public:
     }
 
     template <typename ArgTuple, std::size_t... Indexes>
-    ResultType do_call(index_sequence<Indexes...>&& in, ArgTuple&& argtp)
+    ResultType do_call(index_sequence<Indexes...>&&, ArgTuple&& argtp)
     {
         return invoke<ResultType>(func_, select(std::get<Indexes>(args_), argtp)...);
     }
