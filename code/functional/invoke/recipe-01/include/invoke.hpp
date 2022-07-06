@@ -45,7 +45,7 @@ constexpr std::invoke_result_t<F, Args...> invoke(F&& f, Args&&... args)
         return std::forward<F>(f)(std::forward<Args>(args)...);
 }
 
-template<class R, class F, class... Args>
+template <typename R, typename F, typename... Args>
     // requires std::is_invocable_r_v<R, F, Args...>
 constexpr R invoke_r(F&& f, Args&&... args)
     noexcept(std::is_nothrow_invocable_r_v<R, F, Args...>)
