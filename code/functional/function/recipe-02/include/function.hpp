@@ -38,7 +38,7 @@ public:
 };
 #endif
 
-template <typename T, typename R, typename... Args> 
+template <typename R, typename T, typename... Args> 
 class function_object_invoker : public invoker_base<R,Args...> {
     T t_;
 
@@ -69,7 +69,7 @@ public:
 #endif
 
     template <typename T> function(T t) : 
-        invoker_(new function_object_invoker<T,R,Args...>(t)) {}
+        invoker_(new function_object_invoker<R,T,Args...>(t)) {}
 
     /*
     R operator()(Args... args) {
