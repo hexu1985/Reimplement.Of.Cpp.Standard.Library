@@ -12,7 +12,7 @@
 
 namespace Hx {
 
-template<typename T>
+template <typename T>
 typename std::remove_reference<T>::type&&
 move(T&& param)
 {

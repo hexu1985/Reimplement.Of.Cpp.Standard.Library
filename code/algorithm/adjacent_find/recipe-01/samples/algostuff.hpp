@@ -26,7 +26,7 @@
  * - all elements of the collection coll
  * - separated by spaces
  */
-template <class T>
+template <typename T>
 inline void PRINT_ELEMENTS (const T& coll, const char* optcstr="")
 {
     typename T::const_iterator pos;
@@ -42,7 +42,7 @@ inline void PRINT_ELEMENTS (const T& coll, const char* optcstr="")
  * - fill values from first to last into the collection
  * - NOTE: NO half-open range
  */
-template <class T>
+template <typename T>
 inline void INSERT_ELEMENTS (T& coll, int first, int last)
 {
     for (int i=first; i<=last; ++i) {

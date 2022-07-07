@@ -578,7 +578,7 @@ bool operator>= (std::nullptr_t, const shared_ptr<T>& rhs)
  *
  * @return 
  */
-template <class charT, class traits, class T>
+template <typename charT, typename traits, typename T>
 std::basic_ostream<charT, traits>& operator<< (std::basic_ostream<charT, traits>& os, 
         const shared_ptr<T>& ptr)
 {

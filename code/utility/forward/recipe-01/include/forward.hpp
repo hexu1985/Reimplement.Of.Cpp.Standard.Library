@@ -13,13 +13,13 @@
 
 namespace Hx {
 
-template<typename T>
+template <typename T>
 T&& forward(typename std::remove_reference<T>::type& param)
 {
     return static_cast<T&&>(param); 
 }
 
-template<typename T>
+template <typename T>
 T&& forward(typename std::remove_reference<T>::type&& param) noexcept
 {
     static_assert(!std::is_lvalue_reference<T>::value, "template argument"

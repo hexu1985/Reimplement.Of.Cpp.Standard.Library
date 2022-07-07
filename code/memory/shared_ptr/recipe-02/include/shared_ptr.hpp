@@ -54,8 +54,8 @@ private:
 
     typedef shared_ptr<T> this_type;
 
-    template<typename> friend class shared_ptr;
-    template<typename> friend class weak_ptr;
+    template <typename> friend class shared_ptr;
+    template <typename> friend class weak_ptr;
 
     // for make_shared call only
     shared_ptr(sp_counted_base_tag, sp_counted_base* pi): pi_(pi) 
@@ -637,7 +637,7 @@ bool operator>= (std::nullptr_t, const shared_ptr<T>& rhs)
  *
  * @return 
  */
-template <class charT, class traits, class T>
+template <typename charT, typename traits, typename T>
 std::basic_ostream<charT, traits>& operator<< (std::basic_ostream<charT, traits>& os, 
         const shared_ptr<T>& ptr)
 {

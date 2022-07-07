@@ -1,7 +1,7 @@
 #ifndef ACCUMULATE_INC
 #define ACCUMULATE_INC
 
-template<class InputIt, class T>
+template <typename InputIt, typename T>
 constexpr // since C++20
 T accumulate(InputIt first, InputIt last, T init)
 {
@@ -11,7 +11,7 @@ T accumulate(InputIt first, InputIt last, T init)
     return init;
 }
 
-template<class InputIt, class T, class BinaryOperation>
+template <typename InputIt, typename T, typename BinaryOperation>
 constexpr // since C++20
 T accumulate(InputIt first, InputIt last, T init,
         BinaryOperation op)

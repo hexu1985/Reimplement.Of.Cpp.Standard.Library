@@ -1,11 +1,10 @@
-#ifndef MINI_STL_ALL_OF_INC
-#define MINI_STL_ALL_OF_INC
+#pragma once
 
 #include <algorithm>
 
 namespace Hx {
 
-template <class InputIt, class UnaryPredicate>
+template <typename InputIt, typename UnaryPredicate>
 constexpr bool all_of(InputIt first, InputIt last, UnaryPredicate p)
 {
     return std::find_if_not(first, last, p) == last;
@@ -13,4 +12,3 @@ constexpr bool all_of(InputIt first, InputIt last, UnaryPredicate p)
 
 }   // namespace Hx
 
-#endif

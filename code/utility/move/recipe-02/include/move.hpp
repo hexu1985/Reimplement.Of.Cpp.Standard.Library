@@ -12,7 +12,7 @@
 
 namespace Hx {
 
-template<typename T> // C++14; still in
+template <typename T> // C++14; still in
 decltype(auto) move(T&& param)
 {
     using ReturnType = std::remove_reference_t<T>&&;

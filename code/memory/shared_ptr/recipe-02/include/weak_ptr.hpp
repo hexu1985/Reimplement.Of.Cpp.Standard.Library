@@ -33,8 +33,8 @@ private:
 
     typedef weak_ptr<T> this_type;
 
-    template<typename> friend class shared_ptr;
-    template<typename> friend class weak_ptr;
+    template <typename> friend class shared_ptr;
+    template <typename> friend class weak_ptr;
 
 public:
     /**

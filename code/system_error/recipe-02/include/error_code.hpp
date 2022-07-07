@@ -10,10 +10,10 @@
 
 namespace Hx {
 
-template<typename T>
+template <typename T>
 struct is_error_code_enum: public std::false_type {};
 
-template<typename T>
+template <typename T>
 struct is_error_condition_enum: public std::false_type {};
 
 enum class errc {
@@ -227,7 +227,7 @@ public:
      * if is_error_condition_enum<ErrorConditionEnum>::value is true. 
      * Which is the case when errc is used as the ErrorConditionEnum type.
      */
-    template <class ErrorConditionEnum, typename = typename
+    template <typename ErrorConditionEnum, typename = typename
         std::enable_if<is_error_condition_enum<ErrorConditionEnum>::value>::type>
     error_condition(ErrorConditionEnum e) noexcept
     {
@@ -250,7 +250,7 @@ public:
      * Calls make_error_condition to construct an error condition from e, 
      * whose value is assigned to the error_condition object.
      */
-    template <class ErrorConditionEnum, typename T = typename
+    template <typename ErrorConditionEnum, typename T = typename
         std::enable_if<is_error_condition_enum<ErrorConditionEnum>::value>::type>
     error_condition& operator= (ErrorConditionEnum e) noexcept
     {
@@ -330,7 +330,7 @@ public:
      * This constructor only participates in overload resolution 
      * if is_error_code_enum<ErrorCodeEnum>::value is true.
      */
-    template <class ErrorCodeEnum, typename = typename
+    template <typename ErrorCodeEnum, typename = typename
         std::enable_if<is_error_code_enum<ErrorCodeEnum>::value>::type>
     error_code(ErrorCodeEnum e) noexcept
     {
@@ -353,7 +353,7 @@ public:
      * Calls make_error_code to construct an error code from e, 
      * whose value is assigned to the error_code object.
      */
-    template <class ErrorCodeEnum, typename = typename
+    template <typename ErrorCodeEnum, typename = typename
         std::enable_if<is_error_code_enum<ErrorCodeEnum>::value>::type>
     error_code& operator= (ErrorCodeEnum e) noexcept
     {
@@ -526,7 +526,7 @@ bool error_category::equivalent(const error_code& code, int valcond)
  * Insert into ostream
  * Writes a textual representation of the error code.
  */
-template <class charT, class traits>
+template <typename charT, typename traits>
 inline 
 std::basic_ostream<charT, traits>& operator<< (std::basic_ostream<charT, traits>& os, error_code ec)
 {

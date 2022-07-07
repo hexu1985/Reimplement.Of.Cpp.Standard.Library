@@ -12,7 +12,7 @@ T make_from_tuple(Tuple &&t, std::index_sequence<I...>)
     return T(std::get<I>(std::forward<Tuple>(t))...);
 }
 
-template <class T, class Tuple>
+template <typename T, typename Tuple>
 T make_from_tuple(Tuple&& t)
 {
     return make_from_tuple<T>(std::forward<Tuple>(t),
