@@ -9,7 +9,6 @@ class invoker_base {
 public:
     virtual R operator()(Args... args)=0;
     virtual ~invoker_base() {}
-    virtual invoker_base* clone() const=0;
 };
 
 template <typename R, typename... Args> 
@@ -19,14 +18,8 @@ class function_ptr_invoker : public invoker_base<R,Args...> {
 public:
     function_ptr_invoker(R (*func)(Args...)):func_(func) {}
 
-    R operator()(Args... args) override 
-    {
+    R operator()(Args... args) override {
         return (func_)(std::forward<Args>(args)...);
-    }
-
-    invoker_base<R,Args...>* clone() const override 
-    {
-        return new function_ptr_invoker(func_);
     }
 };
 
@@ -52,14 +45,8 @@ class function_object_invoker : public invoker_base<R,Args...> {
 public:
     function_object_invoker(T t):t_(t) {}
 
-    R operator()(Args... args) override
-    {
+    R operator()(Args... args) {
         return t_(std::forward<Args>(args)...);
-    }
-
-    invoker_base<R,Args...>* clone() const override 
-    {
-        return new function_object_invoker(t_);
     }
 };
 
@@ -68,12 +55,10 @@ class function;
 
 template <typename R, typename... Args>
 class function<R(Args...)> {
-    invoker_base<R,Args...>* invoker_ = nullptr;
+    invoker_base<R,Args...>* invoker_;
 
 public:
     using ResultType = R;
-
-    function() {}
 
     function(R (*func)(Args...)) : 
         invoker_(new function_ptr_invoker<R,Args...>(func)) {}
@@ -85,14 +70,6 @@ public:
 
     template <typename T> function(T t) : 
         invoker_(new function_object_invoker<T,R,Args...>(t)) {}
-
-    function(const function& x) : invoker_(x.invoker_ ? x.invoker_->clone() : 0)
-    {}
-
-    function(function&& x) : invoker_(x.invoker_)
-    {
-        x.invoker_ = nullptr;
-    }
 
     /*
     R operator()(Args... args) {

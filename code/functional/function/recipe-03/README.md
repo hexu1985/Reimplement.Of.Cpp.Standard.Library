@@ -1,0 +1,1 @@
+只支持函数指针和函数对象的function, 修复double free的问题
