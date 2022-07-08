@@ -27,7 +27,7 @@ public:
 namespace detail {
 
 template <typename R, typename C, typename MT, typename T1, typename... Args>
-R memptr_invoke(MT C::* memptr, T1&& t1, Args&&... args)
+R invoke_memptr(MT C::* memptr, T1&& t1, Args&&... args)
 {
     if constexpr (std::is_function_v<MT>) {
         if constexpr (std::is_base_of_v<C, std::decay_t<T1>>) {
@@ -55,7 +55,7 @@ public:
     member_ptr_invoker(MT C::* memptr):memptr_(memptr) {}
 
     R operator()(Args... args) override {
-        return detail::memptr_invoke<R>(memptr_, std::forward<Args>(args)...);
+        return detail::invoke_memptr<R>(memptr_, std::forward<Args>(args)...);
     }
 };
 
