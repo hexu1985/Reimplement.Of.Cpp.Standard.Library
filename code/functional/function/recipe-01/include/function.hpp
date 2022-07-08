@@ -90,14 +90,8 @@ public:
     template <typename T> function(T t) : 
         invoker_(new function_object_invoker<R,T,Args...>(t)) {}
 
-    /*
     R operator()(Args... args) {
         return (*invoker_)(std::forward<Args>(args)...);
-    }
-    */
-    template <typename... CArgs>
-    ResultType operator()(CArgs&&... args) {
-        return (*invoker_)(std::forward<CArgs>(args)...);
     }
 
     ~function() {

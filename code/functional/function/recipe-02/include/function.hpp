@@ -89,10 +89,13 @@ class function;
 
 template <typename R, typename... Args>
 class function<R(Args...)> {
-    invoker_base<R,Args...>* invoker_;
+    invoker_base<R,Args...>* invoker_ = nullptr;
 
 public:
     using ResultType = R;
+
+    // default construct
+    function() {}
 
     // constructs
     function(R (*func)(Args...)) : 
@@ -151,16 +154,12 @@ public:
         return *this;
     }
 
-    /*
+    // callable operator
     R operator()(Args... args) {
         return (*invoker_)(std::forward<Args>(args)...);
     }
-    */
-    template <typename... CArgs>
-    ResultType operator()(CArgs&&... args) {
-        return (*invoker_)(std::forward<CArgs>(args)...);
-    }
 
+    // destroy function
     ~function() {
         delete invoker_;
     }
