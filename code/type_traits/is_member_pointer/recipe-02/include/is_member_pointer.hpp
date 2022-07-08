@@ -5,13 +5,16 @@
 
 namespace Hx {
 
-template< class T >
+template <typename T>
 struct is_member_pointer_helper         : false_type {};
  
-template< class T, class U >
+template <typename T, typename U>
 struct is_member_pointer_helper<T U::*> : true_type {};
  
-template< class T >
+template <typename T>
 struct is_member_pointer : is_member_pointer_helper<remove_cv_t<T>> {};
+
+template <typename T>
+inline constexpr bool is_member_pointer_v = is_member_pointer<T>::value;
 
 }   // namespace Hx
