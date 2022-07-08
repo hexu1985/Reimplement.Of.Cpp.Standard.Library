@@ -8,7 +8,7 @@ namespace Hx {
 template <typename R, typename... Args> 
 class invoker_base {
 public:
-    virtual R operator()(Args... args)=0;
+    virtual R operator()(Args... args) const=0;
     virtual ~invoker_base() {}
     virtual invoker_base* clone() const=0;
 };
@@ -20,7 +20,7 @@ class function_ptr_invoker : public invoker_base<R,Args...> {
 public:
     function_ptr_invoker(R (*func)(Args...)):func_(func) {}
 
-    R operator()(Args... args) override {
+    R operator()(Args... args) const override {
         return (func_)(std::forward<Args>(args)...);
     }
 
@@ -59,7 +59,7 @@ class member_ptr_invoker : public invoker_base<R,Args...> {
 public:
     member_ptr_invoker(MT C::* memptr):memptr_(memptr) {}
 
-    R operator()(Args... args) override {
+    R operator()(Args... args) const override {
         return detail::memptr_invoke<R>(memptr_, std::forward<Args>(args)...);
     }
 
@@ -70,12 +70,12 @@ public:
 
 template <typename R, typename T, typename... Args> 
 class function_object_invoker : public invoker_base<R,Args...> {
-    T t_;
+    mutable T t_;
 
 public:
     function_object_invoker(T t):t_(t) {}
 
-    R operator()(Args... args) {
+    R operator()(Args... args) const override {
         return t_(std::forward<Args>(args)...);
     }
 
@@ -94,10 +94,11 @@ class function<R(Args...)> {
 public:
     using ResultType = R;
 
-    // default construct
-    function() {}
-
     // constructs
+    function() noexcept {}
+
+    function (nullptr_t fn) noexcept {}
+
     function(R (*func)(Args...)) : 
         invoker_(new function_ptr_invoker<R,Args...>(func)) {}
 
@@ -116,6 +117,12 @@ public:
     }
 
     // assign operator
+    function& operator= (nullptr_t fn) {
+        delete invoker_;
+        invoker_ = nullptr;
+        return *this;
+    }
+
     function& operator= (R (*func)(Args...)) {
         delete invoker_;
         invoker_ = new function_ptr_invoker<R,Args...>(func); 
@@ -136,13 +143,13 @@ public:
         return *this;
     }
 
-    function& operator=(const function& rhs) {
+    function& operator= (const function& rhs) {
         function(rhs).swap(*this);
         return *this;
     }
 
     // move assignment
-    function& operator=(function&& rhs) noexcept {
+    function& operator= (function&& rhs) noexcept {
         rhs.swap(*this);
         function().swap(rhs);
         return *this;
@@ -155,8 +162,13 @@ public:
     }
 
     // callable operator
-    R operator()(Args... args) {
+    R operator() (Args... args) const {
         return (*invoker_)(std::forward<Args>(args)...);
+    }
+
+    // Check if callable
+    explicit operator bool () const noexcept {
+        return invoker_;
     }
 
     // destroy function
