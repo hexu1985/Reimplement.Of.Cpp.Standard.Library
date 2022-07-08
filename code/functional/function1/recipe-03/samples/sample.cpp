@@ -48,6 +48,9 @@ int main() {
     Hx::function<bool (const std::string&)> f4(fso);
     f4(std::string("Hello"));
 
+    Hx::function<bool (some_class&)> f5(&some_class::other_function);
+    f5(s);
+
     return 0;
 }
 

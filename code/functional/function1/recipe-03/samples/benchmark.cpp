@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 #include <functional>
-#include "function.hpp"
 
 using namespace std::placeholders;
 
@@ -33,20 +32,23 @@ public:
 };
 
 int main() {
-    Hx::function<bool (const std::string&)> f1(&some_function);
+    std::function<bool (const std::string&)> f1(&some_function);
     f1(std::string("Hello"));
 
     some_class s;
 
-    Hx::function<bool (some_class*)> f2(&some_class::other_function);
+    std::function<bool (some_class*)> f2(&some_class::other_function);
     f2(&s);
 
-    Hx::function<bool (const std::string&)> f3(std::bind(&some_class::some_function,&s,_1));
+    std::function<bool (const std::string&)> f3(std::bind(&some_class::some_function,&s,_1));
     f3(std::string("Hello"));
 
     some_function_object fso;
-    Hx::function<bool (const std::string&)> f4(fso);
+    std::function<bool (const std::string&)> f4(fso);
     f4(std::string("Hello"));
+
+    std::function<bool (some_class&)> f5(&some_class::other_function);
+    f5(s);
 
     return 0;
 }
