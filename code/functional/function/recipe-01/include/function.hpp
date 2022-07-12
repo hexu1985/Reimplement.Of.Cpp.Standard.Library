@@ -26,7 +26,7 @@ public:
 
 namespace detail {
 
-template <typename R, typename C, typename MT, typename T1, typename... Args>
+template <typename R, typename MT, typename C, typename T1, typename... Args>
 R invoke_memptr(MT C::* memptr, T1&& t1, Args&&... args)
 {
     if constexpr (std::is_function_v<MT>) {
@@ -59,15 +59,15 @@ public:
     }
 };
 
-template <typename R, typename T, typename... Args> 
+template <typename R, typename F, typename... Args> 
 class function_object_invoker : public invoker_base<R,Args...> {
-    T t_;
+    F f_;
 
 public:
-    function_object_invoker(T t):t_(t) {}
+    function_object_invoker(F f):f_(f) {}
 
     R operator()(Args... args) {
-        return t_(std::forward<Args>(args)...);
+        return f_(std::forward<Args>(args)...);
     }
 };
 
@@ -87,8 +87,8 @@ public:
     template <typename MT, typename C> function(MT C::* mptr) :
         invoker_(new member_ptr_invoker<R,MT,C,Args...>(mptr)) {}
 
-    template <typename T> function(T t) : 
-        invoker_(new function_object_invoker<R,T,Args...>(t)) {}
+    template <typename F> function(F f) : 
+        invoker_(new function_object_invoker<R,F,Args...>(f)) {}
 
     R operator()(Args... args) {
         return (*invoker_)(std::forward<Args>(args)...);

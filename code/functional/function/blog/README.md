@@ -13,6 +13,9 @@ C++STL std::function的使用与实现
     + std::function的使用方式
     + std::function作为回调的基础
 - std::function的实现
+    +  
+    + 支持可变参数模板
+    +
 
 注: 本文中的示例代码都是基于C++11标准的.
 
@@ -223,6 +226,8 @@ Ah, the value has changed.
 Previous value was 42
 ```
 
+在这里最大的优点不是放宽了对函数的要求(或者说，增加了对函数对象的支持)，而是我们可以使用带状态的对象，这是非常需要的。
+我们对 notifier 类所做的修改非常简单，而且用户代码不受影响。如上所示，把 std::function 引入一个已有的设计中是非常容易的。
 修改成std::function的完整示例代码如下:
 
 ```cpp
