@@ -348,13 +348,48 @@ f(&s,3);
 
 ### std::function的实现
 
-我们将分三个阶段来讲解std::function的幕后细节, 首先, 我们看看如何
-
 #### std::function的简化实现
 
-首先, 我们看看std::function如何保存并调用一个函数指针、 一个成员 函数指针和一个函数对象这三种情形。
-为了达到深入浅出的效果, 我们先介绍一种简化的实现:
-- 
+为了达到深入浅出的效果, 我们先介绍一种简化的实现: 只支持一个参数的std::function, 即std::function<R (Arg)>这种形式的代码.
+那么, 我们看看std::function如何保存并调用一个函数指针、 一个成员函数指针和一个函数对象这三种情形。
+
+我们将要采用的方法是，创建一个泛型基类，它声明了一个虚拟的调用操作符函数；然后，从这个基类派生三个类，分别支持三种不同形式的函数调用。
+这些类负责所有的工作，而另一个类，function, 依据其构造函数的参数来决定实例化哪一个具体类。以下是调用器的基类，invoker_base.
+
+```cpp
+template <typename R, typename Arg> 
+class invoker_base {
+public:
+    virtual R operator()(Arg arg)=0;
+    virtual ~invoker_base() {}
+};
+```
+
+接着，我们开始定义 function_ptr_invoker, 它是一个具体调用器，公有派生自 invoker_base. 它的目的是调用普通函数。
+这个类也接受两个类型，即返回类型和参数类型，它们被用于构造函数，构造函数接受一个函数指针作为参数。
+
+```cpp
+template <typename R, typename Arg> 
+class function_ptr_invoker : public invoker_base<R,Arg> {
+    R (*func_)(Arg);
+
+public:
+    function_ptr_invoker(R (*func)(Arg)):func_(func) {}
+
+    R operator()(Arg arg) {
+        return (func_)(arg);
+    }
+};
+```
+
+这个类模板可用于调用任意一个接受一个参数的普通函数。调用操作符简单地以给定的参数调用
+保存在 func_ 中的函数。请注意(的确有些奇怪)声明一个保存函数指针的变量的那行代码。
+
+```cpp
+R (*func_)(Arg);
+```
+
+
 
 
 ### std::function总结
