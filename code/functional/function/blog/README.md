@@ -1,5 +1,5 @@
-
-#### 引子
+C++STL std::function的使用与实现
+================================
 
 学习并掌握一种语言最好的方式, 就是学习这种语言的标准库的使用, 以及学习标准库的实现原理. 本文就是一篇介绍std::function使用和实现的文章.
 
@@ -13,6 +13,8 @@
     + std::function的使用方式
     + std::function作为回调的基础
 - std::function的实现
+
+注: 本文中的示例代码都是基于C++11标准的.
 
 ### std::function简介
 
@@ -81,7 +83,7 @@ int main() {
 #### std::function作为回调的基础
 
 我们先来看看在没有 std::function 以前我们如何实现一个简单的回调，然后再把代码改为使用 function, 并看看会带来什么优势。
-我们从一个支持某种简单的回调形式的类开始，它可以向任何对新值关注的对象报告值的改变。这里的回调是一种传统的 C 风格回调，即使 用普通函数。
+我们从一个支持某种简单的回调形式的类开始，它可以向任何对新值关注的对象报告值的改变。这里的回调是一种传统的 C 风格回调，即使用普通函数。
 这种回调用可用于象 GUI 控制这样的场合，它可以通知观察者用户改变了它的值，而不需要对监听该信息的客户有任何特殊的知识。
 
 ```cpp
@@ -169,6 +171,121 @@ public:
 最后，我们把调用这些函数的语法改为可以使用函数、函数对象以及 std::function 实例。
 这种对不同类型的类似函数的"东西"的扩展支持可以立即用于带状态的函数对象，它们可以实现一些用函数很难做到的事情。
 
+```cpp
+class knows_the_previous_value {
+  int last_value_;
+public:
+  void operator()(int i) {
+    static bool first_time=true;
+    if (first_time) {
+      last_value_=i;
+      std::cout << 
+        "This is the first change of value, \
+so I don't know the previous one.\n";
+      first_time=false;
+      return;
+    }
+    std::cout << "Previous value was " << last_value_ << '\n';
+    last_value_=i;
+  }
+};
+```
+
+这个函数对象保存以前的值，并在值被改变时把旧值输出到 std::cout 。注意，当它第一次被调用时，它并不知道旧值。
+这个函数对象在函数中使用一个静态 bool 变量来检查这一点，该变量被初始化为 true. 
+由于函数中的静态变量是在函数第一次被调用时进行初始化的，所以它仅在第一次调用时被设为 true 。
+虽然也可以在普通函数中使用静态变量来提供状态，但是我们必须知道那样不太好，而且很难做到多线程安全。
+因此，带状态的函数对象总是优于带静态变量的普通函数。notifier 类并不关心这是不是函数对象，只要符合要求就可以接受。
+以下更新的例子示范了它如何使用。
+
+```cpp
+int main() {
+  notifier n;
+  n.add_observer(&print_new_value);
+  n.add_observer(&interested_in_the_change);
+  n.add_observer(knows_the_previous_value());
+
+  n.change_value(42);
+  std::cout << '\n';
+  n.change_value(30);
+}
+```
+
+关键一点要注意的是，我们新增的一个观察者不是函数指针，而是一 knows_the_previous_value 函数对象的实例。运行这段程序的输出如下：
+
+```
+The value has been updated and is now 42
+Ah, the value has changed.
+This is the first change of value, so I don't know the previous one.
+
+The value has been updated and is now 30
+Ah, the value has changed.
+Previous value was 42
+```
+
+修改成std::function的完整示例代码如下:
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <functional>
+
+void print_new_value(int i) {
+  std::cout << 
+    "The value has been updated and is now " << i << '\n';
+}
+
+void interested_in_the_change(int i) {
+  std::cout << "Ah, the value has changed.\n";
+}
+
+class notifier {
+  typedef std::function<void(int)> function_type;
+  std::vector<function_type> vec_;
+  int value_;
+public:
+  template <typename T> void add_observer(T t) {
+    vec_.push_back(function_type(t));
+  }
+
+  void change_value(int i) {
+    value_=i;
+    for (std::size_t i=0;i<vec_.size();++i) {
+      vec_[i](value_);
+    }
+  }
+};
+
+class knows_the_previous_value {
+  int last_value_;
+public:
+  void operator()(int i) {
+    static bool first_time=true;
+    if (first_time) {
+      last_value_=i;
+      std::cout << 
+        "This is the first change of value, \
+so I don't know the previous one.\n";
+      first_time=false;
+      return;
+    }
+    std::cout << "Previous value was " << last_value_ << '\n';
+    last_value_=i;
+  }
+};
+
+int main() {
+  notifier n;
+  n.add_observer(&print_new_value);
+  n.add_observer(&interested_in_the_change);
+  n.add_observer(knows_the_previous_value());
+
+  n.change_value(42);
+  std::cout << '\n';
+  n.change_value(30);
+}
+
+```
 
 #### 参考资料:
 
