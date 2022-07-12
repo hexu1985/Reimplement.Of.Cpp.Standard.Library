@@ -12,12 +12,13 @@ C++STL std::function的使用与实现
     + std::function的声名方式
     + std::function的使用方式
     + std::function作为回调的基础
+    + std::function对类成员函数的支持
 - std::function的实现
-    +  
-    + 支持可变参数模板
-    +
-
-注: 本文中的示例代码都是基于C++11标准的.
+    + std::function的简化实现
+    + std::function的支持可变参数模板
+- std::function总结
+    + 为什么要用std::function
+    + std::function代价的考虑
 
 ### std::function简介
 
@@ -291,6 +292,83 @@ int main() {
 }
 
 ```
+
+#### std::function对类成员函数的支持
+
+std::function 不支持参数绑定，这在每次调用一个 function 就要调用同一个类实例的成员函数时是需要的。
+幸运的是，如果这个类实例被传递给 function 的话，我们就可以直接调用它的成员函数。这个 function 的签名必须包含类的类型以及成员函数的签名。
+换言之，显式传入的类实例要作为隐式的第一个参数，this。这样就得到了一个在给出的对象上调用成员函数的函数对象。
+看一下以下这个类：
+
+```cpp
+class some_class {
+public:
+    void do_stuff(int i) const {
+        std::cout << "OK. Stuff is done. " << i << '\n';
+    }
+};
+```
+
+成员函数 do_stuff 要从一个 std::function 实例里被调用。要做到这一点，我们需要 function 接受一个 some_class 实例，签名的其它部分为一个 void 返回以及一个 int 参数。
+对于如何把 some_class 实例传给 function，我们有三种选择：传值，传引用，或者传址。如何要传值，代码就应该这样写(很少会有理由来以传值的方式传递对象参数。)
+
+```cpp
+std::function<void(some_class,int)> f;
+```
+
+注意，返回类型仍旧在最开始，后跟成员函数所在的类，最后是成员函数的参数类型。它就象传递一个 this 给一个函数，该函数暗地里用类实例调用一个非成员函数。
+要把函数 f 配置为成员函数 do_stuff, 然后调用它，我们这样写：
+
+```cpp
+f = &some_class::do_stuff;
+f(some_class(),2);
+```
+
+如果要传引用，我们要改一下函数的签名，并传递一个 some_class 实例。
+
+```cpp
+std::function<void(some_class&,int)> f;
+f = &some_class::do_stuff;
+some_class s;
+f(s,1);
+```
+
+最后，如果要传 some_class 的指针，我们就要这样写：
+
+```cpp
+std::function<void(some_class*,int)> f;
+f = &some_class::do_stuff;
+some_class s;
+f(&s,3);
+```
+
+好了，所有这些传递"虚拟 this"实例的方法都已经在库中提供。当然，这种技术也是有限制的：
+你必须显式地传递类实例；而理想上，你更愿意这个实例被绑定在函数中(Python中就是这么做的)。
+乍一看，这似乎是 std::function 的缺点，但有别的库可以支持参数的绑定，如 std::bind 和 lambda. 
+
+### std::function的实现
+
+我们将分三个阶段来讲解std::function的幕后细节, 首先, 我们看看如何
+
+#### std::function的简化实现
+
+首先, 我们看看std::function如何保存并调用一个函数指针、 一个成员 函数指针和一个函数对象这三种情形。
+为了达到深入浅出的效果, 我们先介绍一种简化的实现:
+- 
+
+
+### std::function总结
+
+#### 为什么要用std::function
+
+std::function实现了一套类型消除机制，可以统一处理不同的函数对象类型。以前我们使用函数指针来完成这些；现在我们可以使用更安全的std::function来完成这些任务。
+
+#### std::function代价的考虑
+
+有一句谚语说，世界上没有免费的午餐，对于 std::function 来说也是如此。与使用函数指针相比，使用 std::function 也有一些缺点，特别是对象大小的增加。
+显然，一个函数指针只占用一个函数指针的空间大小(这当然了！)，而一个 std::function 实例占的空间有三倍大。
+如果需要大量的回调函数，这可能会成为一个问题。函数指针在调用时的效率也稍高一些，因为函数指针是被直接调用的，
+而 std::function 可能需要使用两次函数指针的调用。最后，可能在某些需要与 C 库保持后向兼容的情形下，只能使用函数指针。
 
 #### 参考资料:
 
