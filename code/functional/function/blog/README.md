@@ -389,7 +389,129 @@ public:
 R (*func_)(Arg);
 ```
 
+然后, 我们需要一个兼容函数对象的版本。这是所有实现中最容易的一个，至少在我们的方法中是这样。
+通过使用单个模板参数，我们只表明类型 F 必须是一个真正的函数对象，因为我们想要调用它。
 
+```cpp
+template <typename R, typename F, typename Arg> 
+class function_object_invoker : public invoker_base<R,Arg> {
+    F f_;
+public:
+    function_object_invoker(F f):f_(f) {}
+
+    R operator()(Arg arg) {
+        return f_(arg);
+    }
+};
+```
+
+最后, 我们实现一个可以处理成员函数调用的类模板。
+
+```cpp
+template <typename R, typename MT, typename C, typename Arg> 
+class member_ptr_invoker : public invoker_base<R,Arg> {
+    MT C::* memptr_;
+
+public:
+    member_ptr_invoker(MT C::* memptr): memptr_(memptr) {}
+
+    R operator()(Arg arg) {
+        return detail::invoke_memptr<R>(memptr_, arg);
+    }
+};
+```
+
+这块代码相对复杂些, 因为在函数调用时, 需要显式传入的类实例要作为隐式的第一个参数，this。
+而传入类实例的方式有三种: 传值，传引用，或者传址. 而这三种方式造成调用类成员函数的语法形式并不统一.
+其中, 传值，传引用的方式, 调用类成员函数的语法形式如下:
+
+```cpp
+return (arg.*memptr_)();
+```
+
+另外, 传址(类对象的指针)的方式, 调用类成员函数的语法形式如下:
+
+```cpp
+return (arg->*memptr_)();
+或者
+return ((*arg).(memptr_))();
+```
+
+所以, 这里引入了一个helper函数detail::invoke_memptr进行按类型分发, 利用的是C++的SFINAE规则, 以及<type_traits>库
+invoker_memptr的具体实现如下,
+
+```cpp
+namespace detail {
+
+template <typename R, typename MT, typename C, typename Arg>
+R invoke_memptr_helper(std::true_type /*is_object*/, MT C::* memptr, Arg&& arg)
+{
+    return (arg.*memptr)();
+}
+
+template <typename R, typename MT, typename C, typename Arg>
+R invoke_memptr_helper(std::false_type /*is_object*/, MT C::* memptr, Arg&& arg)
+{
+    return (arg->*memptr)();
+}
+
+template <typename R, typename MT, typename C, typename Arg>
+R invoke_memptr(MT C::* memptr, Arg&& arg)
+{
+    typedef typename std::is_base_of<C, typename std::decay<Arg>::type>::type is_object_type;
+    return invoke_memptr_helper<R>(is_object_type{}, memptr, arg);
+}
+}   // namespace detail
+```
+
+简单的解释就是, 通过判断Arg的类型是不是C的子类, 来区分arg是类的对象, 还是指针. invoke_memptr函数如果基于C++17的constexpr-if语法来实现,
+则可以一目了然的看出类型分发的逻辑.
+
+```cpp
+template <typename R, typename MT, typename C, typename Arg>
+R invoke_memptr(MT C::* memptr, Arg&& arg)
+{
+    if constexpr (std::is_base_of_v<C, std::decay_t<Arg>>) {    // object
+        return (arg.*memptr)();
+    } else {
+        return (arg->*memptr)();
+    }
+}
+```
+
+接下来, 就剩下std::function类的实现了.
+
+```cpp
+template <typename>
+class function {
+};
+
+template <typename R, typename Arg> 
+class function<R(Arg)> {
+    invoker_base<R,Arg>* invoker_;
+public:
+    function(R (*func)(Arg)) : 
+        invoker_(new function_ptr_invoker<R,Arg>(func)) {}
+
+    template <typename MT, typename C> function(MT C::* func) : 
+        invoker_(new member_ptr_invoker<R,MT,C,Arg>(func)) {}
+
+    template <typename F> function(F f) : 
+        invoker_(new function_object_invoker<R,F,Arg>(f)) {}
+
+    R operator()(Arg arg) {
+        return (*invoker_)(arg);
+    }
+
+    ~function() {
+        delete invoker_;
+    }
+};
+
+```
+
+现在看来std::function的实现, 就显得自然许多. 结合了策略模式, 通过构造函数的重载, 区分了普通函数指针, 类的成员函数指针和函数对象,
+分别构造了invoker_base的不同子类对象, 并通过基类的指针持有, 再在operator()时, 通过虚函数的多态性, 完成函数调用的分发.
 
 
 ### std::function总结
