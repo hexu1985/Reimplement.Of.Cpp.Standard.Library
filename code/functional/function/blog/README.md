@@ -18,9 +18,9 @@ C++STL std::function的使用与实现
     + std::function的完整实现
     + std::function代价的考虑
 
-### std::function简介
+## std::function简介
 
-#### std::function定义
+### std::function定义
 
 类模板 std::function 是通用多态函数封装器。 std::function 的实例能存储、复制及调用任何可调用 (Callable) 目标——函数、 lambda 表达式、 bind 表达式或其他函数对象，还有指向成员函数指针和指向数据成员指针。
 
@@ -31,7 +31,7 @@ std::function 满足可复制构造 (CopyConstructible) 和可复制赋值 (Copy
 以上引自: <https://zh.cppreference.com/w/cpp/utility/functional/function>
 
 
-#### std::function如何改进你的程序?
+### std::function如何改进你的程序?
 
 在进行回调的设计中，常常需要保存函数和函数对象，而且某些函数或类也是通过函数指针或函数对象来配制其客户化功能。通常，函数指针用于实现回调及延时函数。
 但是，仅仅使用函数指针会有很多限制，更好的方法是采用泛型机制来定义要被保存的函数的署名特征，而让调用者来决定提供哪一种的类函数实体(函数指针或函数对象)。
@@ -42,9 +42,9 @@ std::function 满足可复制构造 (CopyConstructible) 和可复制赋值 (Copy
 以前我们使用函数指针来完成这些；现在我们可以使用更安全的std::function来完成这些任务。
 
 
-### std::function的用法
+## std::function的用法
 
-#### std::function的声名方式
+### std::function的声名方式
 
 一个 function 的声明包括该 function 所兼容的函数或函数对象的签名以及返回类型。结果以及参数的类型以单个参数的方式全部提供给模板。
 例如，声明一个 function ，它返回 bool 并接受一个类型 int 的参数，如下：
@@ -59,7 +59,7 @@ std::function<bool (int)> f;
 std::function<void (int,double)> f;
 ```
 
-#### std::function的使用方式
+### std::function的使用方式
 
 理解被存函数的最佳方法是把它想象为一个普通的函数对象，该函数对象用于封装另一个函数(或函数对象)。
 这个被存的函数的最大用途是它可以被多次调用，而无须在创建 function 时立即使用。
@@ -86,7 +86,7 @@ int main() {
 最后，我们用参数 10 (一个 int) 和 1.1 (一个 double)来调用 f (用函数调用操作符)。
 要调用一个 function, 你必须提供被存函数或函数对象所期望的准确数量的参数。
 
-#### std::function作为回调的基础
+### std::function作为回调的基础
 
 我们先来看看在没有 std::function 以前我们如何实现一个简单的回调，然后再把代码改为使用 function, 并看看会带来什么优势。
 我们从一个支持某种简单的回调形式的类开始，它可以向任何对新值关注的对象报告值的改变。这里的回调是一种传统的 C 风格回调，即使用普通函数。
@@ -295,7 +295,7 @@ int main() {
 
 ```
 
-#### std::function对类成员函数的支持
+### std::function对类成员函数的支持
 
 std::function 不支持参数绑定，这在每次调用一个 function 就要调用同一个类实例的成员函数时是需要的。
 幸运的是，如果这个类实例被传递给 function 的话，我们就可以直接调用它的成员函数。这个 function 的签名必须包含类的类型以及成员函数的签名。
@@ -348,9 +348,9 @@ f(&s,3);
 你必须显式地传递类实例；而理想上，你更愿意这个实例被绑定在函数中(Python中就是这么做的)。
 乍一看，这似乎是 std::function 的缺点，但有别的库可以支持参数的绑定，如 std::bind 和 lambda. 
 
-### std::function的实现
+## std::function的实现
 
-#### std::function的简化实现
+### std::function的简化实现
 
 为了达到深入浅出的效果, 我们先介绍一种简化的实现: 只支持一个参数的std::function, 即std::function<R (Arg)>这种形式的代码.
 那么, 我们看看std::function如何保存并调用一个函数指针、 一个成员函数指针和一个函数对象这三种情形。
@@ -521,7 +521,7 @@ public:
 完整function.hpp可以在<https://github.com/hexu1985/Cpp.Standard.Library.Reimplement/tree/master/code/functional/function1/recipe-03/include/function.hpp>找到.
 
 
-#### std::function的完整实现
+### std::function的完整实现
 
 在std::function的简化实现里, 我们只支持了一个参数的情况, 而真正的std::function是支持任意个参数的(理论上), 除此之外, 
 由于std::function的实现中使用了new和delete, 所以还要实现自己复制构造函数, 赋值操作符, 当然还要支持move语义.
@@ -533,14 +533,14 @@ public:
 完整function.hpp可以在<https://github.com/hexu1985/Cpp.Standard.Library.Reimplement/tree/master/code/functional/function/recipe-02/include/function.hpp>找到.
 
 
-#### std::function代价的考虑
+### std::function代价的考虑
 
 有一句谚语说，世界上没有免费的午餐，对于 std::function 来说也是如此。与使用函数指针相比，使用 std::function 也有一些缺点，特别是对象大小的增加。
 显然，一个函数指针只占用一个函数指针的空间大小(这当然了！)，而一个 std::function 实例占的空间有三倍大。
 如果需要大量的回调函数，这可能会成为一个问题。函数指针在调用时的效率也稍高一些，因为函数指针是被直接调用的，
 而 std::function 可能需要使用两次函数指针的调用。最后，可能在某些需要与 C 库保持后向兼容的情形下，只能使用函数指针。
 
-#### 参考资料:
+### 参考资料:
 
 "Beyond the C++ Standard Library: An Introduction to Boost" -- Library 11. Function
 
