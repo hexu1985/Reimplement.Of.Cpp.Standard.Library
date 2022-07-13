@@ -25,6 +25,26 @@ public:
 
 namespace detail {
 
+#if __cplusplus <= 201703L
+template <typename R, typename MT, typename C, typename Arg>
+R invoke_memptr_helper(std::true_type /*is_object*/, MT C::* memptr, Arg&& arg)
+{
+    return (arg.*memptr)();
+}
+
+template <typename R, typename MT, typename C, typename Arg>
+R invoke_memptr_helper(std::false_type /*is_object*/, MT C::* memptr, Arg&& arg)
+{
+    return (arg->*memptr)();
+}
+
+template <typename R, typename MT, typename C, typename Arg>
+R invoke_memptr(MT C::* memptr, Arg&& arg)
+{
+    typedef typename std::is_base_of<C, typename std::decay<Arg>::type>::type is_object_type;
+    return invoke_memptr_helper<R>(is_object_type{}, memptr, arg);
+}
+#else
 template <typename R, typename MT, typename C, typename Arg>
 R invoke_memptr(MT C::* memptr, Arg&& arg)
 {
@@ -34,6 +54,7 @@ R invoke_memptr(MT C::* memptr, Arg&& arg)
         return (arg->*memptr)();
     }
 }
+#endif
 
 }   // namespace detail
 
