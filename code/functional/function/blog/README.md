@@ -518,7 +518,7 @@ public:
 
 ![class.jpg](./class.jpg)
 
-完整function.hpp可以在<https://github.com/hexu1985/Cpp.Standard.Library.Reimplement/tree/master/code/functional/function1/recipe-03/include>找到.
+完整function.hpp可以在<https://github.com/hexu1985/Cpp.Standard.Library.Reimplement/tree/master/code/functional/function1/recipe-03/include/function.hpp>找到.
 
 
 #### std::function的完整实现
@@ -530,7 +530,7 @@ public:
 - std::function对支持任意个参数的支持, 需要用到C++的可变模板参数的技术, 即把template <typename Arg>变成template <typename... Args>的形式
 - 复制构造函数, 赋值操作符涉及到要复制正确的子类的对象, 这需要用的原型模式(Prototype Pattern)
 
-完整function.hpp可以在<https://github.com/hexu1985/Cpp.Standard.Library.Reimplement/tree/master/code/functional/function/recipe-02/include>找到.
+完整function.hpp可以在<https://github.com/hexu1985/Cpp.Standard.Library.Reimplement/tree/master/code/functional/function/recipe-02/include/function.hpp>找到.
 
 
 #### std::function代价的考虑
