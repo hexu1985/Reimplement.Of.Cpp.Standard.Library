@@ -15,9 +15,7 @@ C++STL std::function的使用与实现
     + std::function对类成员函数的支持
 - std::function的实现
     + std::function的简化实现
-    + std::function的支持可变参数模板
-- std::function总结
-    + 为什么要用std::function
+    + std::function的完整实现
     + std::function代价的考虑
 
 ### std::function简介
@@ -39,6 +37,10 @@ std::function 满足可复制构造 (CopyConstructible) 和可复制赋值 (Copy
 但是，仅仅使用函数指针会有很多限制，更好的方法是采用泛型机制来定义要被保存的函数的署名特征，而让调用者来决定提供哪一种的类函数实体(函数指针或函数对象)。
 这样就可以使用任何行为类似于函数的东西，例如使用std::bind和lambda表达式或其他函数对象。这意味着可以给这些被保存的函数增加状态(因为函数对象是一种类)。
 这种泛化由std::function 提供。用于保存并然后调用函数或函数对象。
+
+也就是说std::function实现了一套类型消除机制，可以统一处理不同的函数对象类型。
+以前我们使用函数指针来完成这些；现在我们可以使用更安全的std::function来完成这些任务。
+
 
 ### std::function的用法
 
@@ -493,8 +495,8 @@ public:
     function(R (*func)(Arg)) : 
         invoker_(new function_ptr_invoker<R,Arg>(func)) {}
 
-    template <typename MT, typename C> function(MT C::* func) : 
-        invoker_(new member_ptr_invoker<R,MT,C,Arg>(func)) {}
+    template <typename MT, typename C> function(MT C::* memptr) : 
+        invoker_(new member_ptr_invoker<R,MT,C,Arg>(memptr)) {}
 
     template <typename F> function(F f) : 
         invoker_(new function_object_invoker<R,F,Arg>(f)) {}
@@ -510,15 +512,26 @@ public:
 
 ```
 
-现在看来std::function的实现, 就显得自然许多. 结合了策略模式, 通过构造函数的重载, 区分了普通函数指针, 类的成员函数指针和函数对象,
+现在看std::function的实现, 就显得自然许多. 结合了策略模式, 通过构造函数的重载, 区分了普通函数指针, 类的成员函数指针和函数对象,
 分别构造了invoker_base的不同子类对象, 并通过基类的指针持有, 再在operator()时, 通过虚函数的多态性, 完成函数调用的分发.
+下面的类图(并不是标准的UML)可以比较直观了描述std::function的实现逻辑:
+
+![class.jpg](./class.jpg)
+
+完整function.hpp可以在<https://github.com/hexu1985/Cpp.Standard.Library.Reimplement/tree/master/code/functional/function1/recipe-03/include>找到.
 
 
-### std::function总结
+#### std::function的完整实现
 
-#### 为什么要用std::function
+在std::function的简化实现里, 我们只支持了一个参数的情况, 而真正的std::function是支持任意个参数的(理论上), 除此之外, 
+由于std::function的实现中使用了new和delete, 所以还要实现自己复制构造函数, 赋值操作符, 当然还要支持move语义.
+而以上这些支持, 其实是属于C++比较通用的技术, 所以这里就不展开介绍了, 这里只是把比较重要技术原理列举出来:
 
-std::function实现了一套类型消除机制，可以统一处理不同的函数对象类型。以前我们使用函数指针来完成这些；现在我们可以使用更安全的std::function来完成这些任务。
+- std::function对支持任意个参数的支持, 需要用到C++的可变模板参数的技术, 即把template <typename Arg>变成template <typename... Args>的形式
+- 复制构造函数, 赋值操作符涉及到要复制正确的子类的对象, 这需要用的原型模式(Prototype Pattern)
+
+完整function.hpp可以在<https://github.com/hexu1985/Cpp.Standard.Library.Reimplement/tree/master/code/functional/function/recipe-02/include>找到.
+
 
 #### std::function代价的考虑
 

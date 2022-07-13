@@ -80,8 +80,8 @@ public:
     function(R (*func)(Arg)) : 
         invoker_(new function_ptr_invoker<R,Arg>(func)) {}
 
-    template <typename MT, typename C> function(MT C::* func) : 
-        invoker_(new member_ptr_invoker<R,MT,C,Arg>(func)) {}
+    template <typename MT, typename C> function(MT C::* memptr) : 
+        invoker_(new member_ptr_invoker<R,MT,C,Arg>(memptr)) {}
 
     template <typename F> function(F f) : 
         invoker_(new function_object_invoker<R,F,Arg>(f)) {}
