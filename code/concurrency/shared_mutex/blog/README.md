@@ -2,7 +2,7 @@ C++STL shared_mutex实现与分析
 =============================
 
 
-### shared_mutex简介
+## shared_mutex简介
 
 shared_mutex 类是一个同步原语，可用于保护共享数据不被多个线程同时访问。
 
@@ -20,7 +20,7 @@ std::shared_mutex是在C++17标准中引入的，std::shared_mutex的更完整�
 
 ***
 
-### shared_mutex语义
+## shared_mutex语义
 
 对于非C++标准来说，shared_mutex的更容易理解的名称是**读写锁**（read-write lock）。
 
@@ -40,11 +40,11 @@ std::shared_mutex是在C++17标准中引入的，std::shared_mutex的更完整�
 
 ***
 
-### shared_mutex实现
+## shared_mutex实现
 
 接下来，我们将自己动手实现一个shared_mutex类。完整工程代码: [github](https://github.com/hexu1985/Cpp.MiniSTL/tree/master/code/shared_mutex/recipe-02) [gitee](https://gitee.com/hexu1985/Cpp.MiniSTL/tree/master/code/shared_mutex/recipe-02)
 
-##### 1. shared_mutex类的数据结构
+### 1. shared_mutex类的数据结构
 
 shared_mutex包含如下成员变量：
 
@@ -69,7 +69,7 @@ private:
 
 这里w_active虽然是int类型，其实是表示一个bool标志，因为只能有一个”活动的写线程“（持有写锁），但考虑到内存对齐，这里使用bool还是int，其实是没差别的。
 
-##### 2. shared_mutex类的构造与析构。
+### 2. shared_mutex类的构造与析构。
 
 首先是构造函数：
 ```cpp
@@ -94,7 +94,7 @@ shared_mutex::~shared_mutex()
 
 更是没什么好说的，只是加了一些断言而已。
 
-##### 3. shared_mutex类的获取/释放共享锁（读锁）的相关方法。
+### 3. shared_mutex类的获取/释放共享锁（读锁）的相关方法。
 
 首先是lock_shared方法，为读操作获取共享锁（读锁）。
 
@@ -152,7 +152,7 @@ void shared_mutex::unlock_shared()
 
 该函数实质上是通过减少活跃的读线程数（r_active）颠倒了lock_shared或try_lock_shared的效果。如果不在有活跃的读线程，并且至少有一个线程正在等待写操作，会通知write条件变量来唤醒其中的一个。
 
-##### 4. shared_mutex类的获取/释放独占锁（写锁）的相关方法。
+### 4. shared_mutex类的获取/释放独占锁（写锁）的相关方法。
 
 首先是lock方法，为写操作获取独占锁（写锁）。
 
@@ -218,11 +218,11 @@ void shared_mutex::unlock()
 - 这里的实现时”读优先“的，首先寻找正在等待的读线程。如果有，将广播read条件变量来唤醒它们。
 - 如果没有等待的读线程，但是有一个以上的写线程等待，通过通知write条件变量来唤醒其中一个。
 
-##### 至此，shared_mutex类的完整实现就介绍完了。
+### 至此，shared_mutex类的完整实现就介绍完了。
 
 ***
 
-### shared_mutex使用示例
+## shared_mutex使用示例
 
 接下来，我们通过一个shared_mutex类的使用示例，介绍shared_mutex类的共享-独占特性。
 
@@ -337,11 +337,11 @@ void thread2()
 
 ***
 
-### shared_mutex写者优先
+## shared_mutex写者优先
 
 接下来，我们介绍如何将现有实现的shared_mutex类改写成”写者优先“策略的。完整工程代码: [github](https://github.com/hexu1985/Cpp.MiniSTL/tree/master/code/shared_mutex/recipe-02) [gitee](https://gitee.com/hexu1985/Cpp.MiniSTL/tree/master/code/shared_mutex/recipe-02)
 
-##### 1. 调整lock_shared逻辑
+### 1. 调整lock_shared逻辑
 
 为实现写线程优先，当有正在等待的写线程（w_wait>0）时，新的读线程的请求必须被阻塞，而不仅仅是在有活动的写线程时（我们已实现的方式）。
 
@@ -360,7 +360,7 @@ void shared_mutex::lock_shared()
 }
 ```
 
-##### 2. 调整try_lock_shared逻辑
+### 2. 调整try_lock_shared逻辑
 
 同样，该函数必须也被修改以实现写线程优先，当有一个写线程活动时，或当一个写线程正在等待时，都会返回false。
 
@@ -377,7 +377,7 @@ bool shared_mutex::try_lock_shared()
 }
 ```
 
-##### 3. 调整unlock逻辑
+### 3. 调整unlock逻辑
 
 要实现写线程优先，只需颠倒两个if测试的先后顺序，即唤醒一个等待的写线程（如果有的话），然后再寻找等待的读线程。
 
@@ -394,7 +394,7 @@ void shared_mutex::unlock()
 }
 ```
 
-##### 至此，我们就完成了shared_mutex从读者优先策略，转变成写者优先。
+### 至此，我们就完成了shared_mutex从读者优先策略，转变成写者优先。
 
 我们可以用写者优先策略的shared_mutex类，再次编译运行之前的示例代码，查看打印输出内容：
 
@@ -425,9 +425,9 @@ void shared_mutex::unlock()
 
 ***
 
-### 题外话：
+## 题外话：
 
-##### 1. 什么是读者优先？
+### 1. 什么是读者优先？
 
 即使写者发出了请求写的信号，但是只要还有读者在读取内容，就还允许其他读者继续读取内容，直到所有读者结束读取，才真正开始写
 
@@ -436,7 +436,7 @@ void shared_mutex::unlock()
 - 读者写者之间互斥，有写者写则不能有读者读
 - 如果在读访问非常频繁的场合，有可能造成写进程一直无法访问文件的局面
 
-##### 2. 什么是写者优先？
+### 2. 什么是写者优先？
 
 如果有写者申请写文件，在申请之前已经开始读取文件的可以继续读取，但是如果再有读者申请读取文件，则不能够读取，只有在所有的写者写完之后才可以读取
 
@@ -445,14 +445,14 @@ void shared_mutex::unlock()
 - 当有一个写者正在写时或在阻塞队列时应当阻塞读者进程的读操作，直到所有写者进程完成写操作时放开读者进程。
 - 当没有写者进程时读者进程应该能够同时读取文件。
 
-##### 3. C++17标准中的shared_mutex到底是读优先还是写优先？
+### 3. C++17标准中的shared_mutex到底是读优先还是写优先？
 
 据我所知，C++17标准中并没有限定shared_mutex实现策略是读优先还是写优先，而是由编译器厂商决定，即由实现定义的。这一点很像POSIX的读写锁接口（pthread_rwlock_*相关接口）。我随便找了两个版本的g++做了实验，结果表明：
 
 - gcc version 9.3.0的实现中，shared_mutex是读优先的
 - gcc version 10.2.0的实现中，shared_mutex是写优先的
 
-##### 4. 参考引用
+### 4. 参考引用
 
 - UNIX网络编程 卷2：进程间通信 第2版（UNIX Network Programming Volume 2: Interprocess Communications, Second Edition）
 - POSIX多线程程序设计（Programming With POSIX Threads）
