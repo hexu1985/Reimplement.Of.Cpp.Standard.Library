@@ -25,9 +25,9 @@ namespace single_linked {
  *   |___| next  
  * 
  */
-typedef struct list_node_t {
-    struct list_node_t* next;
-} list_node_t;
+struct list_node_t {
+    list_node_t* next = nullptr;
+};
 
 /**
  * 单链表: 有哑元头节点, 尾节点的next为空
@@ -35,9 +35,9 @@ typedef struct list_node_t {
  * [head] -> [N1] -> [N2] -> ... -> NIL
  *
  */
-typedef struct list_t {
-    list_node_t head;
-} list_t;
+struct list_t {
+    list_node_t* head = nullptr;
+};
 
 /**
  * 初始化链表
@@ -48,28 +48,36 @@ typedef struct list_t {
 inline
 void list_init(list_t* list)
 {
-    list->head.next = NULL;
+    list->head = new list_node_t;
+    list->head->next = nullptr;
+}
+
+inline
+void list_destroy(list_t* list)
+{
+    delete list->head;
+    list->head = nullptr;
 }
 
 // 返回链表头部第一个节点(非哑元头节点)的指针
 inline
 list_node_t* list_head(const list_t* list)
 {
-    return (list_node_t* ) list->head.next;
+    return (list_node_t* ) list->head->next;
 }
 
 // 返回链表哑元头节点的指针
 inline
 list_node_t* list_before_head(const list_t* list)
 {
-    return (list_node_t* ) &list->head;
+    return (list_node_t* ) list->head;
 }
 
 // 判断链表是否为空
 inline
 int list_is_empty(const list_t* list)
 {
-    return (list->head.next == NULL);
+    return (list->head->next == NULL);
 }
 
 /**

@@ -664,21 +664,19 @@ public:
 
     void resize(size_type n, const value_type& val)
     {
-        link_type* keep = &lst_.head;
-        link_type* link = lst_.head.next;
+        link_type* link = list_before_head(&lst_);
         size_type i = 0;
-        for ( ; link != nullptr && i < n; ++i) {
-            keep = link;
+        for ( ; link->next != nullptr && i < n; ++i) {
             link = link->next;
         }
-        if (link == nullptr) {
+        if (link->next == nullptr) {
             for ( ; i < n; ++i) {
-                list_insert_after(keep, create_node(val));
-                keep = keep->next;
+                list_insert_after(link, create_node(val));
+                link = link->next;
             }
         } else {
-            while (keep->next != nullptr) {
-                destroy_node(list_delete_after(keep));
+            while (link->next != nullptr) {
+                destroy_node(list_delete_after(link));
             }
         }
     }
@@ -696,12 +694,12 @@ public:
 
     void splice_after(const_iterator position, forward_list& fwdlst)
     {
-        splice_after((link_type*) position.link, &fwdlst.lst_.head, nullptr);
+        splice_after((link_type*) position.link, list_before_head(&fwdlst.lst_), nullptr);
     }
 
     void splice_after(const_iterator position, forward_list&& fwdlst)
     {
-        splice_after((link_type*) position.link, &fwdlst.lst_.head, nullptr);
+        splice_after((link_type*) position.link, list_before_head(&fwdlst.lst_), nullptr);
     }
 
     void splice_after(const_iterator position, forward_list& fwdlst,
@@ -1021,28 +1019,27 @@ private:
             auto node = list_delete_head(&lst_);
             destroy_node(node);
         }
+        list_destroy(&lst_);
     }
 
     void fill(size_type n, const value_type& val)
     {
-        link_type* keep = &lst_.head; 
-        link_type* node = keep->next;
-        while ((node != nullptr) && (n > 0)) {
-            *static_cast<node_type*>(node)->valptr() = val;
+        link_type* link = list_before_head(&lst_);
+        while ((link->next != nullptr) && (n > 0)) {
+            *static_cast<node_type*>(link->next)->valptr() = val;
             n--;
-            keep = node;
-            node = node->next;
+            link = link->next;
         }
 
-        if (node == nullptr) {    // forward_list.size() < n
+        if (link->next == nullptr) {    // forward_list.size() < n
             while (n > 0) {
-                list_insert_after(keep, create_node(val));
-                keep = keep->next;
+                list_insert_after(link, create_node(val));
+                link = link->next;
                 n--;
             }
         } else {    // forward_list.size() > n
-            while (keep->next != nullptr) {
-                destroy_node(list_delete_after(keep));
+            while (link->next != nullptr) {
+                destroy_node(list_delete_after(link));
             }
         } 
 
@@ -1052,23 +1049,21 @@ private:
     template <typename InputIterator>
     void copy_from(InputIterator first, InputIterator last)
     {
-        link_type* keep = &lst_.head;
-        link_type* node = keep->next;
-        while ((node != nullptr) && (first != last)) {
-            *static_cast<node_type*>(node)->valptr() = *first;
+        link_type* link = list_before_head(&lst_);
+        while ((link->next != nullptr) && (first != last)) {
+            *static_cast<node_type*>(link->next)->valptr() = *first;
             ++first;
-            keep = node;
-            node = node->next;
+            link = link->next;
         }
 
-        if (node == nullptr) {    // forward_list.size() < distance(first, last)
+        if (link->next == nullptr) {    // forward_list.size() < distance(first, last)
             while (first != last) {
-                list_insert_after(keep, create_node(*first++));
-                keep = keep->next;
+                list_insert_after(link, create_node(*first++));
+                link = link->next;
             }
         } else {    // forward_list.size() > distance(first, last)
-            while (keep->next != nullptr) {
-                destroy_node(list_delete_after(keep));
+            while (link->next != nullptr) {
+                destroy_node(list_delete_after(link));
             }
         } 
     
