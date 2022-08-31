@@ -870,34 +870,6 @@ public:
         sort(std::less<value_type>());
     }
 
-#ifdef USE_STD_SORT
-    template <typename Compare>
-    void sort(Compare comp)
-    {
-        size_type n = list_size(&lst_);
-        if (n < 2) return;
-
-        link_type** array = new link_type*[n];
-
-        link_type* link = list_head(&lst_);
-        for (link_type** ptr = array; link != nullptr; link = link->next) {
-            *ptr++ = link;
-        }
-        std::sort(array, array+n, make_compare(comp));
-
-        initialize();
-        link = list_before_head(&lst_);
-
-        link_type** ptr = array;
-        link_type** end = array+n;
-        while (ptr != end) {
-            list_insert_after(link, *ptr++);
-            link = link->next;
-        }
-
-        delete [] array;
-    }
-#else
     template <typename Compare>
     void sort(Compare comp)
     {
@@ -927,7 +899,6 @@ public:
             unsorted_first = sorted_last->next;
         }
     }
-#endif
 
     /**
      * Reverse the order of elements
