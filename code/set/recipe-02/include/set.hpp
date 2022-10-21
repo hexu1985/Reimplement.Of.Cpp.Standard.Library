@@ -5,7 +5,7 @@
 #ifndef MINI_STL_SET_INC
 #define MINI_STL_SET_INC
 
-#include "set_impl.hpp"
+#include "red_black_tree.hpp"
 
 #include <memory>
 #include <limits>

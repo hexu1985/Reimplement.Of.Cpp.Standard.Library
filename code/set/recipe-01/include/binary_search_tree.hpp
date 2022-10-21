@@ -2,8 +2,8 @@
 // HeXu's
 // 2013 Nov
 
-#ifndef MINI_STL_SET_IMPL_INC
-#define MINI_STL_SET_IMPL_INC
+#ifndef HX_BINARY_SEARCH_TREE_INC
+#define HX_BINARY_SEARCH_TREE_INC
 
 #ifdef __cplusplus
 #include <cstddef>
@@ -247,4 +247,4 @@ void tree_delete(tree_t* tree, tree_node_t* z)
 } // namespace Hx
 #endif // __cplusplus
 
-#endif // MINI_STL_LIST_SET_INC
+#endif // HX_BINARY_SEARCH_TREE_INC
