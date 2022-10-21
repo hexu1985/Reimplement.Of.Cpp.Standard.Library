@@ -2,8 +2,8 @@
 // HeXu's
 // 2013 Nov
 
-#ifndef MINI_STL_LIST_IMPL_INC
-#define MINI_STL_LIST_IMPL_INC
+#ifndef HX_DOUBLY_LINKED_LIST_INC
+#define HX_DOUBLY_LINKED_LIST_INC
 
 #ifdef __cplusplus
 #include <cstddef>
@@ -13,7 +13,7 @@
 
 #ifdef __cplusplus
 namespace Hx {
-namespace double_linked {
+namespace doubly_linked {
 #endif // __cplusplus
 
 /**
@@ -306,9 +306,9 @@ size_t list_size(const list_t* list)
 }
 
 #ifdef __cplusplus
-} // namespace double_linked
+} // namespace doubly_linked
 } // namespace Hx
 #endif // __cplusplus
 
-#endif // MINI_STL_LIST_IMPL_INC
+#endif // HX_DOUBLY_LINKED_LIST_INC
 

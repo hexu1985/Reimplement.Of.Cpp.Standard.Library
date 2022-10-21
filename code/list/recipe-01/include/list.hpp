@@ -5,7 +5,7 @@
 #ifndef MINI_STL_LIST_INC
 #define MINI_STL_LIST_INC
 
-#include "list_impl.hpp"
+#include "doubly_linked_list.hpp"
 
 #include <cassert>
 #include <cstddef>
@@ -24,7 +24,7 @@ namespace Hx {
  * data value in each node.
  */
 template <typename T>
-struct list_node: public double_linked::list_node_t {
+struct list_node: public doubly_linked::list_node_t {
     // raw storage buffer for type T
     // typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type storage;  // deprecated in C++23
     struct alignas(alignof(T)) { char data[sizeof(T)]; } storage;
@@ -42,7 +42,7 @@ struct list_node: public double_linked::list_node_t {
 
 template <typename T>
 struct list_iterator {
-    typedef double_linked::list_node_t link_type;
+    typedef doubly_linked::list_node_t link_type;
     link_type* link = nullptr;
 
     typedef list_iterator<T> this_type;
@@ -117,7 +117,7 @@ struct list_iterator {
 
 template <typename T>
 struct list_const_iterator {
-    typedef const double_linked::list_node_t link_type;
+    typedef const doubly_linked::list_node_t link_type;
     link_type* link = nullptr;
 
     typedef list_const_iterator<T> this_type;
@@ -218,8 +218,8 @@ bool operator!= (const list_iterator<T>& x, const list_const_iterator<T>& y)
  */
 template <typename T, typename Alloc = std::allocator<T> >
 class list {
-    typedef double_linked::list_t list_type;
-    typedef double_linked::list_node_t link_type;
+    typedef doubly_linked::list_t list_type;
+    typedef doubly_linked::list_node_t link_type;
     typedef list_node<T> node_type;
     typedef typename Alloc::template rebind<node_type>::other node_alloc_type;
 
