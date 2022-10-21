@@ -32,52 +32,50 @@ struct list_node_t {
 /**
  * 单链表: 有哑元头节点, 尾节点的next为空
  *
- * [head] -> [N1] -> [N2] -> ... -> NIL
+ * [dummy] -> [N1] -> [N2] -> ... -> NIL
  *
  */
 struct list_t {
-    list_node_t* head = nullptr;
+    list_node_t dummy;
 };
 
 /**
  * 初始化链表
  *
- * [head] -> NIL
+ * [dummy] -> NIL
  *
  */
 inline
 void list_init(list_t* list)
 {
-    list->head = new list_node_t;
-    list->head->next = nullptr;
+    list->dummy.next = nullptr;
 }
 
 inline
 void list_destroy(list_t* list)
 {
-    delete list->head;
-    list->head = nullptr;
+    list->dummy.next = nullptr;
 }
 
 // 返回链表头部第一个节点(非哑元头节点)的指针
 inline
 list_node_t* list_head(const list_t* list)
 {
-    return (list_node_t* ) list->head->next;
+    return (list_node_t* ) list->dummy.next;
 }
 
 // 返回链表哑元头节点的指针
 inline
 list_node_t* list_before_head(const list_t* list)
 {
-    return (list_node_t* ) list->head;
+    return (list_node_t* ) &(list->dummy);
 }
 
 // 判断链表是否为空
 inline
 int list_is_empty(const list_t* list)
 {
-    return (list->head->next == NULL);
+    return (list->dummy.next == NULL);
 }
 
 /**
@@ -143,8 +141,7 @@ list_node_t* list_delete_after(list_node_t* x)
 inline
 list_node_t* list_delete_head(list_t* list)
 {
-    list_node_t* dummy_head = list_before_head(list);
-    return list_delete_after(dummy_head);
+    return list_delete_after(list_before_head(list));
 }
 
 // 返回链表中元素个数

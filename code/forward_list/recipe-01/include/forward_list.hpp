@@ -414,9 +414,9 @@ public:
     template <typename... Args>
     iterator emplace_after(const_iterator position, Args&&... args)
     {
-        link_type* new_link = create_node(std::forward<Args>(args)...);
-        list_insert_after((link_type*) position.link, new_link);
-        return iterator(new_link);
+        link_type* node = create_node(std::forward<Args>(args)...);
+        list_insert_after((link_type*) position.link, node);
+        return iterator(node);
     }
 
     /**
@@ -426,28 +426,28 @@ public:
      */
     iterator insert_after(const_iterator position, const value_type& val)
     {
-        link_type* new_link = create_node(val);
-        list_insert_after((link_type*) position.link, new_link);
-        return iterator(new_link);
+        link_type* node = create_node(val);
+        list_insert_after((link_type*) position.link, node);
+        return iterator(node);
     }
 
     iterator insert_after(const_iterator position, value_type&& val)
     {
-        link_type* new_link = create_node(std::forward<value_type>(val));
-        list_insert_after((link_type*) position.link, new_link);
-        return iterator(new_link);
+        link_type* node = create_node(std::forward<value_type>(val));
+        list_insert_after((link_type*) position.link, node);
+        return iterator(node);
     }
 
     iterator insert_after(const_iterator position, size_type n, 
         const value_type& val)
     {
-        link_type* keep = (link_type*) position.link;
+        link_type* current = (link_type*) position.link;
         for (size_type i = 0; i < n; ++i) {
-            link_type* link = create_node(val);
-            list_insert_after(keep, link);
-            keep = keep->next;
+            link_type* node = create_node(val);
+            list_insert_after(current, node);
+            current = current->next;
         }
-        return iterator(keep);
+        return iterator(current);
     }
 
     template <typename InputIterator, typename = typename
@@ -455,13 +455,13 @@ public:
     iterator insert_after(const_iterator position, InputIterator first, 
         InputIterator last)
     {
-        link_type* keep = (link_type*) position.link;
+        link_type* current = (link_type*) position.link;
         for ( ; first != last; ++first) {
-            link_type* link = create_node(*first);
-            list_insert_after(keep, link);
-            keep = keep->next;
+            link_type* node = create_node(*first);
+            list_insert_after(current, node);
+            current = current->next;
         }
-        return iterator(keep);
+        return iterator(current);
     }
 
     iterator insert_after(const_iterator position, 
@@ -893,23 +893,22 @@ private:
     template <typename InputIterator>
     void move_from(InputIterator first, InputIterator last)
     {
-        link_type* keep = &lst_.head;
-        link_type* node = keep->next;
-        while ((node != nullptr) && (first != last)) {
-            *static_cast<node_type*>(node)->valptr() = std::move(*first);
+        link_type* link = list_before_head(&lst_);
+        while ((link->next != nullptr) && (first != last)) {
+            node_type* node = static_cast<node_type*>(link->next);
+            *(node->valptr()) = std::move(*first);
             ++first;
-            keep = node;
-            node = node->next;
+            link = link->next;
         }
 
-        if (node == nullptr) {    // forward_list.size() < distance(first, last)
+        if (link->next == nullptr) {    // forward_list.size() < distance(first, last)
             while (first != last) {
-                list_insert_after(keep, create_node(std::move(*first++)));
-                keep = keep->next;
+                list_insert_after(link, create_node(std::move(*first++)));
+                link = link->next;
             }
         } else {    // forward_list.size() > distance(first, last)
-            while (keep->next != nullptr) {
-                destroy_node(list_delete_after(keep));
+            while (link->next != nullptr) {
+                destroy_node(list_delete_after(link));
             }
         } 
 
