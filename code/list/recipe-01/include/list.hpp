@@ -45,7 +45,7 @@ struct list_node: public doubly_linked::list_node_t {
 /**
  * List
  */
-template <typename T, typename Alloc = std::allocator<T> >
+template <typename T, typename Alloc = std::allocator<T>>
 class list {
     typedef doubly_linked::list_t list_type;
     typedef doubly_linked::list_node_t link_type;
@@ -201,7 +201,7 @@ public:
      * copies all the elements from x into the container 
      * (with x preserving its contents).
      */
-    list& operator= (const list& x)
+    list& operator=(const list& x)
     {
         if (this == &x)
             return *this;
@@ -214,7 +214,7 @@ public:
      * The move assignment moves the elements of x into the container 
      * (x is left in an unspecified but valid state).
      */
-    list& operator= (list&& x)
+    list& operator=(list&& x)
     {
         using std::swap;
 
@@ -231,7 +231,7 @@ public:
      * The initializer list assignment copies the elements of il into 
      * the container.
      */
-    list& operator= (std::initializer_list<value_type> il)
+    list& operator=(std::initializer_list<value_type> il)
     {
         copy_from(il.begin(), il.end());
         return *this;
@@ -1025,7 +1025,7 @@ private:
 
         explicit compare_node(const BinaryPredicate& comp_): comp(comp_) {}
 
-        bool operator() (const link_type* a, const link_type* b)
+        bool operator()(const link_type* a, const link_type* b)
         {
             return comp(get_val(a), get_val(b));
         }
@@ -1057,7 +1057,7 @@ private:
  */
 template <typename T, typename Alloc>
 inline
-bool operator== (const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
+bool operator==(const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
 {
     if (lhs.size() != rhs.size())
         return false;
@@ -1067,14 +1067,14 @@ bool operator== (const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
 
 template <typename T, typename Alloc>
 inline
-bool operator!= (const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
+bool operator!=(const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
 {
     return !(lhs == rhs);
 }
 
 template <typename T, typename Alloc>
 inline
-bool operator< (const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
+bool operator<(const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
 {
     return std::lexicographical_compare(lhs.begin(), lhs.end(),
         rhs.begin(), rhs.end());
@@ -1082,21 +1082,21 @@ bool operator< (const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
 
 template <typename T, typename Alloc>
 inline
-bool operator> (const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
+bool operator>(const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
 {
     return (rhs < lhs);
 }
 
 template <typename T, typename Alloc>
 inline
-bool operator<= (const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
+bool operator<=(const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
 {
     return !(lhs > rhs);
 }
 
 template <typename T, typename Alloc>
 inline
-bool operator>= (const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
+bool operator>=(const list<T, Alloc>& lhs, const list<T, Alloc>& rhs)
 {
     return !(lhs < rhs);
 }

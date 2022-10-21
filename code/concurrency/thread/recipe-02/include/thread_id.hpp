@@ -50,12 +50,12 @@ struct thread_id {
      *
      * @return 比较结果
      */
-    friend bool operator== (const thread_id& lhs, const thread_id& rhs);
-    friend bool operator!= (const thread_id& lhs, const thread_id& rhs);
-    friend bool operator< (const thread_id& lhs, const thread_id& rhs);
-    friend bool operator<= (const thread_id& lhs, const thread_id& rhs);
-    friend bool operator> (const thread_id& lhs, const thread_id& rhs);
-    friend bool operator>= (const thread_id& lhs, const thread_id& rhs);
+    friend bool operator==(const thread_id& lhs, const thread_id& rhs);
+    friend bool operator!=(const thread_id& lhs, const thread_id& rhs);
+    friend bool operator<(const thread_id& lhs, const thread_id& rhs);
+    friend bool operator<=(const thread_id& lhs, const thread_id& rhs);
+    friend bool operator>(const thread_id& lhs, const thread_id& rhs);
+    friend bool operator>=(const thread_id& lhs, const thread_id& rhs);
 
     /**
      * @brief 返回底层实现定义的线程句柄
@@ -77,17 +77,17 @@ struct thread_id {
     }
 };
 
-inline bool operator== (const thread_id& lhs, const thread_id& rhs)
+inline bool operator==(const thread_id& lhs, const thread_id& rhs)
 {
     return (lhs.id == rhs.id) && (lhs.handle == rhs.handle);
 }
 
-inline bool operator!= (const thread_id& lhs, const thread_id& rhs)
+inline bool operator!=(const thread_id& lhs, const thread_id& rhs)
 {
     return !(lhs == rhs);
 }
 
-inline bool operator< (const thread_id& lhs, const thread_id& rhs)
+inline bool operator<(const thread_id& lhs, const thread_id& rhs)
 {
     if (lhs.id < rhs.id) {
         return true;
@@ -98,17 +98,17 @@ inline bool operator< (const thread_id& lhs, const thread_id& rhs)
     }
 }
 
-inline bool operator<= (const thread_id& lhs, const thread_id& rhs)
+inline bool operator<=(const thread_id& lhs, const thread_id& rhs)
 {
     return !(rhs < lhs);
 }
 
-inline bool operator> (const thread_id& lhs, const thread_id& rhs)
+inline bool operator>(const thread_id& lhs, const thread_id& rhs)
 {
     return (rhs < lhs);
 }
 
-inline bool operator>= (const thread_id& lhs, const thread_id& rhs)
+inline bool operator>=(const thread_id& lhs, const thread_id& rhs)
 {
     return !(lhs < rhs);
 }
@@ -122,7 +122,7 @@ inline bool operator>= (const thread_id& lhs, const thread_id& rhs)
  * @return 输出流os的引用
  */
 template <typename charT, typename traits>
-std::basic_ostream<charT, traits>& operator<< (
+std::basic_ostream<charT, traits>& operator<<(
     std::basic_ostream<charT, traits>& os, const thread_id& id)
 {
     os << id.id;
@@ -138,7 +138,7 @@ namespace std {
  */
 template <> struct hash<Hx::thread_id>
 {
-    size_t operator() (const Hx::thread_id& id) const noexcept
+    size_t operator()(const Hx::thread_id& id) const noexcept
     {
         return std::hash<unsigned>()(id.id);
     }

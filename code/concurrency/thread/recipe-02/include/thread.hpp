@@ -39,7 +39,7 @@ public:
     /**
      * @brief 赋值运算符被删除； thread 不可赋值。没有二个 std::thread 对象可表示同一执行线程。
      */
-    thread& operator= (const thread&) = delete; 
+    thread& operator=(const thread&) = delete; 
 
     /**
      * @brief 构造新的 std::thread 对象并将它与执行线程关联。
@@ -77,7 +77,7 @@ public:
      *       否则，赋值 other 的状态给 *this 并设置 other 为默认构造的状态。
      *       此调用后， this->get_id() 等于 other.get_id() 在调用前的值，而 other 不在表示执行的线程。
      */
-    thread& operator= (thread&& other)
+    thread& operator=(thread&& other)
     {
         if (&other == this) {
             return *this;

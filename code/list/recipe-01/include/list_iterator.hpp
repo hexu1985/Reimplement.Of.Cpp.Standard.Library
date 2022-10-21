@@ -20,48 +20,48 @@ struct list_iterator {
 
     explicit list_iterator(link_type* link_): link(link_) {}
 
-    reference operator* () const 
+    reference operator*() const 
     {
         return *static_cast<node_type*>(link)->valptr();
     }
 
-    pointer operator-> () const 
+    pointer operator->() const 
     {
         return static_cast<node_type*>(link)->valptr();
     }
 
-    this_type& operator++ ()    // prefix increment
+    this_type& operator++()    // prefix increment
     {
         next();
         return *this;
     }
 
-    this_type operator++ (int)    // postfix increment
+    this_type operator++(int)    // postfix increment
     {
         this_type tmp(*this);
         next();
         return tmp;
     }
 
-    this_type& operator-- ()    // prefix decrement
+    this_type& operator--()    // prefix decrement
     {
         prev();
         return *this;
     }
 
-    this_type operator-- (int)    // postfix decrement
+    this_type operator--(int)    // postfix decrement
     {
         this_type tmp(*this);
         prev();
         return tmp;
     }
 
-    bool operator== (const this_type& other) const
+    bool operator==(const this_type& other) const
     {
         return (this->link == other.link);
     }
 
-    bool operator!= (const this_type& other) const
+    bool operator!=(const this_type& other) const
     {
         return !(*this == other);
     }
@@ -98,48 +98,48 @@ struct list_const_iterator {
 
     list_const_iterator(const iterator& iter): link(iter.link) {}
 
-    reference operator* () const 
+    reference operator*() const 
     {
         return *static_cast<node_type*>(link)->valptr();
     }
 
-    pointer operator-> () const 
+    pointer operator->() const 
     { 
         return static_cast<node_type*>(link)->valptr();
     }
 
-    this_type& operator++ ()    // prefix increment
+    this_type& operator++()    // prefix increment
     {
         next();
         return *this;
     }
 
-    this_type operator++ (int)    // postfix increment
+    this_type operator++(int)    // postfix increment
     {
         this_type tmp(*this);
         next();
         return tmp;
     }
 
-    this_type& operator-- ()    // prefix decrement
+    this_type& operator--()    // prefix decrement
     {
         prev();
         return *this;
     }
 
-    this_type operator-- (int)    // postfix decrement
+    this_type operator--(int)    // postfix decrement
     {
         this_type tmp(*this);
         prev();
         return tmp;
     }
 
-    bool operator== (const this_type& other) const
+    bool operator==(const this_type& other) const
     {
         return (this->link == other.link);
     }
 
-    bool operator!= (const this_type& other) const
+    bool operator!=(const this_type& other) const
     {
         return !(*this == other);
     }
@@ -160,7 +160,7 @@ struct list_const_iterator {
  */
 template <typename T>
 inline 
-bool operator== (const list_iterator<T>& x, const list_const_iterator<T>& y)
+bool operator==(const list_iterator<T>& x, const list_const_iterator<T>& y)
 {
     return (x.link == y.link);
 }
@@ -170,7 +170,7 @@ bool operator== (const list_iterator<T>& x, const list_const_iterator<T>& y)
  */
 template <typename T>
 inline 
-bool operator!= (const list_iterator<T>& x, const list_const_iterator<T>& y)
+bool operator!=(const list_iterator<T>& x, const list_const_iterator<T>& y)
 {
     return !(x == y);
 }

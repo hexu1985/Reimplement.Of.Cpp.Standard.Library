@@ -21,7 +21,7 @@ private:
     std::atomic<long> weak_count_;  // #weak + (#shared != 0): 弱引用计数+1/0(共享引用计数是否非0)
 
     sp_counted_base(const sp_counted_base&) = delete;
-    sp_counted_base& operator= (const sp_counted_base&) = delete;
+    sp_counted_base& operator=(const sp_counted_base&) = delete;
 
 public:
     /**

@@ -41,13 +41,13 @@ public: // modifiers
     }
 
     template <typename ValueType>
-    any& operator= (const ValueType& rhs)
+    any& operator=(const ValueType& rhs)
     {
         any(rhs).swap(*this);
         return *this;
     }
 
-    any& operator= (any rhs)
+    any& operator=(any rhs)
     {
         any(rhs).swap(*this);
         return *this;
@@ -110,7 +110,7 @@ private: // types
         ValueType held;
 
     private: // intentionally left unimplemented
-        holder& operator= (const holder&) = delete;
+        holder& operator=(const holder&) = delete;
     };
 
 private: // representation

@@ -50,7 +50,7 @@ protected:
      *
      * @note 私有的std::weak_ptr<T>成员不受此赋值运算符影响
      */
-    enable_shared_from_this& operator= (const enable_shared_from_this&) noexcept
+    enable_shared_from_this& operator=(const enable_shared_from_this&) noexcept
     {
         return *this;
     }

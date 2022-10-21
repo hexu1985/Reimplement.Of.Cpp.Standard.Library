@@ -4,7 +4,7 @@ struct default_delete<T[]> {
     default_delete() = default;
     ~default_delete() = default;
 
-    void operator() (T* p) const
+    void operator()(T* p) const
     {
         delete [] p;
     }
@@ -22,10 +22,10 @@ struct default_delete<T[]> {
              typename = typename std::enable_if<std::is_convertible<U, T>::value>::type>
     default_delete(const default_delete<U>& d) {}
 
-    default_delete& operator= (const default_delete& d) { return *this; }
-    default_delete& operator= (default_delete&& d) { return *this; }
+    default_delete& operator=(const default_delete& d) { return *this; }
+    default_delete& operator=(default_delete&& d) { return *this; }
 
-    void operator() (T* p) const
+    void operator()(T* p) const
     {
         delete [] p;
     }
@@ -84,7 +84,7 @@ public:
         }
     }
 
-    unique_ptr& operator= (unique_ptr&& r) noexcept 
+    unique_ptr& operator=(unique_ptr&& r) noexcept 
     {
         if (this != &r) {
             reset(r.release());
@@ -125,7 +125,7 @@ public:
         return ptr_;
     }
 
-    T& operator[] (size_t i) const
+    T& operator[](size_t i) const
     {
         return ptr_[i];
     }

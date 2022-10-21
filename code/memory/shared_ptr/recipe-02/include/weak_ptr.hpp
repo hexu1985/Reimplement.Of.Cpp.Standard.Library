@@ -92,7 +92,7 @@ public:
      *
      * @return *this
      */
-    weak_ptr& operator= (const weak_ptr& r)
+    weak_ptr& operator=(const weak_ptr& r)
     {
         /**
         if (this != &r) {
@@ -105,7 +105,7 @@ public:
         return *this;
     }
 
-    weak_ptr& operator= (weak_ptr&& r) noexcept
+    weak_ptr& operator=(weak_ptr&& r) noexcept
     {
         /**
         if (this != &r) {
@@ -126,7 +126,7 @@ public:
      *
      * @return *this
      */
-    weak_ptr& operator= (const shared_ptr<T>& r)
+    weak_ptr& operator=(const shared_ptr<T>& r)
     {
         /**
         if (pi_ != r.pi_) {

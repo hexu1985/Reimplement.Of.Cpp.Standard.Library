@@ -168,7 +168,7 @@ public:
      * Copy container content
      * Assigns new contents to the container, replacing its current content.
      */
-    set& operator= (const set& x)
+    set& operator=(const set& x)
     {
         if (this == &x) {
             return *this;
@@ -180,7 +180,7 @@ public:
         return *this;
     }
 
-    set& operator= (set&& x)
+    set& operator=(set&& x)
     {
         if (this == &x) {
             return *this;
@@ -190,7 +190,7 @@ public:
         return *this;
     }
 
-    set& operator= (std::initializer_list<value_type> il)
+    set& operator=(std::initializer_list<value_type> il)
     {
         set(il).swap(*this);
         return *this;
@@ -773,7 +773,7 @@ private:
 
 template <typename T, typename Compare, typename Alloc>
 inline
-bool operator== (const set<T, Compare, Alloc> &lhs, const set<T, Compare, Alloc> &rhs)
+bool operator==(const set<T, Compare, Alloc> &lhs, const set<T, Compare, Alloc> &rhs)
 {
     if (lhs.size() != rhs.size())
         return false;
@@ -783,14 +783,14 @@ bool operator== (const set<T, Compare, Alloc> &lhs, const set<T, Compare, Alloc>
 
 template <typename T, typename Compare, typename Alloc>
 inline
-bool operator!= (const set<T, Compare, Alloc> &lhs, const set<T, Compare, Alloc> &rhs)
+bool operator!=(const set<T, Compare, Alloc> &lhs, const set<T, Compare, Alloc> &rhs)
 {
     return !(lhs == rhs);
 }
 
 template <typename T, typename Compare, typename Alloc>
 inline
-bool operator< (const set<T, Compare, Alloc> &lhs, const set<T, Compare, Alloc> &rhs)
+bool operator<(const set<T, Compare, Alloc> &lhs, const set<T, Compare, Alloc> &rhs)
 {
     return std::lexicographical_compare(lhs.begin(), lhs.end(),
         rhs.begin(), rhs.end());
@@ -798,21 +798,21 @@ bool operator< (const set<T, Compare, Alloc> &lhs, const set<T, Compare, Alloc> 
 
 template <typename T, typename Compare, typename Alloc>
 inline
-bool operator> (const set<T, Compare, Alloc> &lhs, const set<T, Compare, Alloc> &rhs)
+bool operator>(const set<T, Compare, Alloc> &lhs, const set<T, Compare, Alloc> &rhs)
 {
     return (rhs < lhs);
 }
 
 template <typename T, typename Compare, typename Alloc>
 inline
-bool operator<= (const set<T, Compare, Alloc> &lhs, const set<T, Compare, Alloc> &rhs)
+bool operator<=(const set<T, Compare, Alloc> &lhs, const set<T, Compare, Alloc> &rhs)
 {
     return !(lhs > rhs);
 }
 
 template <typename T, typename Compare, typename Alloc>
 inline
-bool operator>= (const set<T, Compare, Alloc> &lhs, const set<T, Compare, Alloc> &rhs)
+bool operator>=(const set<T, Compare, Alloc> &lhs, const set<T, Compare, Alloc> &rhs)
 {
     return !(lhs < rhs);
 }

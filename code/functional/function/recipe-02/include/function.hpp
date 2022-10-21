@@ -117,39 +117,39 @@ public:
     }
 
     // assign operator
-    function& operator= (nullptr_t fn) {
+    function& operator=(nullptr_t fn) {
         delete invoker_;
         invoker_ = nullptr;
         return *this;
     }
 
-    function& operator= (R (*func)(Args...)) {
+    function& operator=(R (*func)(Args...)) {
         delete invoker_;
         invoker_ = new function_ptr_invoker<R,Args...>(func); 
         return *this;
     }
 
     template <typename MT, typename C> 
-    function& operator= (MT C::* mptr) {
+    function& operator=(MT C::* mptr) {
         delete invoker_;
         invoker_ = new member_ptr_invoker<R,MT,C,Args...>(mptr);
         return *this;
     }
 
     template <typename T>
-    function& operator= (T t) {
+    function& operator=(T t) {
         delete invoker_;
         invoker_ = new function_object_invoker<R,T,Args...>(t); 
         return *this;
     }
 
-    function& operator= (const function& rhs) {
+    function& operator=(const function& rhs) {
         function(rhs).swap(*this);
         return *this;
     }
 
     // move assignment
-    function& operator= (function&& rhs) noexcept {
+    function& operator=(function&& rhs) noexcept {
         rhs.swap(*this);
         function().swap(rhs);
         return *this;
@@ -162,12 +162,12 @@ public:
     }
 
     // callable operator
-    R operator() (Args... args) const {
+    R operator()(Args... args) const {
         return (*invoker_)(std::forward<Args>(args)...);
     }
 
     // Check if callable
-    explicit operator bool () const noexcept {
+    explicit operator bool() const noexcept {
         return invoker_;
     }
 

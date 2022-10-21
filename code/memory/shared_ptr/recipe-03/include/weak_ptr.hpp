@@ -108,7 +108,7 @@ public:
      *
      * @return *this
      */
-    weak_ptr& operator= (const weak_ptr& r)
+    weak_ptr& operator=(const weak_ptr& r)
     {
         /**
         if (this != &r) {
@@ -123,13 +123,13 @@ public:
     }
 
     template <typename Y>
-    weak_ptr& operator= (const weak_ptr<Y>& r)
+    weak_ptr& operator=(const weak_ptr<Y>& r)
     {
         this_type(r).swap(*this);
         return *this;
     }
 
-    weak_ptr& operator= (weak_ptr&& r) noexcept
+    weak_ptr& operator=(weak_ptr&& r) noexcept
     {
         /**
         if (this != &r) {
@@ -144,7 +144,7 @@ public:
     }
 
     template <typename Y>
-    weak_ptr& operator= (weak_ptr<Y>&& r) noexcept
+    weak_ptr& operator=(weak_ptr<Y>&& r) noexcept
     {
         this_type(std::move(r)).swap(*this);
         return *this;
@@ -158,7 +158,7 @@ public:
      *
      * @return *this
      */
-    weak_ptr& operator= (const shared_ptr<T>& r)
+    weak_ptr& operator=(const shared_ptr<T>& r)
     {
         /**
         if (pi_ != r.pi_) {

@@ -23,7 +23,7 @@ private:
     T data_;
 
     sp_counted_impl(const sp_counted_impl&) = delete;
-    sp_counted_impl& operator= (const sp_counted_impl&) = delete;
+    sp_counted_impl& operator=(const sp_counted_impl&) = delete;
 
 public:
     sp_counted_impl(): data_() {}
@@ -50,7 +50,7 @@ private:
     T* p_;  // pointer
 
     sp_counted_impl_p(const sp_counted_impl_p&) = delete;
-    sp_counted_impl_p& operator= (const sp_counted_impl_p&) = delete;
+    sp_counted_impl_p& operator=(const sp_counted_impl_p&) = delete;
 
 public:
     /**
@@ -95,7 +95,7 @@ private:
     D del_;     // deleter
 
     sp_counted_impl_pd(const sp_counted_impl_pd&) = delete;
-    sp_counted_impl_pd& operator= (const sp_counted_impl_pd&) = delete;
+    sp_counted_impl_pd& operator=(const sp_counted_impl_pd&) = delete;
 
 public:
     /**

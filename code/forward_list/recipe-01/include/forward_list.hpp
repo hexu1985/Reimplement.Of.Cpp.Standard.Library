@@ -45,7 +45,7 @@ struct forward_list_node: public singly_linked::list_node_t {
 /**
  * Forward list
  */
-template <typename T, typename Alloc = std::allocator<T> >
+template <typename T, typename Alloc = std::allocator<T>>
 class forward_list {
 public:
     typedef T value_type;
@@ -204,7 +204,7 @@ public:
      * The copy assignment copies all the elements from fwdlst into 
      * the container (with fwdlst preserving its contents).
      */
-    forward_list& operator= (const forward_list& fwdlst)
+    forward_list& operator=(const forward_list& fwdlst)
     {
         if (this == &fwdlst)
             return *this;
@@ -217,7 +217,7 @@ public:
      * The move assignment moves the elements of fwdlst into 
      * the container (x is left in an unspecified but valid state).
      */
-    forward_list& operator= (forward_list&& x)
+    forward_list& operator=(forward_list&& x)
     {
         if (this == &x)
             return *this;
@@ -230,7 +230,7 @@ public:
      * The initializer list assignment copies the elements of il into 
      * the container.
      */
-    forward_list& operator= (std::initializer_list<value_type> il)
+    forward_list& operator=(std::initializer_list<value_type> il)
     {
         copy_from(il.begin(), il.end());
         return *this;
@@ -819,7 +819,7 @@ private:
 
         explicit compare_node(const BinaryPredicate& comp_): comp(comp_) {}
 
-        bool operator() (const link_type* a, const link_type* b)
+        bool operator()(const link_type* a, const link_type* b)
         {
             return comp(get_val(a), get_val(b));
         }
@@ -924,21 +924,21 @@ private:
  */
 template <typename T, typename Alloc>
 inline
-bool operator== (const forward_list<T, Alloc>& lhs, const forward_list<T, Alloc>& rhs)
+bool operator==(const forward_list<T, Alloc>& lhs, const forward_list<T, Alloc>& rhs)
 {
     return std::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
 template <typename T, typename Alloc>
 inline
-bool operator!= (const forward_list<T, Alloc>& lhs, const forward_list<T, Alloc>& rhs)
+bool operator!=(const forward_list<T, Alloc>& lhs, const forward_list<T, Alloc>& rhs)
 {
     return !(lhs == rhs);
 }
 
 template <typename T, typename Alloc>
 inline
-bool operator< (const forward_list<T, Alloc>& lhs, const forward_list<T, Alloc>& rhs)
+bool operator<(const forward_list<T, Alloc>& lhs, const forward_list<T, Alloc>& rhs)
 {
     return std::lexicographical_compare(lhs.begin(), lhs.end(),
         rhs.begin(), rhs.end());
@@ -946,21 +946,21 @@ bool operator< (const forward_list<T, Alloc>& lhs, const forward_list<T, Alloc>&
 
 template <typename T, typename Alloc>
 inline
-bool operator> (const forward_list<T, Alloc>& lhs, const forward_list<T, Alloc>& rhs)
+bool operator>(const forward_list<T, Alloc>& lhs, const forward_list<T, Alloc>& rhs)
 {
     return (rhs < lhs);
 }
 
 template <typename T, typename Alloc>
 inline
-bool operator<= (const forward_list<T, Alloc>& lhs, const forward_list<T, Alloc>& rhs)
+bool operator<=(const forward_list<T, Alloc>& lhs, const forward_list<T, Alloc>& rhs)
 {
     return !(lhs > rhs);
 }
 
 template <typename T, typename Alloc>
 inline
-bool operator>= (const forward_list<T, Alloc>& lhs, const forward_list<T, Alloc>& rhs)
+bool operator>=(const forward_list<T, Alloc>& lhs, const forward_list<T, Alloc>& rhs)
 {
     return !(lhs < rhs);
 }

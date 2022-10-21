@@ -20,50 +20,50 @@ struct set_reverse_iterator {
 
     explicit set_reverse_iterator(link_type* link_): link(link_) {}
 
-    reference operator* () const
+    reference operator*() const
     {
         assert(link != nullptr);
         return *static_cast<node_type*>(link)->valptr();
     }
 
-    pointer operator-> () const
+    pointer operator->() const
     {
         assert(link != nullptr);
         return static_cast<node_type*>(link)->valptr();
     }
 
-    this_type& operator++ ()
+    this_type& operator++()
     {
         next();
         return *this;
     }
 
-    this_type operator++ (int)
+    this_type operator++(int)
     {
         this_type tmp(*this);
         next();
         return tmp;
     }
 
-    this_type& operator-- ()
+    this_type& operator--()
     {
         prev();
         return *this;
     }
 
-    this_type operator-- (int)
+    this_type operator--(int)
     {
         this_type tmp(*this);
         prev();
         return tmp;
     }
 
-    bool operator== (const this_type& other) const
+    bool operator==(const this_type& other) const
     {
         return (this->link == other.link);
     }
 
-    bool operator!= (const this_type& other) const
+    bool operator!=(const this_type& other) const
     {
         return !(*this == other);
     }
@@ -106,25 +106,25 @@ struct set_const_reverse_iterator {
 
     set_const_reverse_iterator(const reverse_iterator& iter): link(iter.link) {}
 
-    reference operator* () const
+    reference operator*() const
     {
         assert(link != nullptr);
         return *static_cast<node_type*>(link)->valptr();
     }
 
-    pointer operator-> () const
+    pointer operator->() const
     {
         assert(link != nullptr);
         return static_cast<node_type*>(link)->valptr();
     }
 
-    this_type& operator++ ()
+    this_type& operator++()
     {
         next();
         return *this;
     }
 
-    this_type operator++ (int)
+    this_type operator++(int)
     {
         this_type tmp(*this);
         next();
@@ -137,19 +137,19 @@ struct set_const_reverse_iterator {
         return *this;
     }
 
-    this_type operator-- (int)
+    this_type operator--(int)
     {
         this_type tmp(*this);
         prev();
         return tmp;
     }
 
-    bool operator== (const this_type& other) const
+    bool operator==(const this_type& other) const
     {
         return (this->link == other.link);
     }
 
-    bool operator!= (const this_type& other) const
+    bool operator!=(const this_type& other) const
     {
         return !(*this == other);
     }
@@ -172,7 +172,7 @@ struct set_const_reverse_iterator {
  */
 template <typename T>
 inline
-bool operator== (const set_reverse_iterator<T>& x, const set_const_reverse_iterator<T>& y)
+bool operator==(const set_reverse_iterator<T>& x, const set_const_reverse_iterator<T>& y)
 {
     return (x.link == y.link);
 }
@@ -182,7 +182,7 @@ bool operator== (const set_reverse_iterator<T>& x, const set_const_reverse_itera
  */
 template <typename T>
 inline
-bool operator!= (const set_reverse_iterator<T>& x, const set_const_reverse_iterator<T>& y)
+bool operator!=(const set_reverse_iterator<T>& x, const set_const_reverse_iterator<T>& y)
 {
     return !(x == y);
 }

@@ -14,7 +14,7 @@ struct default_delete {
     default_delete() = default;
     ~default_delete() = default;
 
-    void operator() (T* p) const
+    void operator()(T* p) const
     {
         delete p;
     }
@@ -32,10 +32,10 @@ struct default_delete {
              typename = typename std::enable_if<std::is_convertible<U*, T*>::value>::type>
     default_delete(const default_delete<U>& d) {}
 
-    default_delete& operator= (const default_delete& d) { return *this; }
-    default_delete& operator= (default_delete&& d) { return *this; }
+    default_delete& operator=(const default_delete& d) { return *this; }
+    default_delete& operator=(default_delete&& d) { return *this; }
 
-    void operator() (T* p) const
+    void operator()(T* p) const
     {
         delete p;
     }
@@ -94,7 +94,7 @@ public:
         }
     }
 
-    unique_ptr& operator= (unique_ptr&& r) noexcept 
+    unique_ptr& operator=(unique_ptr&& r) noexcept 
     {
         if (this != &r) {
             reset(r.release());
@@ -135,12 +135,12 @@ public:
         return ptr_;
     }
 
-    T& operator* () const 
+    T& operator*() const 
     {
         return *ptr_;
     }
 
-    T* operator-> () const noexcept
+    T* operator->() const noexcept
     {
         return ptr_;
     }
@@ -169,7 +169,7 @@ unique_ptr<T> make_unique(Args&&... args)
 }
 
 template <typename charT, typename traits, typename T, typename Deleter>
-std::basic_ostream<charT, traits>& operator<< (
+std::basic_ostream<charT, traits>& operator<<(
         std::basic_ostream<charT, traits>& os, const unique_ptr<T, Deleter>& ptr)
 {
     os << ptr.get();
@@ -178,61 +178,61 @@ std::basic_ostream<charT, traits>& operator<< (
 
 // comparaison operators
 template <typename T1, typename D1, typename T2, typename D2> 
-inline bool operator== (const unique_ptr<T1, D1>& lhs, const unique_ptr<T2, D2>& rhs) noexcept
+inline bool operator==(const unique_ptr<T1, D1>& lhs, const unique_ptr<T2, D2>& rhs) noexcept
 {
     return (lhs.get() == rhs.get());
 }
 
 template <typename T1, typename D1, typename T2, typename D2> 
-inline bool operator!= (const unique_ptr<T1, D1>& lhs, const unique_ptr<T2, D2>& rhs) noexcept
+inline bool operator!=(const unique_ptr<T1, D1>& lhs, const unique_ptr<T2, D2>& rhs) noexcept
 {
     return (lhs.get() != rhs.get());
 }
 
 template <typename T1, typename D1, typename T2, typename D2> 
-inline bool operator<= (const unique_ptr<T1, D1>& lhs, const unique_ptr<T2, D2>& rhs) noexcept
+inline bool operator<=(const unique_ptr<T1, D1>& lhs, const unique_ptr<T2, D2>& rhs) noexcept
 {
     return (lhs.get() <= rhs.get());
 }
 
 template <typename T1, typename D1, typename T2, typename D2> 
-inline bool operator< (const unique_ptr<T1, D1>& lhs, const unique_ptr<T2, D2>& rhs) noexcept
+inline bool operator<(const unique_ptr<T1, D1>& lhs, const unique_ptr<T2, D2>& rhs) noexcept
 {
     return (lhs.get() < rhs.get());
 }
 
 template <typename T1, typename D1, typename T2, typename D2> 
-inline bool operator>= (const unique_ptr<T1, D1>& lhs, const unique_ptr<T2, D2>& rhs) noexcept
+inline bool operator>=(const unique_ptr<T1, D1>& lhs, const unique_ptr<T2, D2>& rhs) noexcept
 {
     return (lhs.get() >= rhs.get());
 }
 
 template <typename T1, typename D1, typename T2, typename D2> 
-inline bool operator> (const unique_ptr<T1, D1>& lhs, const unique_ptr<T2, D2>& rhs) noexcept
+inline bool operator>(const unique_ptr<T1, D1>& lhs, const unique_ptr<T2, D2>& rhs) noexcept
 {
     return (lhs.get() > rhs.get());
 }
 
 template <typename T, typename D> 
-inline bool operator== (const unique_ptr<T, D>& lhs, std::nullptr_t) noexcept
+inline bool operator==(const unique_ptr<T, D>& lhs, std::nullptr_t) noexcept
 {
     return !lhs;
 }
 
 template <typename T, typename D> 
-inline bool operator== (std::nullptr_t, const unique_ptr<T, D>& rhs) noexcept
+inline bool operator==(std::nullptr_t, const unique_ptr<T, D>& rhs) noexcept
 {
     return !rhs;
 }
 
 template <typename T, typename D> 
-inline bool operator!= (const unique_ptr<T, D>& lhs, std::nullptr_t) noexcept
+inline bool operator!=(const unique_ptr<T, D>& lhs, std::nullptr_t) noexcept
 {
     return (bool) lhs;
 }
 
 template <typename T, typename D> 
-inline bool operator!= (std::nullptr_t, const unique_ptr<T, D>& rhs) noexcept
+inline bool operator!=(std::nullptr_t, const unique_ptr<T, D>& rhs) noexcept
 {
     return (bool) rhs;
 }
@@ -245,7 +245,7 @@ namespace std {
 
 template <typename T, typename Deleter>
 struct hash<Hx::unique_ptr<T, Deleter>> {
-    size_t operator() (const Hx::unique_ptr<T, Deleter>& p)
+    size_t operator()(const Hx::unique_ptr<T, Deleter>& p)
     {
         return std::hash<typename Hx::unique_ptr<T, Deleter>::pointer>()(p.get());
     }

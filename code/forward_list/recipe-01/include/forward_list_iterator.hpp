@@ -20,37 +20,37 @@ struct forward_list_iterator {
 
     explicit forward_list_iterator(link_type* link_): link(link_) {}
 
-    reference operator* () const
+    reference operator*() const
     {
         assert(link != nullptr);
         return *static_cast<node_type*>(link)->valptr();
     }
 
-    pointer operator-> () const
+    pointer operator->() const
     {
         assert(link != nullptr);
         return static_cast<node_type*>(link)->valptr();
     }
 
-    this_type& operator++ ()
+    this_type& operator++()
     {
         next();
         return *this;
     }
 
-    this_type operator++ (int)
+    this_type operator++(int)
     {
         this_type tmp(*this);
         next();
         return tmp;
     }
 
-    bool operator== (const this_type& other) const
+    bool operator==(const this_type& other) const
     {
         return (this->link == other.link);
     }
 
-    bool operator!= (const this_type& other) const
+    bool operator!=(const this_type& other) const
     {
         return !(*this == other);
     }
@@ -87,37 +87,37 @@ struct forward_list_const_iterator {
 
     forward_list_const_iterator(const iterator& iter): link(iter.link) {}
 
-    reference operator* () const
+    reference operator*() const
     {
         assert(link != nullptr);
         return *static_cast<node_type*>(link)->valptr();
     }
 
-    pointer operator-> () const
+    pointer operator->() const
     {
         assert(link != nullptr);
         return static_cast<node_type*>(link)->valptr();
     }
 
-    this_type& operator++ ()
+    this_type& operator++()
     {
         next();
         return *this;
     }
 
-    this_type operator++ (int)
+    this_type operator++(int)
     {
         this_type tmp(*this);
         next();
         return tmp;
     }
 
-    bool operator== (const this_type& other) const
+    bool operator==(const this_type& other) const
     {
         return (this->link == other.link);
     }
 
-    bool operator!= (const this_type& other) const
+    bool operator!=(const this_type& other) const
     {
         return !(*this == other);
     }
@@ -134,7 +134,7 @@ struct forward_list_const_iterator {
  */
 template <typename T>
 inline 
-bool operator== (const forward_list_iterator<T>& x,
+bool operator==(const forward_list_iterator<T>& x,
     const forward_list_const_iterator<T>& y)
 {
     return (x.link == y.link);
@@ -145,7 +145,7 @@ bool operator== (const forward_list_iterator<T>& x,
  */
 template <typename T>
 inline 
-bool operator!= (const forward_list_iterator<T>& x,
+bool operator!=(const forward_list_iterator<T>& x,
     const forward_list_const_iterator<T>& y)
 {
     return !(x == y);

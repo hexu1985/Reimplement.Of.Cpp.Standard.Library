@@ -20,7 +20,7 @@ private:
     std::atomic<long> use_count_;   // #shared: 共享引用计数
 
     sp_counted_base(const sp_counted_base&) = delete;
-    sp_counted_base& operator= (const sp_counted_base&) = delete;
+    sp_counted_base& operator=(const sp_counted_base&) = delete;
 
 public:
     /**

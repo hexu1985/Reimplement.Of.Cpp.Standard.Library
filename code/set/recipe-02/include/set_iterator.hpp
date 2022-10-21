@@ -22,50 +22,50 @@ struct set_iterator {
 
     set_iterator(tree_type* tree_, link_type* link_): tree(tree_), link(link_) {}
 
-    reference operator* () const
+    reference operator*() const
     {
         assert(link != nullptr);
         return *static_cast<node_type*>(link)->valptr();
     }
 
-    pointer operator-> () const
+    pointer operator->() const
     {
         assert(link != nullptr);
         return static_cast<node_type*>(link)->valptr();
     }
 
-    this_type& operator++ ()
+    this_type& operator++()
     {
         next();
         return *this;
     }
 
-    this_type operator++ (int)
+    this_type operator++(int)
     {
         this_type tmp(*this);
         next();
         return tmp;
     }
 
-    this_type& operator-- ()
+    this_type& operator--()
     {
         prev();
         return *this;
     }
 
-    this_type operator-- (int)
+    this_type operator--(int)
     {
         this_type tmp(*this);
         prev();
         return tmp;
     }
 
-    bool operator== (const this_type& other) const
+    bool operator==(const this_type& other) const
     {
         return (this->tree == other.tree && this->link == other.link);
     }
 
-    bool operator!= (const this_type& other) const
+    bool operator!=(const this_type& other) const
     {
         return !(*this == other);
     }
@@ -116,25 +116,25 @@ struct set_const_iterator {
 
     set_const_iterator(const iterator& iter): tree(iter.tree), link(iter.link) {}
 
-    reference operator* () const
+    reference operator*() const
     {
         assert(link != nullptr);
         return *static_cast<node_type*>(link)->valptr();
     }
 
-    pointer operator-> () const
+    pointer operator->() const
     {
         assert(link != nullptr);
         return static_cast<node_type*>(link)->valptr();
     }
 
-    this_type& operator++ ()
+    this_type& operator++()
     {
         next();
         return *this;
     }
 
-    this_type operator++ (int)
+    this_type operator++(int)
     {
         this_type tmp(*this);
         next();
@@ -147,19 +147,19 @@ struct set_const_iterator {
         return *this;
     }
 
-    this_type operator-- (int)
+    this_type operator--(int)
     {
         this_type tmp(*this);
         prev();
         return tmp;
     }
 
-    bool operator== (const this_type& other) const
+    bool operator==(const this_type& other) const
     {
         return (this->tree == other.tree && this->link == other.link);
     }
 
-    bool operator!= (const this_type& other) const
+    bool operator!=(const this_type& other) const
     {
         return !(*this == other);
     }
@@ -188,7 +188,7 @@ struct set_const_iterator {
  */
 template <typename T>
 inline
-bool operator== (const set_iterator<T>& x, const set_const_iterator<T>& y)
+bool operator==(const set_iterator<T>& x, const set_const_iterator<T>& y)
 {
     return (x.tree == y.tree && x.link == y.link);
 }
@@ -198,7 +198,7 @@ bool operator== (const set_iterator<T>& x, const set_const_iterator<T>& y)
  */
 template <typename T>
 inline
-bool operator!= (const set_iterator<T>& x, const set_const_iterator<T>& y)
+bool operator!=(const set_iterator<T>& x, const set_const_iterator<T>& y)
 {
     return !(x == y);
 }

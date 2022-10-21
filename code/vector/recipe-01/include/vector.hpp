@@ -202,7 +202,7 @@ public:
      * copies all the elements from x into the container 
      * (with x preserving its contents).
      */
-    vector& operator= (const vector& x)
+    vector& operator=(const vector& x)
     {
         if (this == &x)
             return *this;
@@ -216,7 +216,7 @@ public:
      * moves the elements of x into the container 
      * (x is left in an unspecified but valid state).
      */
-    vector& operator= (vector&& x)
+    vector& operator=(vector&& x)
     {
         if (this == &x)
             return *this;
@@ -230,7 +230,7 @@ public:
      * The initializer list assignment 
      * copies the elements of il into the container.
      */
-    vector& operator= (std::initializer_list<value_type> il)
+    vector& operator=(std::initializer_list<value_type> il)
     {
         assign(il.begin(), il.end());
         return *this;
@@ -418,8 +418,8 @@ public:
      * Access element
      * Returns a reference to the element at position n in the vector container.
      */
-    reference operator[] (size_type n) { return *(start_+n); }
-    const_reference operator[] (size_type n) const { return *(start_+n); }
+    reference operator[](size_type n) { return *(start_+n); }
+    const_reference operator[](size_type n) const { return *(start_+n); }
     
     /**
      * Access element
@@ -969,7 +969,7 @@ private:
  * lhs and rhs.
  */
 template <typename T, typename Alloc>
-bool operator== (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
+bool operator==(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
 {
     if (lhs.size() != rhs.size())
         return false;
@@ -979,32 +979,32 @@ bool operator== (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
 
 template <typename T, typename Alloc>
 inline
-bool operator!= (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
+bool operator!=(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
 {
     return !(lhs == rhs);
 }
 
 template <typename T, typename Alloc>
-bool operator< (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
+bool operator<(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
 {
     return std::lexicographical_compare(lhs.begin(), lhs.end(),
         rhs.begin(), rhs.end());
 }
 
 template <typename T, typename Alloc>
-bool operator> (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
+bool operator>(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
 {
     return (rhs < lhs);
 }
 
 template <typename T, typename Alloc>
-bool operator<= (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
+bool operator<=(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
 {
     return !(lhs > rhs);
 }
 
 template <typename T, typename Alloc>
-bool operator>= (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
+bool operator>=(const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
 {
     return !(lhs < rhs);
 }
