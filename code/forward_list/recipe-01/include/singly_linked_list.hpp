@@ -2,8 +2,8 @@
 // HeXu's
 // 2013 Dec
 
-#ifndef MINI_STL_FORWARD_LIST_IMPL_INC
-#define MINI_STL_FORWARD_LIST_IMPL_INC
+#ifndef HX_SINGLY_LINKED_LIST_INC
+#define HX_SINGLY_LINKED_LIST_INC
 
 #ifdef __cplusplus
 #include <cstddef>
@@ -15,7 +15,7 @@
 
 #ifdef __cplusplus
 namespace Hx {
-namespace single_linked {
+namespace singly_linked {
 #endif // __cplusplus
 
 /**
@@ -195,10 +195,10 @@ void list_reverse_after(list_node_t* x)
 }
 
 #ifdef __cplusplus
-} // namespace single_linked
+} // namespace singly_linked
 } // namespace Hx
 #endif // __cplusplus
 
-#endif // MINI_STL_FORWARD_LIST_IMPL_H
+#endif // HX_SINGLY_LINKED_LIST_INC
 
 

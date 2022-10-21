@@ -5,7 +5,7 @@
 #ifndef MINI_STL_FORWARD_LIST_INC
 #define MINI_STL_FORWARD_LIST_INC
 
-#include "forward_list_impl.hpp"
+#include "singly_linked_list.hpp"
 
 #include <cassert>
 #include <cstddef>
@@ -24,7 +24,7 @@ namespace Hx {
  * data value in each node.
  */
 template <typename T>
-struct forward_list_node: public single_linked::list_node_t {
+struct forward_list_node: public singly_linked::list_node_t {
     // raw storage buffer for type T
     // typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type storage;     // deprecated in C++23
     struct alignas(alignof(T)) { char data[sizeof(T)]; } storage;
@@ -46,7 +46,7 @@ struct forward_list_node: public single_linked::list_node_t {
  */
 template <typename T>
 struct forward_list_iterator {
-    typedef single_linked::list_node_t link_type;
+    typedef singly_linked::list_node_t link_type;
     link_type* link;
 
     typedef T value_type;
@@ -110,7 +110,7 @@ struct forward_list_iterator {
  */
 template <typename T>
 struct forward_list_const_iterator {
-    typedef const single_linked::list_node_t link_type;
+    typedef const singly_linked::list_node_t link_type;
     link_type* link;
 
     typedef T value_type;
@@ -213,8 +213,8 @@ public:
     typedef size_t size_type;
 
 private:
-    typedef single_linked::list_t list_type;
-    typedef single_linked::list_node_t link_type;
+    typedef singly_linked::list_t list_type;
+    typedef singly_linked::list_node_t link_type;
     typedef forward_list_node<T> node_type;
     typedef typename 
         allocator_type::template rebind<node_type>::other node_alloc_type;
