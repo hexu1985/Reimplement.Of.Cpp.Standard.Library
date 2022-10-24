@@ -71,7 +71,7 @@ struct unordered_map_iterator {
 			if (pos == end) {	// get bucket end
 				link = nullptr;
 			} else {	// get an non-empty bucket
-				link = pos->head.next;
+				link = list_head(pos);
 			}
 		}
 	}
@@ -154,7 +154,7 @@ struct unordered_map_const_iterator {
 			if (pos == end) {	// get bucket end
 				link = nullptr;
 			} else {	// get an non-empty bucket
-				link = pos->head.next;
+				link = list_head(pos);
 			}
 		}
 	}
