@@ -51,12 +51,6 @@ void list_init(list_t* list)
     list->dummy.next = nullptr;
 }
 
-inline
-void list_destroy(list_t* list)
-{
-    list->dummy.next = nullptr;
-}
-
 // 返回链表头部第一个节点(非哑元头节点)的指针
 inline
 list_node_t* list_head(const list_t* list)

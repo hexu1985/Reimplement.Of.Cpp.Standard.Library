@@ -839,7 +839,6 @@ private:
             auto node = list_delete_head(&lst_);
             destroy_node(node);
         }
-        list_destroy(&lst_);
     }
 
     void fill(size_type n, const value_type& val)
