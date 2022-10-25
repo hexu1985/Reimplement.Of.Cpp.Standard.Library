@@ -62,7 +62,7 @@ class unordered_map {
     size_t bucket_count_;        // bucket count
     float max_load_factor_;        // max load factor
 
-    static const size_t MIN_BUCKET_NUM_HINT = 8;
+    static const size_t MIN_BUCKET_NUM_HINT = 4;
     static const size_t MAX_BUCKET_NUM_HINT = (((size_t)1 << (8*sizeof(size_t)-1)) / sizeof (bucket_type));
     static const size_t DEFAULT_BUCKET_NUM = 2*MIN_BUCKET_NUM_HINT-1;
     
@@ -646,14 +646,15 @@ public:
         assert(position.pos != nullptr && position.link != nullptr);
         link_type* link = list_before_head(position.pos);
         while (link->next != nullptr) {
-            if (link->next = position.link) {
+            if (link->next == position.link) {
                 break;
             }
             link = link->next;
         }
         list_delete_after(link);
-        destroy_node(position.pos);
-        return iterator((bucket_type*) position.pos, (bucket_type*) position.end, link->next);
+        destroy_node((link_type*) position.link);
+        iterator iter((bucket_type*) position.pos, (bucket_type*) position.end, link);
+        return ++iter;
     }
 
     size_type erase(const key_type& k)
@@ -667,8 +668,9 @@ public:
                 list_delete_after(link);
                 destroy_node(node);
                 n++;
+            } else {
+                link = link->next;
             }
-            link = link->next;
         }
         return n;
     }
