@@ -55,12 +55,12 @@ class unordered_map {
     typedef typename Alloc::template rebind<bucket_type>::other bucket_alloc_type;
     typedef typename Alloc::template rebind<node_type>::other node_alloc_type;
 
-    Hash hash_;                    // hash function
-    Pred equal_;                // equal fucntion
-    node_alloc_type node_alloc_;// allocator for node
-    bucket_type* buckets_;        // hash table
-    size_t bucket_count_;        // bucket count
-    float max_load_factor_;        // max load factor
+    Hash hash_;                     // hash function
+    Pred equal_;                    // equal fucntion
+    node_alloc_type node_alloc_;    // allocator for node
+    bucket_type* buckets_;          // hash table
+    size_t bucket_count_;           // bucket count
+    float max_load_factor_;         // max load factor
 
     static const size_t MIN_BUCKET_NUM_HINT = 4;
     static const size_t MAX_BUCKET_NUM_HINT = (((size_t)1 << (8*sizeof(size_t)-1)) / sizeof (bucket_type));
@@ -787,7 +787,7 @@ public:
     void rehash(size_type n)
     {
         size_type buckets_num =
-            adjust_buckets(std::max(n, size()/max_load_factor()));
+            adjust_buckets(std::max<size_type>(n, size()/max_load_factor()));
         do_rehash(buckets_num);
     }
 
