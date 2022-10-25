@@ -910,7 +910,7 @@ private:
         }
     }
 
-    void move_from(unordered_map &&ump)
+    void move_from(unordered_map&& ump)
     {
         bucket_type* first = ump.buckets_; 
         bucket_type* last = ump.buckets_+ump.bucket_count_;
