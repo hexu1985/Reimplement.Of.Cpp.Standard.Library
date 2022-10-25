@@ -432,6 +432,7 @@ public:
             if (equal_(get_key(link->next), k)) {
                 return get_mapped(link->next);
             }
+            link = link->next;
         }
         list_insert_after(link, create_node(k, mapped_type()));
         return get_mapped(link->next);
@@ -450,6 +451,7 @@ public:
             if (equal_(get_key(link->next), k)) {
                 return get_mapped(link->next);
             }
+            link = link->next;
         }
         throw std::out_of_range("unordered_map::at");
     }
@@ -462,6 +464,7 @@ public:
             if (equal_(get_key(link->next), k)) {
                 return get_mapped(link->next);
             }
+            link = link->next;
         }
         throw std::out_of_range("unordered_map::at");
     }
@@ -480,6 +483,7 @@ public:
             if (equal_(get_key(link->next), k)) {
                 return iterator(bucket, buckets_+bucket_count_, link->next);
             }
+            link = link->next;
         }
         return end();
     }
@@ -492,6 +496,7 @@ public:
             if (equal_(get_key(link->next), k)) {
                 return const_iterator(bucket, buckets_+bucket_count_, link->next);
             }
+            link = link->next;
         }
         return cend();
     }
@@ -510,6 +515,7 @@ public:
             if (equal_(get_key(link->next), k)) {
                 n++;
             }
+            link = link->next;
         }
         return n;
     }
@@ -530,6 +536,7 @@ public:
                 upper.next();
                 return std::make_pair(lower, upper);
             }
+            link = link->next;
         }
         return std::make_pair(end(), end());
     }
@@ -546,6 +553,7 @@ public:
                 upper.next();
                 return std::make_pair(lower, upper);
             }
+            link = link->next;
         }
         return std::make_pair(cend(), cend());
     }
@@ -589,9 +597,10 @@ public:
             if (equal_(get_key(link->next), val.first)) {
                 return std::make_pair(iterator(bucket, buckets_+bucket_count_, link->next), false);
             }
+            link = link->next;
         }
         list_insert_after(link, create_node(val));
-        return std::make_pair(iterator(bucket, buckets_+bucket_count_, head->next), true);
+        return std::make_pair(iterator(bucket, buckets_+bucket_count_, link->next), true);
     }
 
     iterator insert(const_iterator hint, const value_type& val)
@@ -617,9 +626,10 @@ public:
             if (equal_(get_key(link->next), val.first)) {
                 return std::make_pair(iterator(bucket, buckets_+bucket_count_, link->next), false);
             }
+            link = link->next;
         }
         list_insert_after(link, create_node(std::forward<P>(val)));
-        return std::make_pair(iterator(bucket, buckets_+bucket_count_, head->next), true);
+        return std::make_pair(iterator(bucket, buckets_+bucket_count_, link->next), true);
     }
 
     template <typename P>
@@ -645,10 +655,11 @@ public:
             if (link->next = position.link) {
                 break;
             }
+            link = link->next;
         }
         list_delete_after(link);
         destroy_node(position.pos);
-        return iterator iter((bucket_type*) position.pos, (bucket_type*) position.end, link->next);
+        return iterator((bucket_type*) position.pos, (bucket_type*) position.end, link->next);
     }
 
     size_type erase(const key_type& k)
@@ -663,6 +674,7 @@ public:
                 destroy_node(node);
                 n++;
             }
+            link = link->next;
         }
         return n;
     }
@@ -947,9 +959,9 @@ private:
         bucket_type* last = buckets_+bucket_count_;
         for ( ; bucket != last; ++bucket) {
             while (!list_is_empty(bucket)) {
-                auto node = list_delete_head(bucket);
+                auto link = list_delete_head(bucket);
                 bucket_type* new_bucket = new_buckets+bucket_index(hash_(get_key(link)), n);
-                list_insert_after(list_before_head(new_bucket), node);
+                list_insert_after(list_before_head(new_bucket), link);
             }
         }
         
