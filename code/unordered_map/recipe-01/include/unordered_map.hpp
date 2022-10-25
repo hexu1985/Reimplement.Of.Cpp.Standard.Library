@@ -62,9 +62,9 @@ class unordered_map {
     size_t bucket_count_;        // bucket count
     float max_load_factor_;        // max load factor
 
-    static const size_t MIN_BUCKET_NUM = 8;
-    static const size_t MAX_BUCKET_NUM = ((size_t)1 << (8*sizeof(size_t)-1));
-    static const size_t DEFAULT_BUCKET_NUM = 16;
+    static const size_t MIN_BUCKET_NUM_HINT = 8;
+    static const size_t MAX_BUCKET_NUM_HINT = (((size_t)1 << (8*sizeof(size_t)-1)) / sizeof (bucket_type));
+    static const size_t DEFAULT_BUCKET_NUM = 2*MIN_BUCKET_NUM_HINT-1;
     
 public:
     typedef Key key_type;
@@ -101,7 +101,6 @@ public:
         buckets_(nullptr), bucket_count_(adjust_buckets(n)), 
         max_load_factor_(1.0)
     {
-        check_buckets(bucket_count_);
         initialize();
     }
 
@@ -110,7 +109,6 @@ public:
         buckets_(nullptr), bucket_count_(DEFAULT_BUCKET_NUM), 
         max_load_factor_(1.0)
     {
-        check_buckets(bucket_count_);
         initialize();
     }
 
@@ -124,7 +122,6 @@ public:
         buckets_(nullptr), bucket_count_(ump.bucket_count_), 
         max_load_factor_(ump.max_load_factor_)
     {
-        check_buckets(bucket_count_);
         initialize();
 
         try 
@@ -143,7 +140,6 @@ public:
         buckets_(nullptr), bucket_count_(ump.bucket_count_), 
         max_load_factor_(ump.max_load_factor_)
     {
-        check_buckets(bucket_count_);
         initialize();
 
         try 
@@ -168,7 +164,7 @@ public:
         max_load_factor_(ump.max_load_factor_)
     {
         ump.buckets_ = nullptr;
-        ump.bucket_count_ = MIN_BUCKET_NUM;
+        ump.bucket_count_ = DEFAULT_BUCKET_NUM;
         ump.max_load_factor_ = 1.0;
         ump.initialize();
     }
@@ -178,7 +174,6 @@ public:
         buckets_(nullptr), bucket_count_(ump.bucket_count_), 
         max_load_factor_(ump.max_load_factor_)
     {
-        check_buckets(bucket_count_);
         initialize();
 
         try 
@@ -208,7 +203,6 @@ public:
         buckets_(nullptr), bucket_count_(adjust_buckets(n)), 
         max_load_factor_(1.0)
     {
-        check_buckets(bucket_count_);
         initialize();
         
         try
@@ -309,7 +303,7 @@ public:
      */
     size_type max_size() const noexcept
     {
-        return std::numeric_limits<size_type>::max();
+        return std::numeric_limits<size_type>::max() / sizeof(node_type);
     }
 
     /**
@@ -735,7 +729,7 @@ public:
      */
     size_type max_bucket_count() const noexcept
     {
-        return MAX_BUCKET_NUM;
+        return MAX_BUCKET_NUM_HINT-1;
     }
 
     /**
@@ -875,27 +869,20 @@ public:
 private:
     static size_type adjust_buckets(size_type buckets_num)
     {
-        if (buckets_num > MAX_BUCKET_NUM) {
-            return MAX_BUCKET_NUM;
+        if (buckets_num > MAX_BUCKET_NUM_HINT) {
+            return MAX_BUCKET_NUM_HINT-1;
         }
 
-        size_type n = MIN_BUCKET_NUM;
-        while (n < buckets_num) {
+        size_type n = 2*MIN_BUCKET_NUM_HINT;
+        while (n-1 < buckets_num) {
             n = n << 1;
         }
-        return n;
-    }
-
-    static void check_buckets(size_type buckets_num)
-    {
-        assert(buckets_num >= MIN_BUCKET_NUM); 
-        assert(buckets_num <= MAX_BUCKET_NUM); 
-        assert((buckets_num & (buckets_num-1)) == 0);
+        return n-1;
     }
 
     static size_type bucket_index(size_type hash_val, size_type buckets_num)
     {
-        return hash_val & (buckets_num-1);
+        return hash_val % buckets_num;
     }
 
     size_type bucket_index(size_type hash_val) const
@@ -946,8 +933,6 @@ private:
     void do_rehash(size_type n)
     {
         if (n == bucket_count_) return;
-
-        check_buckets(n);
 
         // allocate new table 
         bucket_type* new_buckets = bucket_alloc_type(node_alloc_).allocate(n);

@@ -52,7 +52,6 @@ struct unordered_map_local_iterator {
 
 	bool operator!=(const this_type& other) const
 	{
-        assert(link != nullptr);
 		return !(*this == other);
 	}
 
