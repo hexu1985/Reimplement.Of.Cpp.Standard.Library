@@ -221,9 +221,9 @@ inline bind_t<F, P...> bind(F&& f, P&&... par)
 }
 ```
 bind函数返回一个`bind_t<F, P...>`类型的对象，这个`bind_t<F, P...>`类型就对应之前原理分析中的各个binder类，
-这里bind_t是一个类模板，接下来我们就具体看bind_t的定义。
+这里`bind_t`是一个类模板，接下来我们就具体看`bind_t`的定义。
 
-2、bind_t类模板的定义：
+2、`bind_t`类模板的定义：
 ```cpp
 template <typename Fun, typename... Args>
 struct bind_t {
@@ -255,10 +255,10 @@ private:
     ArgType args_;
 };
 ```
-bind_t类主要包含4个部分，两个成员变量：`func_`和`args_`，两个成员函数：构造函数和`()`函数。
+`bind_t`类主要包含4个部分，两个成员变量：`func_`和`args_`，两个成员函数：构造函数和`()`函数。
 我们还是以具体例子来介绍这4部分怎么相互作用和相互配合的，以及还需要哪些更底层的工具支持。
 
-3、bind_t的构造函数的定义
+3、`bind_t`的构造函数的定义
 ```cpp
 template <typename Fun, typename... Args>
 struct bind_t {
@@ -271,21 +271,21 @@ public:
 ...
 };
 ```
-bind_t的构造函数涉及到一些C++11的技术和库，首先bind_t的构造函数是一个可变参数模板函数，
+`bind_t`的构造函数涉及到一些C++11的技术和库，首先`bind_t`的构造函数是一个可变参数模板函数，
 所以std::forward函数的出现也就很自然了（完美转发）。
 
 我们以前面的一个图为例：
 ![bind-plain-function-one-var-two-args](bind-plain-function-one-var-two-args.png)
-我们看`f = bind(my_handler, 123, _1, _2)`这句，实际就是调用了bind_t的构造函数：
-很明显的my_handler的地址赋值给了`func_`， 而`(123, _1, _2)`这三个参数则被pack成一个std::tuple赋值给了`args_`，
+我们看`f = bind(my_handler, 123, _1, _2);`这句，实际就是调用了`bind_t`的构造函数：
+很明显的`my_handler`的地址赋值给了`func_`， 而`(123, _1, _2)`这三个参数则被打包（pack）成一个std::tuple赋值给了`args_`，
 所以不考虑std::forward的话， 我们可以大体理解构造函数做的事情就类似于：
 ```
 auto func_ = my_handler;
 auto args_ = std::make_tuple(123, _1, _2);
 ```
-至于`_1、_2`这两个占位符对象的类型定义，我们在接下来分析`()`成员函数时介绍。
+至于`_1、_2`这两个占位符对象的类型定义，我们在接下来分析`operator()`成员函数时介绍。
 
-4、operator()函数的定以
+4、`operator()`函数的定以
 ```cpp
 template <typename Fun, typename... Args>
 struct bind_t {
@@ -300,10 +300,11 @@ public:
 ...
 };
 ```
-operator()函数做了一些参数转化，然后就把调用转发给一个叫做do_call的helper函数（也是成员函数），
-具体的，operator()函数做了两件事：
-第一件事是`make_index_sequence<std::tuple_size<ArgType>::value>{}`，std::make_index_sequence在C++14的时候加入到了标准库，
-这里的代码实现算是一个简化版的std::make_index_sequence
+`operator()`函数做了一些参数转化，然后就把调用转发给一个叫做`do_call`的helper函数（也是成员函数），具体的：
+
+首先是通过`make_index_sequence<std::tuple_size<ArgType>::value>{}`创建了传递给`do_call`的第一个实参，
+那这条语句的含义是什么呢？简单的说，就是构造了一组0,1,2,3 .... N - 1的一组编译期的可变长度的整数列。
+std::make_index_sequence在C++14的时候加入到了标准库，这里的代码实现算是一个简化版的std::make_index_sequence：
 ```cpp
 template <std::size_t... Ints> struct index_sequence {};
 
@@ -318,8 +319,47 @@ struct make_index_sequence_impl<0u, Ints...> {
 template <std::size_t N>
 using make_index_sequence = typename make_index_sequence_impl<N>::type;
 ```
+根据上面代码，我们可以了解到make_index_sequence是一个递归模板，通过模板的递归展开和模板的偏特化结束递归，
+最终make_index_sequence<N>会创建一个index_sequence<0,1,2,3,...,N-1>的类型，
+而这个类型就为实现`operator()`函数的参数选择（占位符）提供支持。
 
-5、
+然后是把`operator()`函数的实参也打包（pack）成一个tuple，传入给`do_call`。还是以刚才的代码例子来分析：
+我们之前通过`f = bind(my_handler, 123, _1, _2)`，创建了一个匿名的函数对象，然后我们可以通过 `f(ec, length);`来调用这个函数对象；
+所以当调用`do_call`时，传入的第二个实参类似于`std::make_tuple(ec, length)`。
+
+5、`do_call`函数的定义：
+```cpp
+template <typename Fun, typename... Args>
+struct bind_t {
+...
+    template <typename ArgTuple, std::size_t... Indexes>
+    ResultType do_call(index_sequence<Indexes...>&&, ArgTuple&& argtp)
+    {
+        return invoke<ResultType>(func_, select(std::get<Indexes>(args_), argtp)...);
+    }
+...
+};
+```
+
+我们看看`do_call`都做了什么，`do_call`把`func_`，`args_`和`argtp`结合起来，转发给了`invoke`函数，我们后面再分析`invoke`函数的具体实现，
+在
+```cpp
+f = bind(my_handler, 123, _1, _2);
+f(ec, length);
+```
+这个例子里，我们可以简单的理解`invoke<ResultType>(func_, select(std::get<Indexes>(args_), argtp)...);`含义如下：
+```
+// do_call被调用前就准备好了的参数
+auto func_ = my_handler;
+auto args_ = std::make_tuple(123, _1, _2);
+auto argtp = std::make_tuple(ec, length);
+// invoke等价于
+// Indexes = 0, 1, 2
+func_(select(std::get<Indexes>(args_), argtp)...);
+```
+而这里的`select(std::get<Indexes>(args_), argtp)...`就是根据可变参数模板函数的特性，把`args_`和`argtp`展开成了`123, ec, length`，
+所以最终实现了，`my_handler(123, ec, length)`的调用。
+
 
 
 ### 参考资料：
