@@ -21,6 +21,7 @@ std::bind创建函数对象来绑定到一个函数(普通函数或成员函数)
 f = bind(my_handler, 123)
 ```
 ![bind-plain-function-one-var-zero-args](bind-plain-function-one-var-zero-args.png)
+
 一个匿名类（即这里的binder类)的成员变量捕获了函数指针的值和绑定的参数的值，匿名类重载了`operator()`运算符，从而其对象为仿函数/函数对象。在`operator()`函数体内，使用捕获的函数指针和参数，回调函数指针指向的函数。匿名类只会捕获提前绑定的参数。
 当用户调用该函数对象时，实现延迟调用。
 
@@ -30,6 +31,7 @@ f = bind(my_handler, 123)
 f = bind(&session::handler, this)
 ```
 ![bind-member-function-one-var-zero-args](bind-member-function-one-var-zero-args.png)
+
 匿名类捕获一个指向session的对象的指针作为其成员变量的值。
 
 
@@ -45,6 +47,7 @@ f = bind(&session::handler, _1)
 f = bind(&session::handler, this, _1)
 ```
 ![bind-member-function-one-var-one-arg](bind-member-function-one-var-one-arg.png)
+
 这里的_1是std::placeholders命名空间里的占位符，在调用函数对象的时候，参数按对应的顺序传递给占位符。
 
 
@@ -54,26 +57,28 @@ f = bind(my_handler, 123, _1, _2)
 ```
 ![bind-plain-function-one-var-two-args](bind-plain-function-one-var-two-args.png)
 
-6、有的时候，函数对象调用时会提供一些不会被目标函数使用到的参数，`bind()`函数会自动的忽略这些多余的参数：
 
+6、有的时候，函数对象调用时会提供一些不会被目标函数使用到的参数，`bind()`函数会自动的忽略这些多余的参数：
 ```cpp
 f = bind(my_handler, 123, _1)
 ```
 ![bind-plain-function-one-var-two-args-second-ignored](bind-plain-function-one-var-two-args-second-ignored.png)
+
 
 7、多余的参数不需要在函数签名的最后边：
 ```cpp
 f = bind(my_handler, 123, _2)
 ```
 ![bind-plain-function-one-var-two-args-first-ignored](bind-plain-function-one-var-two-args-first-ignored.png)
+
 也就是说，提前绑定的参数会使调用时又提供的参数无效而丢弃。
 
 8、`bind() `函数允许改变参数的顺序让目标函数能够适应函数对象的函数签名：
-
 ```cpp
 f = bind(my_handler, _2, 123, _1)
 ```
 ![bind-plain-function-one-var-two-args-reordered.png](bind-plain-function-one-var-two-args-reordered.png)
+
 
 从上边的图中可以看出，`bind() `函数的原理和lambda函数的原理是类似的，都是通过捕获变量来生成一个匿名的类，在类中重载`operator() `，从而其对象是能够调用的函数对象/仿函数。
 
@@ -154,6 +159,7 @@ public:
 
 我们以前面的一个图为例：
 ![bind-plain-function-one-var-two-args](bind-plain-function-one-var-two-args.png)
+
 我们看`f = bind(my_handler, 123, _1, _2);`这句，实际就是调用了`bind_t`的构造函数：
 很明显的`my_handler`的地址赋值给了`func_`， 而`(123, _1, _2)`这三个参数则被打包（pack）成一个std::tuple赋值给了`args_`，
 所以不考虑std::forward的话， 我们可以大体理解构造函数做的事情就类似于：
@@ -198,8 +204,8 @@ struct make_index_sequence_impl<0u, Ints...> {
 template <std::size_t N>
 using make_index_sequence = typename make_index_sequence_impl<N>::type;
 ```
-根据上面代码，我们可以了解到make_index_sequence是一个递归模板，通过模板的递归展开和模板的偏特化结束递归，
-最终make_index_sequence<N>会创建一个index_sequence<0,1,2,3,...,N-1>的类型，
+根据上面代码，我们可以了解到`make_index_sequence`是一个递归模板，通过模板的递归展开和模板的偏特化结束递归，
+最终`make_index_sequence<N>`会创建一个`index_sequence<0,1,2,3,...,N-1>`的类型，
 而这个类型就为实现`operator()`函数的参数选择（占位符）提供了支持（这里N为`args_`这个tuple的size）。
 
 然后是把`operator()`函数的实参也打包（pack）成一个tuple（注意这个tuple和args_的大小没有必然关系），作为第二个实参传给`do_call`。还是以刚才的代码例子来分析：
@@ -273,8 +279,8 @@ inline auto select(placeholder_t<I>&, Tuple& tp) -> decltype(std::get<I - 1>(tp)
     return std::get<I - 1>(tp);
 }
 ```
-看到以上代码，我们就很清楚的知道占位符`_1`、`_2`等都是从placeholder_t这个模板类实例化出来的具体类的对象，
-placeholder_t模板类包含一个非类型参数I，用于存储编译期的整数值（占位符索引）。
+看到以上代码，我们就很清楚的知道占位符`_1`、`_2`等都是从`placeholder_t`这个模板类实例化出来的具体类的对象，
+`placeholder_t`模板类包含一个非类型参数I，用于存储编译期的整数值（占位符索引）。
 
 而`select`函数有两个重载版本，两个版本的`select`函数的主要不同，就在于第一个参数，
 以及根据第一个参数类型的不同，采取的不同操作。
@@ -306,7 +312,7 @@ auto argtp = std::make_tuple(ec, length);
 ```
 
 至此，我们应该比较清楚，`bind_t`类的`operator()`函数是如何把bind时绑定的参数，和`operator()`函数调用时传入的参数，
-有规则的结合在一起，并转发给func_的了吧。
+有规则的结合在一起，并转发给`func_`的了吧。
 
 7、`invoke`函数的定义：
 至此，就差`invoke`函数的介绍了，`invoke`函数在bind库里的作用，主要是为了支持采用统一的语法来创建函数对象。
@@ -354,14 +360,14 @@ R>::type invoke(F&& f, P&&... par)
     return std::forward<F>(f)(std::forward<P>(par)...);
 }
 ```
-invoke函数的核心原理就是利用了type_traits+SFINAE特性，
+`invoke`函数的核心原理就是利用了`type_traits`+`SFINAE`特性，
 我们以`invoke<ResultType>(func, arg1, arg2, ...);`为例，给出这段代码的逻辑，图中的判断都是编译期完成的，
 ![invoke-logic](invoke.jpg)
-也就是因为invoke，我们可以把自由函数，成员函数+对象指针，成员函数+对象引用，函数对象这4种类型的可调用对象（callable)
-的调用语法从某个层面上来说统一了。
+也就是因为`invoke`函数，我们可以把自由函数，成员函数+对象指针，成员函数+对象引用，函数对象这4种类型的可调用对象（callable)
+的调用语法从某个层面上统一了。
 
 细心的读者可能会发现，这里并没有介绍`bind_t`的ResultType类型的定义，这里ResultType类型的定义就是利用了C++的类型萃取技术，
-和invoke函数实现里用到的type_traits类似，这里就不赘述了。
+和`invoke`函数实现里用到的`type_traits`类似，这里就不赘述了。
 
 ### 参考资料：
 
