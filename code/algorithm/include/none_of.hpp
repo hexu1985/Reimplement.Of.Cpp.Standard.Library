@@ -1,5 +1,4 @@
-#ifndef MINI_STL_NONE_OF_INC
-#define MINI_STL_NONE_OF_INC
+#pragma once
 
 namespace Hx {
 
@@ -15,4 +14,3 @@ bool none_of(InputIterator first, InputIterator last, UnaryPredicate pred)
 
 }   // namespace Hx
 
-#endif

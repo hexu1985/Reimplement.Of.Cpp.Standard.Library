@@ -1,5 +1,4 @@
-#ifndef MINI_STL_ADJACENT_FIND_INC
-#define MINI_STL_ADJACENT_FIND_INC
+#pragma once
 
 namespace Hx {
 
@@ -37,4 +36,3 @@ ForwardIterator adjacent_find(ForwardIterator first, ForwardIterator last, Binar
 
 }   // namespace Hx
 
-#endif

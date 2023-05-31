@@ -1,5 +1,4 @@
-#ifndef MINI_STLALL_OF_INC
-#define MINI_STLALL_OF_INC
+#pragma once
 
 namespace Hx {
 
@@ -15,4 +14,3 @@ bool all_of(InputIterator first, InputIterator last, UnaryPredicate pred)
 
 }   // Hx
 
-#endif
