@@ -1,5 +1,6 @@
-#ifndef ACCUMULATE_INC
-#define ACCUMULATE_INC
+#pragma once
+
+namespace Hx {
 
 template <typename InputIterator, typename T>
 T accumulate(InputIterator first, InputIterator last, T init)
@@ -18,5 +19,5 @@ T accumulate(InputIterator first, InputIterator last, T init,
     return init;
 }
 
-#endif
+}   // Hx
 

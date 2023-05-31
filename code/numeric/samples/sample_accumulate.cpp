@@ -13,19 +13,19 @@ int main () {
 	int numbers[] = {10,20,30};
 
 	std::cout << "using default accumulate: ";
-	std::cout << accumulate(numbers,numbers+3,init);
+	std::cout << Hx::accumulate(numbers,numbers+3,init);
 	std::cout << '\n';
 
 	std::cout << "using functional's minus: ";
-	std::cout << accumulate (numbers, numbers+3, init, std::minus<int>());
+	std::cout << Hx::accumulate (numbers, numbers+3, init, std::minus<int>());
 	std::cout << '\n';
 
 	std::cout << "using custom function: ";
-	std::cout << accumulate (numbers, numbers+3, init, myfunction);
+	std::cout << Hx::accumulate (numbers, numbers+3, init, myfunction);
 	std::cout << '\n';
 
 	std::cout << "using custom object: ";
-	std::cout << accumulate (numbers, numbers+3, init, myobject);
+	std::cout << Hx::accumulate (numbers, numbers+3, init, myobject);
 	std::cout << '\n';
 
 	return 0;
