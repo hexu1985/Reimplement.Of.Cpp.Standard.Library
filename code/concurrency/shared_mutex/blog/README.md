@@ -42,7 +42,8 @@ std::shared_mutex是在C++17标准中引入的，std::shared_mutex的更完整�
 
 ## shared_mutex实现
 
-接下来，我们将自己动手实现一个shared_mutex类。完整工程代码: [github](https://github.com/hexu1985/Cpp.MiniSTL/tree/master/code/shared_mutex/recipe-02) [gitee](https://gitee.com/hexu1985/Cpp.MiniSTL/tree/master/code/shared_mutex/recipe-02)
+接下来，我们将自己动手实现一个shared_mutex类。
+[完整工程代码](https://gitee.com/hexu1985/Reimplement.Of.Cpp.Standard.Library/tree/master/code/concurrency/shared_mutex/recipe-02)
 
 ### 1. shared_mutex类的数据结构
 
@@ -339,7 +340,8 @@ void thread2()
 
 ## shared_mutex写者优先
 
-接下来，我们介绍如何将现有实现的shared_mutex类改写成”写者优先“策略的。完整工程代码: [github](https://github.com/hexu1985/Cpp.MiniSTL/tree/master/code/shared_mutex/recipe-02) [gitee](https://gitee.com/hexu1985/Cpp.MiniSTL/tree/master/code/shared_mutex/recipe-02)
+接下来，我们介绍如何将现有实现的shared_mutex类改写成”写者优先“策略的。
+[完整工程代码](https://gitee.com/hexu1985/Reimplement.Of.Cpp.Standard.Library/tree/master/code/concurrency/shared_mutex/recipe-03)
 
 ### 1. 调整lock_shared逻辑
 
