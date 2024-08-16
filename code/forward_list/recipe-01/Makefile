@@ -2,7 +2,7 @@
 RM = rm -rf
 CXX = g++
 CXXFLAGS = -Wall -g -fsanitize=leak -fno-omit-frame-pointer #-DNDEBUG
-INCLUDES = -Iinclude
+INCLUDES = -Isrc
 LDFLAGS =
 LDPATH =
 
