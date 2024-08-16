@@ -1,8 +1,8 @@
 
 RM = rm -rf
 CXX = g++
-CXXFLAGS = -Wall -g -std=c++11 -fsanitize=leak -fno-omit-frame-pointer #-DNDEBUG
-INCLUDES = -I../include
+CXXFLAGS = -Wall -g -fsanitize=leak -fno-omit-frame-pointer #-DNDEBUG
+INCLUDES = -Iinclude
 LDFLAGS =
 LDPATH =
 
@@ -15,5 +15,5 @@ all: $(PROGS)
 clean:
 	$(RM) $(PROGS)
 
-%: %.cpp 
+%: %.cpp
 	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDES) $^ $(LDFLAGS) $(LDPATH)
