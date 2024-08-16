@@ -2,11 +2,10 @@
 RM = rm -rf
 CXX = g++
 CXXFLAGS = -Wall -g -std=c++17 #-DNDEBUG
-INCLUDES = -I../include
+INCLUDES = 
 LDFLAGS = -lpthread
 LDPATH =
 
-LIB_SRC = $(shell ls ../src/*.cpp)
 SOURCES = $(shell ls *.cpp)
 PROGS = $(SOURCES:%.cpp=%)
 
@@ -16,5 +15,5 @@ all: $(PROGS)
 clean:
 	$(RM) $(PROGS)
 
-%: %.cpp $(LIB_SRC)
+%: %.cpp
 	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDES) $^ $(LDFLAGS) $(LDPATH)
