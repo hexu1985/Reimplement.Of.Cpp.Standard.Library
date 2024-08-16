@@ -16,5 +16,5 @@ all: $(PROGS)
 clean:
 	$(RM) $(PROGS)
 
-%: %.cpp $(LIB_SRC) $(LIB_HDR)
+%: %.cpp $(LIB_SRC)
 	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDES) $^ $(LDFLAGS) $(LDPATH)
