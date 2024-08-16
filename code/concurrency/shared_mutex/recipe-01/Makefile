@@ -1,31 +1,20 @@
 
+RM = rm -rf
 CXX = g++
-CXXFLAGS = -g3 -Wall -Wextra
-INCLUDES =
-LDFLAGS =
-LDLIBS = -lgflags -lpthread -lrt
+CXXFLAGS = -Wall -g #-std=c++17 #-DNDEBUG
+INCLUDES = -Isrc
+LDFLAGS = -lpthread
+LDPATH =
 
-PROGS =	test1 test2 test3
-LIBOBJS = shared_mutex.o
+LIB_SRC = $(shell ls src/*.cpp src/*.hpp)
+SOURCES = $(shell ls *.cpp)
+PROGS = $(SOURCES:%.cpp=%)
 
-.PHONY: all
 all: $(PROGS)
-	@echo "build OK!"
+	@echo "PROGS = $(PROGS)" 
 
 clean:
-	@$(RM) $(PROGS) *.o
-	@echo "clean OK!"
+	$(RM) $(PROGS)
 
-%.o:%.cpp
-	$(CXX) -o $@ -c $^ $(CXXFLAGS) $(INCLUDES)
-
-test1: test1.o $(LIBOBJS)
-	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
-
-test2: test2.o $(LIBOBJS)
-	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
-
-test3: test3.o $(LIBOBJS)
-	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS)
-
-
+%: %.cpp $(LIB_SRC) $(LIB_HDR)
+	$(CXX) -o $@ $(CXXFLAGS) $(INCLUDES) $^ $(LDFLAGS) $(LDPATH)
